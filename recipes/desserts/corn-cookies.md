@@ -1,4 +1,4 @@
-# Momofuku Milkbar Cookies
+# Momofuku Milkbar Corn Cookies
 
 Source: [Momofuku Milk Bar/Christina Tosi](http://www.thekitchn.com/christina-tosis-162171)
 
