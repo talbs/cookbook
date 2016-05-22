@@ -15,8 +15,8 @@ Source: Adapted from [New York Times](http://www.nytimes.com/2008/07/09/dining/0
 * 1 cup plus 2 T (8 oz) granulated sugar
 * 2 large eggs
 * 2 t natural vanilla extract
-* 1.25 pounds bittersweet chocolate disks or fèves, at least 60% cacao content
-* Sea salt
+* 1.25 pounds bittersweet chocolate disks or chips, at least 60% cacao content
+* Coarse kosher or sea salt
 
 - - -
 
