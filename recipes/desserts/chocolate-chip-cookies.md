@@ -29,8 +29,8 @@ Source: Adapted from [New York Times](http://www.nytimes.com/2008/07/09/dining/0
 5. Drop chocolate pieces in and incorporate them without breaking them.
 6. Press plastic wrap against dough and refrigerate for 24 to 36hrs. Dough may be used in batches, and can be refrigerated for up to 72hrs.
 7. When ready to bake, preheat oven to 350 degrees. Line a baking sheet with parchment paper or a nonstick baking mat. Set aside.
-8. Scoop 6-9 2 oz mounds of dough onto baking sheet, making sure to turn horizontally any chocolate pieces that are poking up; it will make for a more attractive cookie. Sprinkle lightly with sea salt.
-9. Bake until golden brown but still soft, 18 to 20min.
+8. Scoop 6-9 2 oz mounds of dough onto baking sheet, making sure to turn horizontally any chocolate pieces that are poking up; it will make for a more attractive cookie. Sprinkle lightly with coarse kosher or sea salt.
+9. Bake until surface is cracked and edges are golden brown but cookie is still soft, 18 to 20min.
 10. Transfer sheet to a wire rack for 10min, then slip cookies onto another rack to cool a bit more.
 11. Repeat with remaining dough, or reserve dough, refrigerated, for baking remaining batches the next day.
 
