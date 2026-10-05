@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chocolate Chip Cookies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, ul, ol, dl, dd { margin: 0; padding: 0; }
+      ul, ol { list-style: none; }
+      table { border-collapse: separate; border-spacing: 0; }
+    }
+
+    @layer tokens {
+      :root {
+        color-scheme: light;
+
+        --unit: 0.25rem;
+        --space-tight: var(--unit);
+        --space-related: calc(var(--unit) * 2);
+        --space-group: calc(var(--unit) * 3);
+        --space-gutter: clamp(calc(var(--unit) * 4), 0.5rem + 1.25vw, calc(var(--unit) * 6));
+        --space-section: clamp(calc(var(--unit) * 8), 1rem + 2.5vw, calc(var(--unit) * 12));
+        --space-page: clamp(calc(var(--unit) * 12), 1.5rem + 5vw, calc(var(--unit) * 24));
+        --type-body: 1.0625rem;
+        --type-text: 0.9375rem;
+        --type-label: 0.6875rem;
+        --type-display: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+        --type-data: 0.8125rem;
+        --type-note: var(--type-data);
+        --pin: 8rem;
+        --row: calc(var(--unit) * 12);
+        --target: calc(var(--unit) * 11);
+
+        --weight-light: 300;
+        --weight-body: 400;
+        --weight-label: 500;
+        --weight-action: 600;
+        --weight-strong: 700;
+        --weight-display: 700;
+
+        --leading-display: 1.05;
+        --leading-body: 1.5;
+        --leading-text: 1.4;
+        --leading-data: 1.35;
+        --leading-label: 1.4;
+        --lift: calc(var(--unit) * 2);
+        --gap: var(--space-group);
+
+        --font-prose: "Atkinson Hyperlegible Next", "Avenir Next", sans-serif;
+        --font-data: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+
+        --paper: oklch(98% 0.008 90);
+        --card: oklch(99.5% 0.004 90);
+        --ink: oklch(24% 0.015 60);
+        --accent: oklch(52% 0.2 29);
+
+        --text-primary: var(--ink);
+        --text-secondary: alpha(from var(--ink) / 82%);
+        --text-tertiary: alpha(from var(--ink) / 68%);
+        --text-faint: alpha(from var(--ink) / 38%);
+        --border-container: alpha(from var(--ink) / 34%);
+        --border-current: var(--ink);
+        --border-divider: alpha(from var(--ink) / 15%);
+        --dot: alpha(from var(--ink) / 40%);
+        --mark: alpha(from var(--ink) / 8%);
+        --wash: alpha(from var(--accent) / 16%);
+        --highlight: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0.6 3.4C14 1.6 29 4.3 47 2.6S83 3.9 99.2 1.8L99.6 7.4C82 8.6 63 6.9 42 8.2S13 7.3 0.3 8.9Z' fill='%23c0302a' fill-opacity='.11'/%3E%3C/svg%3E");
+        --underline-accent: alpha(from var(--accent) / 35%);
+
+        --tx-hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-hatch-back: repeating-linear-gradient(45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-cross: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px), repeating-linear-gradient(45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-stipple: var(--stipple) 0 0 / 10px 10px, var(--stipple) 5px 5px / 10px 10px;
+        --tx-stipple-dense: var(--stipple) 0 0 / 6px 6px, var(--stipple) 3px 3px / 6px 6px;
+
+        --leader: radial-gradient(circle, var(--dot) 0.6px, transparent 1px);
+        --stipple: radial-gradient(circle, alpha(from var(--ink) / 24%) 0.5px, transparent 0.9px);
+      }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--text-primary);
+        font: var(--weight-body) var(--type-body) / var(--leading-body) var(--font-prose);
+      }
+      ::selection { background: var(--wash); }
+      h1 {
+        font: var(--weight-display) var(--type-display) / var(--leading-display) var(--font-prose);
+        letter-spacing: -0.025em;
+        text-wrap: balance;
+      }
+      h2, .tag {
+        font: var(--weight-label) var(--type-label) / var(--leading-label) var(--font-data);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+      a {
+        color: inherit;
+        text-decoration-line: underline;
+        text-decoration-thickness: 1px;
+        text-decoration-color: var(--border-container);
+        text-underline-offset: 0.35em;
+      }
+      a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--accent); text-underline-offset: 0.25em; }
+      @media (prefers-reduced-motion: no-preference) {
+        a { transition: text-decoration-color 200ms ease-out, text-underline-offset 200ms ease-out, text-decoration-thickness 200ms ease-out; }
+      }
+      a:active { color: var(--accent); }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: 90rem; margin-inline: auto; padding: var(--space-gutter); }
+      .flow { display: flex; flex-direction: column; gap: var(--flow, var(--space-gutter)); }
+      .cluster { display: flex; flex-wrap: wrap; gap: var(--space-related) var(--space-gutter); }
+    }
+
+    @layer blocks {
+      .back { display: inline-flex; align-items: center; gap: var(--space-related); min-height: var(--target); margin-block-end: var(--space-related); color: var(--text-tertiary); font-size: var(--type-note); font-weight: var(--weight-light); text-decoration: none; }
+      .back:hover { color: var(--text-primary); text-decoration: underline; }
+
+      .card-head {
+        display: grid;
+        gap: var(--space-gutter) var(--space-section);
+        align-items: start;
+        margin: var(--gap) var(--gap) calc(var(--space-gutter) - var(--gap));
+      }
+      @media (min-width: 60rem) {
+        .card-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+        .card-setup { justify-self: end; }
+        :root:has(#setup-none:checked) .card-head { grid-template-columns: 1fr; }
+      }
+      .card-head::after, .card-notes::before {
+        content: "";
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--border-divider);
+      }
+      :root:has(:is(#div-hyphen, #div-star):checked) .card-head::after,
+      :root:has(:is(#div-hyphen, #div-star):checked) .card-notes::before {
+        height: 1lh;
+        overflow: hidden;
+        border: 0;
+        font: var(--type-data) / var(--leading-data) var(--font-data);
+        color: var(--text-faint);
+        white-space: nowrap;
+      }
+      :root:has(#div-hyphen:checked) .card-head::after,
+      :root:has(#div-hyphen:checked) .card-notes::before { content: "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"; }
+      :root:has(#div-star:checked) .card-head::after,
+      :root:has(#div-star:checked) .card-notes::before { content: "*   *   *"; white-space: pre; text-align: center; }
+      :root:has(#div-none:checked) .card-head::after,
+      :root:has(#div-none:checked) .card-notes::before { border: 0; }
+
+      .card-title { display: grid; gap: var(--space-group); }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-related) var(--space-gutter);
+        font: var(--type-data) / var(--leading-data) var(--font-data);
+        color: var(--text-secondary);
+      }
+      .facts li { display: inline-flex; align-items: baseline; gap: var(--space-related); }
+      .facts b { font-weight: var(--weight-strong); color: var(--text-primary); }
+      .facts i { color: var(--text-tertiary); }
+
+      .card-setup { display: none; gap: var(--space-related); font-size: var(--type-text); line-height: var(--leading-text); }
+      :root:has(#setup-few:checked) .card-setup[data-amount="few"],
+      :root:has(#setup-many:checked) .card-setup[data-amount="many"] { display: grid; }
+      .card-setup > div { display: grid; grid-template-columns: calc(var(--unit) * 13) 1fr; align-items: baseline; }
+      .card-setup ul { display: grid; gap: var(--space-tight); }
+
+      .stack { position: relative; isolation: isolate; margin: 0 calc(var(--lift) * 2) calc(var(--lift) * 2) 0; }
+      .stack::before, .stack::after {
+        content: "";
+        position: absolute;
+        border: 1px solid var(--border-container);
+        background: var(--card);
+      }
+      .stack::before { inset: var(--lift) calc(var(--lift) * -1) calc(var(--lift) * -1) var(--lift); }
+      .stack::after {
+        z-index: -1;
+        inset: calc(var(--lift) * 2) calc(var(--lift) * -2) calc(var(--lift) * -2) calc(var(--lift) * 2);
+        box-shadow: 0 1px 3px alpha(from var(--ink) / 10%);
+      }
+      :root:has(#depth-hatch:checked) .stack { margin: 0 var(--lift) var(--lift) 0; }
+      :root:has(#depth-hatch:checked) .stack::before {
+        inset: var(--lift) calc(var(--lift) * -1) calc(var(--lift) * -1) var(--lift);
+        border: 0;
+        background: var(--paper) repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
+      }
+      :root:has(#depth-hatch:checked) .stack::after { content: none; }
+      .card { position: relative; z-index: 1; padding: var(--space-gutter); border: 1px solid var(--border-container); background: var(--card); }
+      @media (min-width: 44rem) {
+        .card { padding: var(--space-section); }
+      }
+
+      .scroller {
+        container-type: inline-size;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--pin);
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-container) transparent;
+      }
+
+      .rt { min-width: 100%; border-spacing: var(--gap); line-height: var(--leading-text); }
+      .rt :is(th, td) { padding: var(--space-related) var(--space-group); }
+      .rt td[id] { padding: var(--space-group); }
+      .rt td[id] { border: 1px solid var(--border-divider); background-color: var(--card); }
+
+      .rt th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--pin);
+        min-width: var(--pin);
+        max-width: var(--pin);
+        padding-inline-start: var(--space-tight);
+        background: var(--card);
+        box-shadow: 0 0 0 var(--gap) var(--card);
+        font: var(--weight-body) var(--type-data) / var(--leading-data) var(--font-data);
+        color: var(--text-secondary);
+        text-align: left;
+        vertical-align: middle;
+      }
+      .qty { display: block; font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; color: var(--text-primary); white-space: nowrap; }
+      .qty:empty { display: none; }
+
+      .rt td {
+        min-width: min(calc(100cqi - var(--pin) - var(--unit) * 12), 11rem);
+        font-size: var(--type-text);
+        text-align: center;
+        text-wrap: balance;
+        scroll-snap-align: start;
+      }
+      .rt td[data-fill] {
+        min-width: 0;
+        background: var(--card) var(--leader) left center / 6px 6px round no-repeat;
+      }
+      .tag { text-transform: lowercase; }
+
+      [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      [data-kind="shape"] { background: var(--tx-hatch-back), var(--card); }
+      [data-kind="cook"] { background: var(--tx-cross), var(--card); }
+      [data-kind="wait"] { background: var(--tx-stipple), var(--card); }
+      [data-kind="bake"] { background: var(--tx-stipple-dense), var(--card); }
+
+      .do { color: var(--text-secondary); text-wrap: balance; }
+      .do b { font-weight: var(--weight-action); color: var(--text-primary); }
+      .do + .do { margin-block-start: var(--space-tight); }
+      .t { margin-block-start: var(--space-related); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); white-space: nowrap; }
+
+      .rt td[id]:focus { border-color: var(--border-current); }
+      .rt:has(td[id]:focus) :is(td[id]:not(:focus), td[data-fill], th) { opacity: 0.45; }
+      .rt:has(#step-1:focus) th[data-steps~="1"] { opacity: 1; }
+      .rt:has(#step-2:focus) th[data-steps~="2"] { opacity: 1; }
+      .rt:has(#step-3:focus) th[data-steps~="3"] { opacity: 1; }
+      .rt:has(#step-4:focus) th[data-steps~="4"] { opacity: 1; }
+      .rt:has(#step-5:focus) th[data-steps~="5"] { opacity: 1; }
+      .rt:has(#step-6:focus) th[data-steps~="6"] { opacity: 1; }
+      .rt:has(#step-7:focus) th[data-steps~="7"] { opacity: 1; }
+      .rt:has(#step-8:focus) th[data-steps~="8"] { opacity: 1; }
+      @media (hover: hover) {
+        .rt td[id]:hover:not(:focus, :target) { border-color: var(--border-container); }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .rt :is(td, th) { transition: opacity 150ms ease-out, border-color 150ms ease-out; }
+      }
+
+
+      .plate { display: inline-block; text-align: left; padding: var(--space-gutter) var(--space-gutter); background: radial-gradient(ellipse closest-side, var(--card) 62%, transparent); }
+
+      .fn {
+        position: relative;
+        color: var(--accent);
+        font: var(--weight-strong) var(--type-label) / 1 var(--font-data);
+        text-decoration-color: var(--underline-accent);
+      }
+      .plate .fn { vertical-align: super; margin-inline-start: 0.1em; }
+      .fn::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: var(--target);
+        min-height: var(--target);
+        translate: -50% -50%;
+      }
+
+      @container (min-width: 60rem) {
+        .rt { width: 100%; }
+        .rt th { position: static; width: auto; min-width: 0; max-width: none; height: var(--row); padding-block: 0; padding-right: 0; box-shadow: none; white-space: nowrap; }
+        .rt th > span { display: flex; gap: 1ch; align-items: baseline; }
+        .rt th > span::after { min-width: var(--space-gutter); margin-inline-start: var(--space-related); }
+        .rt th:has(+ td[data-fill]) > span::after { margin-inline-end: calc(var(--gap) * -1); }
+        .rt th > span::after, .rt td[data-fill]::before {
+          content: "";
+          display: block;
+          flex: 1 1 var(--space-gutter);
+          align-self: start;
+          height: 1lh;
+          background: var(--leader) left 0 bottom calc(0.4em - 3px) / 6px 6px round no-repeat;
+        }
+        .rt td[data-fill] { padding-inline: 0; background: var(--card); font: var(--type-data) / var(--leading-data) var(--font-data); vertical-align: middle; }
+        .rt td[id] { padding-inline: var(--space-related); }
+        .plate { padding-inline: var(--space-tight); }
+        .rt td { min-width: 5.5rem; }
+        .rt td[data-fill] { min-width: 0; }
+      }
+
+      .card-notes {
+        display: grid;
+        gap: var(--space-gutter) var(--space-section);
+        margin: calc(var(--space-gutter) - var(--gap)) var(--gap) 0;
+        padding-block-end: var(--space-related);
+        font-size: var(--type-note);
+        line-height: var(--leading-body);
+        color: var(--text-secondary);
+      }
+      .card-notes > section { display: grid; gap: var(--space-related); align-content: start; }
+      .card-notes > section:first-child { grid-row: span 2; }
+      .card-notes ol { display: grid; gap: var(--space-related); }
+      .card-notes li { display: grid; grid-template-columns: calc(var(--unit) * 4) 1fr; gap: var(--space-tight); align-items: baseline; }
+      .card-notes li:target > p > span {
+        background: var(--highlight) no-repeat 0 100% / 100% 62%;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+        padding: 0 var(--space-tight) 0.1em;
+        margin-inline: calc(var(--space-tight) * -1);
+      }
+      .rt td[id]:target { border-color: var(--border-current); }
+      .card-notes p { max-width: 55ch; }
+      @media (min-width: 48rem) {
+        .card-notes { grid-template-columns: 3fr 2fr; }
+      }
+
+      .switcher { display: flex; flex-wrap: wrap; gap: var(--space-related) var(--space-gutter); margin: 0; padding: 0; border: 0; font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .switcher legend { padding: 0; }
+      .switcher label { display: inline-flex; align-items: center; gap: var(--space-related); min-height: var(--target); }
+      .switcher input { accent-color: var(--accent); }
+
+      .kit { display: grid; gap: var(--space-group) var(--space-section); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+      .scale { display: grid; gap: var(--space-related); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .scale > div { display: grid; grid-template-columns: calc(var(--unit) * 24) calc(var(--unit) * 36) 1fr; gap: var(--space-group); align-items: center; }
+      .scale dt { height: var(--space-group); width: var(--w); border: 1px solid var(--border-container); background: var(--tx-cross), var(--card); }
+      .scale dd { white-space: nowrap; }
+      .scale dd + dd { white-space: normal; }
+      .scale b { color: var(--text-primary); font-weight: var(--weight-strong); }
+
+      .kit > div { display: grid; grid-template-columns: calc(var(--unit) * 16) 1fr; gap: var(--space-group); align-items: center; }
+      .kit dd { font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .swatch { height: calc(var(--unit) * 10); background-color: var(--card); border: 1px solid var(--border-divider); }
+      .swatch[data-mark="leader"] { border: 0; background: var(--leader) left center / 6px 6px round no-repeat; }
+      .swatch[data-mark="rule"] { height: 0; border-width: 1px 0 0; background: none; }
+      .swatch[data-mark="hairline"] { border-width: 0 0 1px 1px; background: none; }
+      .swatch[data-mark="note"] { border: 0; background: none; display: grid; place-items: center; }
+
+      @media (forced-colors: active) {
+        .card, .rt td[id] { border-color: CanvasText; }
+        .stack::before, .rt td[id], .swatch { background-image: none; }
+        .rt th { box-shadow: none; }
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a class="back" href="#"><i class="fa-regular fa-circle-left" aria-hidden="true"></i> Desserts</a>
+
+
+    <div class="flow" style="--flow: var(--space-page)">
+      <div class="stack">
+        <div class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h1>Chocolate Chip Cookies</h1>
+              <ul class="facts">
+                <li><i class="fa-regular fa-clock" aria-hidden="true"></i><span><b>25 hr</b> total</span></li>
+                <li><i class="fa-regular fa-hand" aria-hidden="true"></i><span><b>30 min</b> active</span></li>
+                <li><i class="fa-regular fa-clone" aria-hidden="true"></i><span><b>18</b> large cookies</span></li>
+              </ul>
+            </div>
+            <dl class="card-setup" data-amount="few">
+              <div><dt class="tag">tools</dt><dd>Stand mixer with paddle, 2 oz scoop</dd></div>
+              <div><dt class="tag">prep</dt><dd>Line a baking sheet with parchment</dd></div>
+            </dl>
+            <dl class="card-setup" data-amount="many">
+              <div><dt class="tag">tools</dt><dd>Digital scale, digital thermometer, immersion blender, fine-mesh strainer, sous vide container and circulator, five 8 oz canning jars with lids, jar lifter, food processor</dd></div>
+              <div><dt class="tag">prep</dt><dd><ul><li>Fill the sous vide container and set it to 158°F</li><li>Separate 7 egg yolks</li><li>Crush the cookies, filling removed</li></ul></dd></div>
+            </dl>
+          </header>
+          <div class="scroller" role="region" aria-labelledby="table-title" tabindex="0">
+            <table class="rt">
+              <caption id="table-title" hidden>Chocolate Chip Cookies recipe table</caption>
+              <tbody>
+                <tr>
+                  <th scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">8.5 oz</span> cake flour</span></th>
+                  <td id="step-1" tabindex="0" data-kind="combine" rowspan="5" colspan="2"><div class="plate"><p class="do"><b>Sift</b> together</p></div></td>
+                  <td id="step-4" tabindex="0" data-kind="combine" rowspan="10"><div class="plate"><p class="do"><b>Mix in</b> dry until just combined <a class="fn" href="#note-1" aria-label="Note 1">1</a></p></div></td>
+                  <td id="step-5" tabindex="0" data-kind="wait" rowspan="11"><div class="plate"><p class="do"><b>Fold in</b></p><p class="do"><b>Chill</b> <a class="fn" href="#note-2" aria-label="Note 2">2</a></p><p class="t">24–36&nbsp;hr</p></div></td>
+                  <td id="step-6" tabindex="0" data-kind="shape" rowspan="11"><div class="plate"><p class="do"><b>Heat</b> oven to 350°</p><p class="do"><b>Scoop</b> 2&nbsp;oz mounds <a class="fn" href="#note-3" aria-label="Note 3">3</a></p></div></td>
+                  <td id="step-7" tabindex="0" data-kind="bake" rowspan="12"><div class="plate"><p class="do"><b>Sprinkle</b></p><p class="do"><b>Bake</b> <a class="fn" href="#note-4" aria-label="Note 4">4</a></p><p class="t">18–20&nbsp;min</p></div></td>
+                  <td id="step-8" tabindex="0" data-kind="wait" rowspan="12"><div class="plate"><p class="do"><b>Cool</b> on sheet</p><p class="t">10&nbsp;min</p></div></td>
+                </tr>
+                <tr><th scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">8.5 oz</span> bread flour</span></th></tr>
+                <tr><th scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/4 t</span> baking soda</span></th></tr>
+                <tr><th scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/2 t</span> baking powder</span></th></tr>
+                <tr><th scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/2 t</span> coarse salt</span></th></tr>
+                <tr>
+                  <th scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">2 1/2 sticks</span> unsalted butter</span></th>
+                  <td id="step-2" tabindex="0" data-kind="combine" rowspan="3"><div class="plate"><p class="do"><b>Cream</b> until very light</p><p class="t">5&nbsp;min</p></div></td>
+                  <td id="step-3" tabindex="0" data-kind="combine" rowspan="5"><div class="plate"><p class="do"><b>Beat in</b> eggs one at a time, then vanilla</p></div></td>
+                </tr>
+                <tr><th scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">10 oz</span> light brown sugar</span></th></tr>
+                <tr><th scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">8 oz</span> granulated sugar</span></th></tr>
+                <tr><th scope="row" data-steps="3 4 5 6 7 8"><span><span class="qty">2</span> large eggs</span></th><td data-fill></td></tr>
+                <tr><th scope="row" data-steps="3 4 5 6 7 8"><span><span class="qty">2 t</span> vanilla extract</span></th><td data-fill></td></tr>
+                <tr><th scope="row" data-steps="5 6 7 8"><span><span class="qty">1 1/4 lb</span> bittersweet chocolate</span></th><td data-fill colspan="3"></td></tr>
+                <tr><th scope="row" data-steps="7 8"><span><span class="qty"></span> flaky sea salt</span></th><td data-fill colspan="5"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-notes">
+            <section>
+              <h2>Step notes</h2>
+              <ol>
+                <li id="note-1"><a class="fn" href="#step-4" aria-label="Back to the step for note 1">1</a><p><span>5 to 10 seconds on low. Stop the moment the flour disappears.</span></p></li>
+                <li id="note-2"><a class="fn" href="#step-5" aria-label="Back to the step for note 2">2</a><p><span>Press plastic wrap against the dough. It keeps up to 72 hours.</span></p></li>
+                <li id="note-3"><a class="fn" href="#step-6" aria-label="Back to the step for note 3">3</a><p><span>6 to 9 mounds per sheet. Turn any chocolate that pokes up flat. It makes a better-looking cookie.</span></p></li>
+                <li id="note-4"><a class="fn" href="#step-7" aria-label="Back to the step for note 4">4</a><p><span>Surface cracked, edges golden, center still soft.</span></p></li>
+              </ol>
+            </section>
+            <section>
+              <h2>Notes</h2>
+              <p>The original calls for 3.5 oz cookies. 2 oz yields far more, and they're still large with every texture you want.</p>
+            </section>
+            <section>
+              <h2>Source</h2>
+              <p>Adapted from <a href="https://www.nytimes.com/2008/07/09/dining/091crex.html">New York Times</a></p>
+            </section>
+          </div>
+        </div>
+      </div>
+
+
+      <section class="flow" style="--flow: var(--space-group)">
+        <h2>The kit (mock only)</h2>
+        <fieldset class="switcher">
+          <legend>Tools and prep</legend>
+          <label><input type="radio" name="setup" id="setup-none"> None</label>
+          <label><input type="radio" name="setup" id="setup-few" checked> A little</label>
+          <label><input type="radio" name="setup" id="setup-many"> A lot</label>
+        </fieldset>
+        <fieldset class="switcher">
+          <legend>Divider</legend>
+          <label><input type="radio" name="div" id="div-line" checked> Ruled line</label>
+          <label><input type="radio" name="div" id="div-hyphen"> Typed hyphens</label>
+          <label><input type="radio" name="div" id="div-star"> Typed asterisks</label>
+          <label><input type="radio" name="div" id="div-none"> Space only</label>
+        </fieldset>
+        <fieldset class="switcher">
+          <legend>Card depth</legend>
+          <label><input type="radio" name="depth" id="depth-cards" checked> Stacked cards</label>
+          <label><input type="radio" name="depth" id="depth-hatch"> Hatched underlayer</label>
+        </fieldset>
+        <dl class="scale">
+          <div><dt style="--w: var(--space-tight)"></dt><dd><b>tight</b> 4px</dd><dd>Icon to its label. A note number to its text.</dd></div>
+          <div><dt style="--w: var(--space-related)"></dt><dd><b>related</b> 8px</dd><dd>Lines that belong together. The stack offset.</dd></div>
+          <div><dt style="--w: var(--space-group)"></dt><dd><b>group</b> 12px</dd><dd>Inside a step box. The gap between boxes.</dd></div>
+          <div><dt style="--w: var(--space-gutter)"></dt><dd><b>gutter</b> 16 to 24px</dd><dd>Between blocks inside the card. Either side of a divider.</dd></div>
+          <div><dt style="--w: var(--space-section)"></dt><dd><b>section</b> 32 to 48px</dd><dd>Card padding. Between columns of notes.</dd></div>
+          <div><dt style="--w: var(--space-page)"></dt><dd><b>page</b> 48 to 96px</dd><dd>Between page-level things.</dd></div>
+        </dl>
+        <dl class="kit">
+          <div><dt class="swatch" data-kind="combine"></dt><dd>Hatch. Hands on, combining.</dd></div>
+          <div><dt class="swatch" data-kind="shape"></dt><dd>Back hatch. Hands on: prep, shape, portion.</dd></div>
+          <div><dt class="swatch" data-kind="cook"></dt><dd>Cross-hatch. Hands on, with heat.</dd></div>
+          <div><dt class="swatch" data-kind="wait"></dt><dd>Stipple. Hands off: chill, rest, cool.</dd></div>
+          <div><dt class="swatch" data-kind="bake"></dt><dd>Dense stipple. Hands off, with heat.</dd></div>
+          <div><dt class="swatch" data-mark="leader"></dt><dd>Leader. An ingredient waiting to join.</dd></div>
+          <div><dt class="swatch" data-mark="rule"></dt><dd>Ruled line. A divider inside the card.</dd></div>
+          <div><dt class="swatch" data-mark="note"><span class="fn">1</span></dt><dd>Small red number. This step has a note.</dd></div>
+        </dl>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

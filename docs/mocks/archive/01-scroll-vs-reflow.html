@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe table mock: B vs C</title>
+  <style>
+    :root {
+      --ink: #1c1a17;
+      --muted: #6b655c;
+      --paper: #fbf9f4;
+      --cell: #fff;
+      --step: #f3ede0;
+      --line: #cfc7b6;
+      --accent: #a8431f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: var(--paper);
+      color: var(--ink);
+      font: 1rem/1.4 "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    }
+
+    h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+    h2 { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 2rem 0 0.5rem; }
+    .note { color: var(--muted); font-size: 0.875rem; margin: 0 0 0.75rem; max-width: 60ch; }
+    .qty { font-weight: 650; }
+
+    .scroller {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      scroll-snap-type: x proximity;
+      scroll-padding-left: 9.5rem;
+    }
+
+    .rt { border-collapse: separate; border-spacing: 0; font-size: 0.9375rem; }
+    .rt th, .rt td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 0.5rem 0.625rem; }
+    .rt tr:last-child > * { border-bottom: 0; }
+    .rt th {
+      position: sticky;
+      left: 0;
+      width: 9.5rem;
+      min-width: 9.5rem;
+      background: var(--cell);
+      font-weight: 400;
+      text-align: left;
+      box-shadow: 4px 0 6px -4px rgb(0 0 0 / 0.25);
+    }
+    .rt td { min-width: 7.5rem; background: var(--step); text-align: center; scroll-snap-align: start; }
+    .rt td.fill { background: var(--cell); min-width: 0; }
+
+    .frame { container-type: inline-size; resize: horizontal; overflow: auto; max-width: 100%; }
+
+    .tree { counter-reset: step; border: 1px solid var(--line); background: var(--cell); font-size: 0.9375rem; }
+    .tree p { margin: 0; }
+    .leaf { padding: 0.375rem 0.75rem; }
+    .label { padding: 0.5rem 0.75rem 0.75rem; background: var(--step); border-bottom: 1px solid var(--line); font-weight: 600; }
+    .label::before {
+      counter-increment: step;
+      content: counter(step);
+      display: inline-grid;
+      place-items: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-right: 0.5rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.8125rem;
+    }
+    .tree > .step > .label { border-bottom: 0; }
+    .step:has(> .leaf) > .leaf:first-child { padding-top: 0.75rem; }
+
+    @container (min-width: 44rem) {
+      .tree {
+        display: grid;
+        grid-template-columns: minmax(10rem, 1.6fr) repeat(var(--cols), minmax(0, 1fr));
+      }
+      .step {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-template-rows: subgrid;
+        grid-column: 1 / -2;
+        grid-row: span var(--span);
+      }
+      .tree > .step { grid-column: 1 / -1; }
+      .leaf {
+        grid-column: 1 / var(--col);
+        padding: 0.5rem 0.625rem;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .step:has(> .leaf) > .leaf:first-child { padding-top: 0.5rem; }
+      .label {
+        grid-column: var(--col) / -1;
+        grid-row: 1 / -1;
+        display: grid;
+        place-items: center;
+        padding: 0.5rem;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        font-weight: 400;
+        text-align: center;
+        text-wrap: balance;
+      }
+      .label::before { content: none; }
+      .tree > .step > .label { border-right: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Chocolate Chip Cookies</h1>
+  <p class="note">Throwaway layout mock. Same recipe, two approaches. View at phone width, then desktop.</p>
+
+  <h2>B · Table, scroll sideways</h2>
+  <p class="note">Real table. Ingredient column stays pinned while steps scroll.</p>
+  <div class="scroller" role="region" aria-label="Recipe table, scrollable" tabindex="0">
+    <table class="rt">
+      <tbody>
+        <tr><th scope="row"><span class="qty">8.5 oz</span> cake flour</th><td rowspan="5" colspan="2">Sift together</td><td rowspan="10">Mix in dry until just combined</td><td rowspan="11">Fold in, chill 24–36 hrs</td><td rowspan="11">Scoop 2 oz mounds</td><td rowspan="12">Sprinkle, bake 350° 18–20 min</td><td rowspan="12">Cool on sheet 10 min</td></tr>
+        <tr><th scope="row"><span class="qty">8.5 oz</span> bread flour</th></tr>
+        <tr><th scope="row"><span class="qty">1¼ t</span> baking soda</th></tr>
+        <tr><th scope="row"><span class="qty">1½ t</span> baking powder</th></tr>
+        <tr><th scope="row"><span class="qty">1½ t</span> coarse salt</th></tr>
+        <tr><th scope="row"><span class="qty">2½ sticks</span> unsalted butter</th><td rowspan="3">Cream 5 min, until very light</td><td rowspan="5">Beat in eggs one at a time, then vanilla</td></tr>
+        <tr><th scope="row"><span class="qty">10 oz</span> light brown sugar</th></tr>
+        <tr><th scope="row"><span class="qty">8 oz</span> granulated sugar</th></tr>
+        <tr><th scope="row"><span class="qty">2</span> large eggs</th><td class="fill"></td></tr>
+        <tr><th scope="row"><span class="qty">2 t</span> vanilla extract</th><td class="fill"></td></tr>
+        <tr><th scope="row"><span class="qty">1¼ lb</span> bittersweet chocolate</th><td class="fill" colspan="3"></td></tr>
+        <tr><th scope="row">Coarse sea salt</th><td class="fill" colspan="5"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>C · One markup, two layouts</h2>
+  <p class="note">Nested tree. A grid table when its container is wide, a step outline when narrow. On desktop, drag the bottom-right corner to watch it switch.</p>
+  <div class="frame">
+    <div class="tree" style="--cols: 7">
+      <div class="step" style="--span: 12; --col: 8">
+        <div class="step" style="--span: 12; --col: 7">
+          <div class="step" style="--span: 11; --col: 6">
+            <div class="step" style="--span: 11; --col: 5">
+              <div class="step" style="--span: 10; --col: 4">
+                <div class="step" style="--span: 5; --col: 2">
+                  <p class="leaf"><span class="qty">8.5 oz</span> cake flour</p>
+                  <p class="leaf"><span class="qty">8.5 oz</span> bread flour</p>
+                  <p class="leaf"><span class="qty">1¼ t</span> baking soda</p>
+                  <p class="leaf"><span class="qty">1½ t</span> baking powder</p>
+                  <p class="leaf"><span class="qty">1½ t</span> coarse salt</p>
+                  <p class="label">Sift together</p>
+                </div>
+                <div class="step" style="--span: 5; --col: 3">
+                  <div class="step" style="--span: 3; --col: 2">
+                    <p class="leaf"><span class="qty">2½ sticks</span> unsalted butter</p>
+                    <p class="leaf"><span class="qty">10 oz</span> light brown sugar</p>
+                    <p class="leaf"><span class="qty">8 oz</span> granulated sugar</p>
+                    <p class="label">Cream 5 min, until very light</p>
+                  </div>
+                  <p class="leaf"><span class="qty">2</span> large eggs</p>
+                  <p class="leaf"><span class="qty">2 t</span> vanilla extract</p>
+                  <p class="label">Beat in eggs one at a time, then vanilla</p>
+                </div>
+                <p class="label">Mix in dry until just combined</p>
+              </div>
+              <p class="leaf"><span class="qty">1¼ lb</span> bittersweet chocolate</p>
+              <p class="label">Fold in, chill 24–36 hrs</p>
+            </div>
+            <p class="label">Scoop 2 oz mounds</p>
+          </div>
+          <p class="leaf">Coarse sea salt</p>
+          <p class="label">Sprinkle, bake 350° 18–20 min</p>
+        </div>
+        <p class="label">Cool on sheet 10 min</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

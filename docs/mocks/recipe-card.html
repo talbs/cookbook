@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Chocolate Chip Cookies | Cookbook</title>
+  <meta name="description" content="Chocolate chip cookies as a recipe table: 12 ingredients, 8 steps, 30 minutes of work and a day of chilling. Makes 18 large cookies.">
+  <link rel="canonical" href="https://talbs.github.io/cookbook/desserts/chocolate-chip-cookies/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Chocolate Chip Cookies">
+  <meta property="og:description" content="A recipe table: 12 ingredients, 8 steps, 30 minutes of work and a day of chilling.">
+  <meta property="og:url" content="https://talbs.github.io/cookbook/desserts/chocolate-chip-cookies/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    "name": "Chocolate Chip Cookies",
+    "description": "Large chocolate chip cookies from a dough that chills for a day before baking.",
+    "recipeCategory": "Dessert",
+    "recipeYield": "18 large cookies",
+    "totalTime": "PT25H",
+    "prepTime": "PT30M",
+    "isBasedOn": "https://www.nytimes.com/2008/07/09/dining/091crex.html",
+    "tool": ["Stand mixer with paddle", "2 oz scoop"],
+    "recipeIngredient": [
+      "8.5 oz cake flour",
+      "8.5 oz bread flour",
+      "1 1/4 t baking soda",
+      "1 1/2 t baking powder",
+      "1 1/2 t coarse salt",
+      "2 1/2 sticks unsalted butter",
+      "10 oz light brown sugar",
+      "8 oz granulated sugar",
+      "2 large eggs",
+      "2 t vanilla extract",
+      "1 1/4 lb bittersweet chocolate",
+      "flaky sea salt"
+    ],
+    "recipeInstructions": [
+      { "@type": "HowToStep", "text": "Sift together the flours, baking soda, baking powder and salt." },
+      { "@type": "HowToStep", "text": "Cream the butter and sugars until very light, 5 minutes." },
+      { "@type": "HowToStep", "text": "Beat in the eggs one at a time, then the vanilla." },
+      { "@type": "HowToStep", "text": "Mix in the dry ingredients until just combined." },
+      { "@type": "HowToStep", "text": "Fold in the chocolate. Chill 24 to 36 hours." },
+      { "@type": "HowToStep", "text": "Heat the oven to 350°F. Scoop 2 oz mounds." },
+      { "@type": "HowToStep", "text": "Sprinkle with sea salt. Bake 18 to 20 minutes." },
+      { "@type": "HowToStep", "text": "Cool on the sheet for 10 minutes." }
+    ]
+  }
+  </script>
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, ul, ol, dl, dd { margin: 0; padding: 0; }
+      ul, ol { list-style: none; }
+      table { border-collapse: separate; border-spacing: 0; }
+    }
+
+    @layer tokens {
+      :root {
+        color-scheme: light;
+
+        --unit: 0.25rem;
+        --space-tight: var(--unit);
+        --space-related: calc(var(--unit) * 2);
+        --space-group: calc(var(--unit) * 3);
+        --space-gutter: clamp(calc(var(--unit) * 4), 0.5rem + 1.25vw, calc(var(--unit) * 6));
+        --space-section: clamp(calc(var(--unit) * 8), 1rem + 2.5vw, calc(var(--unit) * 12));
+
+        --size-page: 90rem;
+        --size-measure: 55ch;
+        --size-target: calc(var(--unit) * 11);
+        --size-row: calc(var(--unit) * 12);
+        --size-pin: calc(var(--unit) * 32);
+        --size-step-min: calc(var(--unit) * 22);
+        --size-step-max: calc(var(--unit) * 44);
+        --size-step-peek: calc(var(--unit) * 12);
+        --size-label: calc(var(--unit) * 13);
+        --size-noteref: calc(var(--unit) * 4);
+        --size-lift: var(--space-related);
+        --size-gap: var(--space-group);
+        --size-stroke: 1px;
+        --size-stroke-strong: 2px;
+
+        --font-size-xs: 0.6875rem;
+        --font-size-s: 0.8125rem;
+        --font-size-m: 0.9375rem;
+        --font-size-l: 1.0625rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.4375rem;
+        --font-size-3xl: 1.625rem;
+        --font-size-4xl: 1.875rem;
+
+        --leading-display: 1.05;
+        --leading-heading: 1.2;
+        --leading-data: 1.35;
+        --leading-text: 1.4;
+        --leading-label: 1.4;
+        --leading-prose: 1.5;
+
+        --weight-body: 400;
+        --weight-label: 500;
+        --weight-action: 600;
+        --weight-strong: 700;
+
+        --tracking-display: -0.025em;
+        --tracking-label: 0.08em;
+
+        --font-prose: "Atkinson Hyperlegible Next", "Avenir Next", sans-serif;
+        --font-data: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+
+        --heading-l: var(--weight-strong) clamp(var(--font-size-2xl), 1.2rem + 1.4vw, var(--font-size-4xl)) / var(--leading-display) var(--font-prose);
+        --heading-m: var(--weight-strong) var(--font-size-xl) / var(--leading-heading) var(--font-prose);
+        --heading-s: var(--weight-action) var(--font-size-l) / var(--leading-heading) var(--font-prose);
+        --body-l: var(--weight-body) var(--font-size-l) / var(--leading-prose) var(--font-prose);
+        --body-m: var(--weight-body) var(--font-size-m) / var(--leading-text) var(--font-prose);
+        --body-s: var(--weight-body) var(--font-size-s) / var(--leading-prose) var(--font-prose);
+        --data-l: var(--weight-body) var(--font-size-m) / var(--leading-data) var(--font-data);
+        --data-m: var(--weight-body) var(--font-size-s) / var(--leading-data) var(--font-data);
+        --data-s: var(--weight-label) var(--font-size-xs) / var(--leading-label) var(--font-data);
+        --caption-m: var(--weight-label) var(--font-size-s) / var(--leading-label) var(--font-data);
+        --caption-s: var(--weight-label) var(--font-size-xs) / var(--leading-label) var(--font-data);
+
+        --type-title: var(--heading-l);
+        --type-step: var(--body-m);
+        --type-setup: var(--body-m);
+        --type-note: var(--body-m);
+        --type-crumb: var(--body-s);
+        --type-ingredient: var(--data-m);
+        --type-fact: var(--data-m);
+        --type-fact-number: var(--data-l);
+        --type-time: var(--data-s);
+        --type-noteref: var(--data-s);
+        --type-label: var(--caption-s);
+
+        --paper: oklch(98% 0.008 90);
+        --card: oklch(99.5% 0.004 90);
+        --ink: oklch(24% 0.015 60);
+        --accent: oklch(52% 0.2 29);
+
+        --alpha-secondary: 82%;
+        --alpha-tertiary: 68%;
+        --alpha-container: 34%;
+        --alpha-divider: 15%;
+        --alpha-dot: 40%;
+        --alpha-stipple: 24%;
+        --alpha-mark: 8%;
+        --alpha-shadow: 10%;
+        --alpha-wash: 16%;
+
+        --text-primary: var(--ink);
+        --text-secondary: alpha(from var(--ink) / var(--alpha-secondary));
+        --text-tertiary: alpha(from var(--ink) / var(--alpha-tertiary));
+        --border-current: var(--ink);
+        --border-container: alpha(from var(--ink) / var(--alpha-container));
+        --border-divider: alpha(from var(--ink) / var(--alpha-divider));
+        --mark-dot: alpha(from var(--ink) / var(--alpha-dot));
+        --mark-stipple: alpha(from var(--ink) / var(--alpha-stipple));
+        --mark-line: alpha(from var(--ink) / var(--alpha-mark));
+        --shadow-ink: alpha(from var(--ink) / var(--alpha-shadow));
+        --accent-wash: alpha(from var(--accent) / var(--alpha-wash));
+
+        --pitch-hatch: 9px;
+        --pitch-stipple: 10px;
+        --pitch-stipple-dense: 6px;
+        --pitch-leader: 6px;
+
+        --hatch-stops: transparent 0, var(--mark-line) 0.5px, var(--mark-line) 1px, transparent 1.5px, transparent var(--pitch-hatch);
+        --tx-hatch: repeating-linear-gradient(-45deg, var(--hatch-stops));
+        --tx-hatch-back: repeating-linear-gradient(45deg, var(--hatch-stops));
+        --tx-stipple-dot: radial-gradient(circle, var(--mark-stipple) 0.5px, transparent 0.9px);
+        --tx-leader-dot: radial-gradient(circle, var(--mark-dot) 0.6px, transparent 1px);
+        --tx-leader-size: var(--pitch-leader) var(--pitch-leader);
+        --tx-fade: radial-gradient(ellipse closest-side, var(--card) 62%, transparent);
+        --tx-highlight: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0.6 3.4C14 1.6 29 4.3 47 2.6S83 3.9 99.2 1.8L99.6 7.4C82 8.6 63 6.9 42 8.2S13 7.3 0.3 8.9Z' fill='%23c0302a' fill-opacity='.11'/%3E%3C/svg%3E");
+
+        --underline-rest: 0.35em;
+        --underline-hover: 0.25em;
+        --shadow-stack: 0 1px 3px var(--shadow-ink);
+        --dim: 0.45;
+        --ease: ease-out;
+        --duration-step: 150ms;
+        --duration-link: 200ms;
+      }
+
+      @supports not (color: alpha(from red / 50%)) {
+        :root {
+          --text-secondary: color-mix(in srgb, var(--ink) var(--alpha-secondary), transparent);
+          --text-tertiary: color-mix(in srgb, var(--ink) var(--alpha-tertiary), transparent);
+          --border-container: color-mix(in srgb, var(--ink) var(--alpha-container), transparent);
+          --border-divider: color-mix(in srgb, var(--ink) var(--alpha-divider), transparent);
+          --mark-dot: color-mix(in srgb, var(--ink) var(--alpha-dot), transparent);
+          --mark-stipple: color-mix(in srgb, var(--ink) var(--alpha-stipple), transparent);
+          --mark-line: color-mix(in srgb, var(--ink) var(--alpha-mark), transparent);
+          --shadow-ink: color-mix(in srgb, var(--ink) var(--alpha-shadow), transparent);
+          --accent-wash: color-mix(in srgb, var(--accent) var(--alpha-wash), transparent);
+        }
+      }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--text-primary);
+        font: var(--type-step);
+      }
+      ::selection { background: var(--accent-wash); }
+
+      h1 {
+        font: var(--type-title);
+        letter-spacing: var(--tracking-display);
+        text-wrap: balance;
+      }
+      h2, dt {
+        font: var(--type-label);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+
+      a {
+        color: inherit;
+        text-decoration-line: underline;
+        text-decoration-thickness: var(--size-stroke);
+        text-decoration-color: var(--border-container);
+        text-underline-offset: var(--underline-rest);
+      }
+      a:hover {
+        text-decoration-thickness: var(--size-stroke-strong);
+        text-decoration-color: var(--accent);
+        text-underline-offset: var(--underline-hover);
+      }
+      a:active { color: var(--accent); }
+      :focus-visible { outline: var(--size-stroke-strong) solid var(--accent); outline-offset: var(--size-stroke-strong); }
+
+      @media (prefers-reduced-motion: no-preference) {
+        a {
+          transition-property: text-decoration-color, text-decoration-thickness, text-underline-offset;
+          transition-duration: var(--duration-link);
+          transition-timing-function: var(--ease);
+        }
+      }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: var(--size-page); margin-inline: auto; padding: var(--space-gutter); }
+    }
+
+    @layer blocks {
+      .crumb {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-related);
+        min-height: var(--size-target);
+        margin-block-end: var(--space-related);
+        color: var(--text-tertiary);
+        font: var(--type-crumb);
+        text-decoration-line: none;
+      }
+      .crumb:hover { color: var(--text-primary); text-decoration-line: underline; }
+
+      .stack {
+        position: relative;
+        isolation: isolate;
+        margin: 0 calc(var(--size-lift) * 2) calc(var(--size-lift) * 2) 0;
+      }
+      .stack::before, .stack::after {
+        content: "";
+        position: absolute;
+        border: var(--size-stroke) solid var(--border-container);
+        background: var(--card);
+      }
+      .stack::before { inset: var(--size-lift) calc(var(--size-lift) * -1) calc(var(--size-lift) * -1) var(--size-lift); }
+      .stack::after {
+        z-index: -1;
+        inset: calc(var(--size-lift) * 2) calc(var(--size-lift) * -2) calc(var(--size-lift) * -2) calc(var(--size-lift) * 2);
+        box-shadow: var(--shadow-stack);
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        padding: var(--space-gutter);
+        border: var(--size-stroke) solid var(--border-container);
+        background: var(--card);
+      }
+
+      .card-head, .card-notes { display: grid; gap: var(--space-gutter) var(--space-section); }
+      .card-head { align-items: start; margin: var(--size-gap) var(--size-gap) calc(var(--space-gutter) - var(--size-gap)); }
+      .card-notes { margin: max(0px, calc(var(--space-gutter) - var(--size-gap) - var(--space-related))) var(--size-gap) 0; padding-block-end: var(--space-related); }
+      .card-head::after, .card-notes::before {
+        content: "";
+        grid-column: 1 / -1;
+        border-top: var(--size-stroke) solid var(--border-divider);
+      }
+
+      .card-title { display: grid; gap: var(--space-group); }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-related) var(--space-gutter);
+        font: var(--type-fact);
+        color: var(--text-secondary);
+      }
+      .facts li { display: inline-flex; align-items: baseline; gap: var(--space-related); }
+      .facts b { font: var(--type-fact-number); font-weight: var(--weight-strong); color: var(--text-primary); }
+      .facts i { color: var(--text-tertiary); }
+
+      .card-setup { display: grid; gap: var(--space-related); font: var(--type-setup); color: var(--text-secondary); }
+      .card-setup > div { display: grid; grid-template-columns: var(--size-label) 1fr; align-items: baseline; }
+      .card-setup ul { display: grid; gap: var(--space-tight); }
+
+      .scroller {
+        container-type: inline-size;
+        padding-block-end: var(--space-related);
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--size-pin);
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-container) transparent;
+      }
+
+      .recipe-table { min-width: 100%; border-spacing: var(--size-gap); }
+      .recipe-table caption { height: 0; overflow: hidden; }
+
+      .ingredient {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--size-pin);
+        min-width: var(--size-pin);
+        max-width: var(--size-pin);
+        padding: var(--space-related) var(--space-group) var(--space-related) var(--space-tight);
+        background: var(--card);
+        box-shadow: 0 0 0 var(--size-gap) var(--card);
+        font: var(--type-ingredient);
+        color: var(--text-secondary);
+        text-align: left;
+        vertical-align: middle;
+      }
+      .ingredient::after {
+        content: "";
+        position: absolute;
+        inset-block: calc(var(--size-gap) * -1) 0;
+        inset-inline-end: calc(var(--size-gap) * -1);
+        border-inline-end: var(--size-stroke) solid var(--border-divider);
+      }
+      .qty {
+        display: block;
+        font-weight: var(--weight-strong);
+        font-variant-numeric: tabular-nums;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .step, .fill { scroll-snap-align: start; }
+      .step {
+        position: relative;
+        min-width: min(calc(100cqi - var(--size-pin) - var(--size-step-peek)), var(--size-step-max));
+        padding: var(--space-group);
+        border: var(--size-stroke) solid var(--border-divider);
+        background: var(--card);
+        text-align: center;
+      }
+      .step:is(:focus, :target) { border-color: var(--border-current); }
+      .fill { background: var(--tx-leader-dot) left center / var(--tx-leader-size) round no-repeat; }
+
+      [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      [data-kind="shape"] { background: var(--tx-hatch-back), var(--card); }
+      [data-kind="cook"] { background: var(--tx-hatch), var(--tx-hatch-back), var(--card); }
+      [data-kind="wait"] { --pitch: var(--pitch-stipple); }
+      [data-kind="bake"] { --pitch: var(--pitch-stipple-dense); }
+      [data-kind="wait"], [data-kind="bake"] {
+        background:
+          var(--tx-stipple-dot) 0 0 / var(--pitch) var(--pitch),
+          var(--tx-stipple-dot) calc(var(--pitch) / 2) calc(var(--pitch) / 2) / var(--pitch) var(--pitch),
+          var(--card);
+      }
+
+      .step-body { display: inline-block; padding: var(--space-gutter); background: var(--tx-fade); }
+      .step-do { color: var(--text-secondary); text-wrap: balance; }
+      .step-do b { font-weight: var(--weight-action); color: var(--text-primary); }
+      .step-do + .step-do { margin-block-start: var(--space-tight); }
+      .step-time {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline: 0;
+        width: fit-content;
+        margin-inline: auto;
+        padding-inline: calc(var(--unit) * 1.5);
+        translate: 0 50%;
+        background: var(--card);
+        font: var(--type-time);
+        font-weight: var(--weight-strong);
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .noteref {
+        position: relative;
+        color: var(--accent);
+        font: var(--type-noteref);
+        line-height: 1;
+        text-decoration-line: none;
+      }
+      .noteref:hover { text-decoration-line: underline; }
+      .noteref::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: var(--size-target);
+        min-height: var(--size-target);
+        translate: -50% -50%;
+      }
+      sup { margin-inline-start: 0.3em; line-height: 0; }
+
+      .recipe-table:has(.step:focus) :is(.step:not(:focus), .fill, .ingredient) { opacity: var(--dim); }
+
+      @media (hover: hover) {
+        .step:hover:not(:focus, :target) { border-color: var(--border-container); }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .recipe-table :is(th, td) {
+          transition: opacity var(--duration-step) var(--ease), border-color var(--duration-step) var(--ease);
+        }
+      }
+
+      .keys {
+        margin: var(--space-related) var(--size-gap) 0;
+        font: var(--type-label);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+        visibility: hidden;
+      }
+      .scroller:has(.step:focus-visible) + .keys { visibility: visible; }
+      .keys:not([hidden]) + .card-notes { margin-block-start: 0; }
+
+      .card-notes { font: var(--type-note); color: var(--text-secondary); }
+      .card-notes > section { display: grid; gap: var(--space-related); align-content: start; }
+      .card-notes > section:first-child { grid-row: span 2; }
+      .card-notes ol { display: grid; gap: var(--space-related); }
+      .card-notes li { display: grid; grid-template-columns: var(--size-noteref) 1fr; gap: var(--space-tight); align-items: baseline; }
+      .card-notes p { max-width: var(--size-measure); }
+      .card-notes li:target > p > span {
+        margin-inline: calc(var(--space-tight) * -1);
+        padding: 0 var(--space-tight) 0.1em;
+        background: var(--tx-highlight) no-repeat 0 100% / 100% 62%;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
+
+      @media (min-width: 44rem) {
+        .card { padding: var(--space-section); }
+      }
+      @media (min-width: 48rem) {
+        .card-notes { grid-template-columns: 3fr 2fr; }
+      }
+      @media (min-width: 60rem) {
+        .card-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+        .card-head:not(:has(.card-setup)) { grid-template-columns: 1fr; }
+        .card-setup { justify-self: end; }
+      }
+
+      @container (min-width: 60rem) {
+        .recipe-table { width: 100%; }
+        .ingredient {
+          position: static;
+          width: auto;
+          min-width: 0;
+          max-width: none;
+          height: var(--size-row);
+          padding-block: 0;
+          padding-inline-end: 0;
+          box-shadow: none;
+          white-space: nowrap;
+        }
+        .ingredient::after { content: none; }
+        .ingredient > span { display: flex; gap: 1ch; align-items: baseline; }
+        .ingredient > span::after, .fill::before {
+          content: "";
+          display: block;
+          flex: 1 1 var(--space-gutter);
+          align-self: start;
+          height: 1lh;
+          background: var(--tx-leader-dot) left 0 bottom calc(0.4em - var(--pitch-leader) / 2) / var(--tx-leader-size) round no-repeat;
+        }
+        .ingredient > span::after { min-width: var(--space-gutter); margin-inline-start: var(--space-related); }
+        .ingredient:has(+ .fill) > span::after { margin-inline-end: calc(var(--size-gap) * -1); }
+        .qty { display: inline; }
+        .step { min-width: var(--size-step-min); padding-inline: var(--space-related); }
+        .step:has(.step-time) { min-width: calc(var(--size-step-min) + var(--space-group)); }
+        .step-body { padding-inline: var(--space-tight); }
+        .fill {
+          padding: 0;
+          background: none;
+          font: var(--type-ingredient);
+          vertical-align: middle;
+        }
+      }
+
+      @media (forced-colors: active) {
+        .card, .step { border-color: CanvasText; }
+        .step, .step-body { background-image: none; }
+        .ingredient { box-shadow: none; }
+      }
+    }
+  </style>
+  <style data-generated="per-recipe">
+    @layer blocks {
+      .recipe-table:has(#step-1:focus) [data-steps~="1"],
+      .recipe-table:has(#step-2:focus) [data-steps~="2"],
+      .recipe-table:has(#step-3:focus) [data-steps~="3"],
+      .recipe-table:has(#step-4:focus) [data-steps~="4"],
+      .recipe-table:has(#step-5:focus) [data-steps~="5"],
+      .recipe-table:has(#step-6:focus) [data-steps~="6"],
+      .recipe-table:has(#step-7:focus) [data-steps~="7"],
+      .recipe-table:has(#step-8:focus) [data-steps~="8"] { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <nav aria-label="Breadcrumb">
+      <a class="crumb" href="../"><i class="fa-regular fa-circle-left" aria-hidden="true"></i> Desserts</a>
+    </nav>
+
+    <main>
+      <article class="stack" aria-labelledby="recipe-title">
+        <div class="card">
+          <header class="card-head">
+            <div class="card-title">
+              <h1 id="recipe-title">Chocolate Chip Cookies</h1>
+              <ul class="facts">
+                <li><i class="fa-regular fa-clock" aria-hidden="true"></i><time datetime="PT25H"><b>25 hr</b> total</time></li>
+                <li><i class="fa-regular fa-hand" aria-hidden="true"></i><time datetime="PT30M"><b>30 min</b> active</time></li>
+                <li><i class="fa-regular fa-clone" aria-hidden="true"></i><span>Makes <b>18</b> large cookies</span></li>
+              </ul>
+            </div>
+            <dl class="card-setup">
+              <div><dt>tools</dt><dd>Stand mixer with paddle, 2 oz scoop</dd></div>
+              <div><dt>prep</dt><dd>Line a baking sheet with parchment</dd></div>
+            </dl>
+          </header>
+
+          <div class="scroller" role="region" aria-labelledby="recipe-caption" tabindex="0" data-keys="recipe-keys">
+            <table class="recipe-table">
+              <caption id="recipe-caption">Chocolate Chip Cookies: ingredients in rows, steps in columns from first to last. Each step spans the ingredients it combines.</caption>
+              <tbody>
+                <tr>
+                  <th class="ingredient" scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">8.5 oz</span> cake flour</span></th>
+                  <td class="step" id="step-1" tabindex="0" data-kind="combine" rowspan="5" colspan="2"><div class="step-body"><p class="step-do"><b>Sift</b> together</p></div></td>
+                  <td class="step" id="step-4" tabindex="0" data-kind="combine" rowspan="10"><div class="step-body"><p class="step-do"><b>Mix in</b> dry until just combined<sup><a class="noteref" href="#note-1" aria-label="Note 1">1</a></sup></p></div></td>
+                  <td class="step" id="step-5" tabindex="0" data-kind="wait" rowspan="11"><div class="step-body"><p class="step-do"><b>Fold in</b></p><p class="step-do"><b>Chill</b><sup><a class="noteref" href="#note-2" aria-label="Note 2">2</a></sup></p><p class="step-time">24–36&nbsp;hr</p></div></td>
+                  <td class="step" id="step-6" tabindex="0" data-kind="shape" rowspan="11"><div class="step-body"><p class="step-do"><b>Heat</b> oven to 350°</p><p class="step-do"><b>Scoop</b> 2&nbsp;oz mounds<sup><a class="noteref" href="#note-3" aria-label="Note 3">3</a></sup></p></div></td>
+                  <td class="step" id="step-7" tabindex="0" data-kind="bake" rowspan="12"><div class="step-body"><p class="step-do"><b>Sprinkle</b></p><p class="step-do"><b>Bake</b><sup><a class="noteref" href="#note-4" aria-label="Note 4">4</a></sup></p><p class="step-time">18–20&nbsp;min</p></div></td>
+                  <td class="step" id="step-8" tabindex="0" data-kind="wait" rowspan="12"><div class="step-body"><p class="step-do"><b>Cool</b> on sheet</p><p class="step-time"><time datetime="PT10M">10&nbsp;min</time></p></div></td>
+                </tr>
+                <tr><th class="ingredient" scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">8.5 oz</span> bread flour</span></th></tr>
+                <tr><th class="ingredient" scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/4 t</span> baking soda</span></th></tr>
+                <tr><th class="ingredient" scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/2 t</span> baking powder</span></th></tr>
+                <tr><th class="ingredient" scope="row" data-steps="1 4 5 6 7 8"><span><span class="qty">1 1/2 t</span> coarse salt</span></th></tr>
+                <tr>
+                  <th class="ingredient" scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">2 1/2 sticks</span> unsalted butter</span></th>
+                  <td class="step" id="step-2" tabindex="0" data-kind="combine" rowspan="3"><div class="step-body"><p class="step-do"><b>Cream</b> until very light</p><p class="step-time"><time datetime="PT5M">5&nbsp;min</time></p></div></td>
+                  <td class="step" id="step-3" tabindex="0" data-kind="combine" rowspan="5"><div class="step-body"><p class="step-do"><b>Beat in</b> eggs one at a time, then vanilla</p></div></td>
+                </tr>
+                <tr><th class="ingredient" scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">10 oz</span> light brown sugar</span></th></tr>
+                <tr><th class="ingredient" scope="row" data-steps="2 3 4 5 6 7 8"><span><span class="qty">8 oz</span> granulated sugar</span></th></tr>
+                <tr><th class="ingredient" scope="row" data-steps="3 4 5 6 7 8"><span><span class="qty">2</span> large eggs</span></th><td class="fill"></td></tr>
+                <tr><th class="ingredient" scope="row" data-steps="3 4 5 6 7 8"><span><span class="qty">2 t</span> vanilla extract</span></th><td class="fill"></td></tr>
+                <tr><th class="ingredient" scope="row" data-steps="5 6 7 8"><span><span class="qty">1 1/4 lb</span> bittersweet chocolate</span></th><td class="fill" colspan="3"></td></tr>
+                <tr><th class="ingredient" scope="row" data-steps="7 8"><span>flaky sea salt</span></th><td class="fill" colspan="5"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="keys" id="recipe-keys" hidden>Arrow keys move between steps. Esc leaves the table.</p>
+
+          <div class="card-notes">
+            <section aria-labelledby="step-notes-title">
+              <h2 id="step-notes-title">Step notes</h2>
+              <ol>
+                <li id="note-1"><a class="noteref" href="#step-4" aria-label="Back to the step for note 1">1</a><p><span>5 to 10 seconds on low. Stop the moment the flour disappears.</span></p></li>
+                <li id="note-2"><a class="noteref" href="#step-5" aria-label="Back to the step for note 2">2</a><p><span>Press plastic wrap against the dough. It keeps up to 72 hours.</span></p></li>
+                <li id="note-3"><a class="noteref" href="#step-6" aria-label="Back to the step for note 3">3</a><p><span>6 to 9 mounds per sheet. Turn any chocolate that pokes up flat. It makes a better-looking cookie.</span></p></li>
+                <li id="note-4"><a class="noteref" href="#step-7" aria-label="Back to the step for note 4">4</a><p><span>Surface cracked, edges golden, center still soft.</span></p></li>
+              </ol>
+            </section>
+            <section aria-labelledby="notes-title">
+              <h2 id="notes-title">Notes</h2>
+              <p>The original calls for 3.5 oz cookies. 2 oz yields far more, and they're still large with every texture you want.</p>
+            </section>
+            <section aria-labelledby="source-title">
+              <h2 id="source-title">Source</h2>
+              <p>Adapted from <cite><a href="https://www.nytimes.com/2008/07/09/dining/091crex.html">New York Times</a></cite></p>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <script type="module">
+    for (const table of document.querySelectorAll('.recipe-table')) {
+      const steps = [...table.querySelectorAll('.step')].sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+      if (steps.length === 0) continue;
+
+      const region = table.closest('[role="region"]');
+      const hint = document.getElementById(region?.dataset.keys);
+      const last = steps.length - 1;
+
+      const rove = (current) => {
+        for (const step of steps) {
+          const tabIndex = step === current ? 0 : -1;
+          step.tabIndex = tabIndex;
+          for (const link of step.querySelectorAll('a')) link.tabIndex = tabIndex;
+        }
+      };
+
+      rove(steps[0]);
+      if (hint) {
+        hint.hidden = false;
+        region.setAttribute('aria-describedby', hint.id);
+      }
+      if (region) {
+        const syncRegion = () => {
+          region.tabIndex = region.scrollWidth > region.clientWidth ? 0 : -1;
+        };
+        const watcher = new ResizeObserver(syncRegion);
+        syncRegion();
+        watcher.observe(region);
+        watcher.observe(table);
+      }
+
+      table.addEventListener('focusin', (event) => {
+        if (steps.includes(event.target)) rove(event.target);
+      });
+
+      table.addEventListener('keydown', (event) => {
+        const index = steps.indexOf(event.target);
+        if (index === -1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          if (region) region.focus();
+          else event.target.blur();
+          return;
+        }
+
+        const isRtl = getComputedStyle(table).direction === 'rtl';
+        const moves = {
+          ArrowRight: isRtl ? index - 1 : index + 1,
+          ArrowLeft: isRtl ? index + 1 : index - 1,
+          ArrowDown: index + 1,
+          ArrowUp: index - 1,
+          Home: 0,
+          End: last,
+        };
+        if (!Object.hasOwn(moves, event.key)) return;
+
+        event.preventDefault();
+        const next = steps[Math.max(0, Math.min(last, moves[event.key]))];
+        next.focus();
+        next.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      });
+    }
+  </script>
+</body>
+</html>

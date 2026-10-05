@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Texture library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, ul, ol, dl, dd { margin: 0; padding: 0; }
+      ul, ol { list-style: none; }
+      table { border-collapse: separate; border-spacing: 0; }
+    }
+
+    @layer tokens {
+      :root {
+        color-scheme: light;
+
+        --space-tight: 0.25rem;
+        --space-related: 0.5rem;
+        --space-group: 0.75rem;
+        --space-gutter: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+        --space-section: clamp(1.75rem, 1.3rem + 2.2vw, 3rem);
+        --space-page: clamp(2.75rem, 2rem + 3.5vw, 5rem);
+        --type-body: 1.0625rem;
+        --type-text: 0.9375rem;
+        --type-label: 0.6875rem;
+        --type-display: clamp(1.75rem, 1.3rem + 2.2vw, 2.75rem);
+        --type-data: 0.8125rem;
+        --pin: 8rem;
+        --target: 2.75rem;
+
+        --weight-body: 400;
+        --weight-label: 500;
+        --weight-strong: 700;
+        --weight-display: 700;
+
+        --leading-display: 1.05;
+        --leading-body: 1.5;
+        --leading-text: 1.4;
+        --leading-data: 1.35;
+        --leading-label: 1.4;
+        --lift: 6px;
+        --gap: 10px;
+
+        --font-prose: "Atkinson Hyperlegible Next", "Avenir Next", sans-serif;
+        --font-data: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+
+        --paper: oklch(98% 0.008 90);
+        --card: oklch(99.5% 0.004 90);
+        --ink: oklch(24% 0.015 60);
+        --accent: oklch(52% 0.2 29);
+
+        --text-primary: var(--ink);
+        --text-secondary: alpha(from var(--ink) / 82%);
+        --text-tertiary: alpha(from var(--ink) / 68%);
+        --border-container: alpha(from var(--ink) / 34%);
+        --border-divider: alpha(from var(--ink) / 15%);
+        --dot: alpha(from var(--ink) / 40%);
+        --mark: alpha(from var(--ink) / 8%);
+        --wash: alpha(from var(--accent) / 12%);
+
+
+        --tx-hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-hatch-back: repeating-linear-gradient(45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-cross: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px), repeating-linear-gradient(45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 9px);
+        --tx-vertical: repeating-linear-gradient(90deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 8px);
+        --tx-horizontal: repeating-linear-gradient(0deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 8px);
+        --tx-stipple: var(--stipple) 0 0 / 10px 10px, var(--stipple) 5px 5px / 10px 10px;
+        --tx-stipple-dense: var(--stipple) 0 0 / 6px 6px, var(--stipple) 3px 3px / 6px 6px;
+        --tx-grid: var(--stipple) 0 0 / 12px 12px;
+        --tx-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='12'%3E%3Cpath d='M1 3h8M10 9h8' fill='none' stroke='%23241c14' stroke-opacity='.13'/%3E%3C/svg%3E");
+        --tx-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10'%3E%3Cpath d='M0 5Q6 0 12 5T24 5' fill='none' stroke='%23241c14' stroke-opacity='.13'/%3E%3C/svg%3E");
+        --tx-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M0 7L7 2L14 7' fill='none' stroke='%23241c14' stroke-opacity='.13'/%3E%3C/svg%3E");
+        --tx-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Cpath d='M7 4v6M4 7h6' fill='none' stroke='%23241c14' stroke-opacity='.13'/%3E%3C/svg%3E");
+
+        --leader: radial-gradient(circle, var(--dot) 0.6px, transparent 1px);
+        --stipple: radial-gradient(circle, alpha(from var(--ink) / 24%) 0.5px, transparent 0.9px);
+      }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--text-primary);
+        font: var(--weight-body) var(--type-body) / var(--leading-body) var(--font-prose);
+      }
+      ::selection { background: var(--wash); }
+      h1 {
+        font: var(--weight-display) var(--type-display) / var(--leading-display) var(--font-prose);
+        letter-spacing: -0.025em;
+        text-wrap: balance;
+      }
+      h2, .tag {
+        font: var(--weight-label) var(--type-label) / var(--leading-label) var(--font-data);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+      a { color: inherit; text-decoration-color: var(--border-divider); text-underline-offset: 0.2em; }
+      a:hover { text-decoration-color: var(--accent); }
+      a:active { color: var(--accent); }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: 80rem; margin-inline: auto; padding: var(--space-gutter); }
+      .flow { display: flex; flex-direction: column; gap: var(--flow, var(--space-gutter)); }
+      .cluster { display: flex; flex-wrap: wrap; gap: var(--space-related) var(--space-gutter); }
+    }
+
+    @layer blocks {
+      .back { display: inline-flex; align-items: center; gap: var(--space-related); min-height: var(--target); color: var(--text-tertiary); font-size: var(--type-text); text-decoration: none; }
+      .back:hover { color: var(--text-primary); text-decoration: underline; }
+
+      .masthead { padding-block: var(--space-gutter) var(--space-section); }
+      .meta { margin-block-start: var(--space-related); column-gap: var(--space-section); }
+      .byline, .meta { color: var(--text-tertiary); font-size: var(--type-text); line-height: var(--leading-text); }
+      .meta li { display: inline-flex; align-items: baseline; gap: var(--space-related); }
+      .meta i { width: 1.1em; text-align: center; }
+
+      .stack { position: relative; margin: 0 var(--lift) var(--lift) 0; }
+      .stack::before {
+        content: "";
+        position: absolute;
+        inset: var(--lift) calc(var(--lift) * -1) calc(var(--lift) * -1) var(--lift);
+        background: var(--paper) repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
+      }
+      .card { position: relative; padding: var(--space-group); border: 1px solid var(--border-container); background: var(--card); }
+      @media (min-width: 44rem) {
+        .card { padding: var(--space-section); }
+      }
+
+      .scroller {
+        container-type: inline-size;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--pin);
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-container) transparent;
+      }
+
+      .rt { min-width: 100%; border-spacing: var(--gap); line-height: var(--leading-text); }
+      .rt :is(th, td) { padding: var(--space-related) var(--space-group); }
+      .rt td[id] { padding: var(--space-group); }
+      .rt td[id] { border: 1px solid var(--border-divider); background-color: var(--card); }
+
+      .rt th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--pin);
+        min-width: var(--pin);
+        max-width: var(--pin);
+        padding-inline-start: var(--space-tight);
+        background: var(--card);
+        box-shadow: 0 0 0 var(--gap) var(--card), 1px 0 0 var(--gap) var(--border-divider);
+        font: var(--weight-body) var(--type-data) / var(--leading-data) var(--font-data);
+        color: var(--text-secondary);
+        text-align: left;
+        vertical-align: top;
+      }
+      .qty { display: block; font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; color: var(--text-primary); white-space: nowrap; }
+      .qty:empty { display: none; }
+
+      .rt td {
+        min-width: min(calc(100cqi - var(--pin) - 3rem), 11rem);
+        font-size: var(--type-text);
+        text-align: center;
+        text-wrap: balance;
+        scroll-snap-align: start;
+      }
+      .rt td[data-fill] {
+        min-width: 0;
+        background: var(--card) var(--leader) left center / 6px 6px round no-repeat;
+      }
+      .rt td[data-prep] {
+        padding: var(--space-related);
+        border: 1px solid var(--border-divider);
+        text-align: left;
+        text-wrap: wrap;
+      }
+      .rt td[data-prep] > span {
+        position: sticky;
+        left: var(--space-related);
+        display: inline-block;
+        max-width: calc(100cqi - var(--space-section));
+        padding: var(--space-tight) var(--space-section) var(--space-tight) var(--space-related);
+        background: linear-gradient(90deg, var(--card) calc(100% - var(--space-section)), transparent);
+      }
+      .tag { margin-inline-end: var(--space-related); text-transform: lowercase; }
+
+      [data-tx="hatch"] { background: var(--tx-hatch), var(--card); }
+      [data-tx="hatch-back"] { background: var(--tx-hatch-back), var(--card); }
+      [data-tx="cross"] { background: var(--tx-cross), var(--card); }
+      [data-tx="vertical"] { background: var(--tx-vertical), var(--card); }
+      [data-tx="horizontal"] { background: var(--tx-horizontal), var(--card); }
+      [data-tx="dash"] { background: var(--tx-dash), var(--card); }
+      [data-tx="wave"] { background: var(--tx-wave), var(--card); }
+      [data-tx="chevron"] { background: var(--tx-chevron), var(--card); }
+      [data-tx="stipple"] { background: var(--tx-stipple), var(--card); }
+      [data-tx="stipple-dense"] { background: var(--tx-stipple-dense), var(--card); }
+      [data-tx="grid"] { background: var(--tx-grid), var(--card); }
+      [data-tx="plus"] { background: var(--tx-plus), var(--card); }
+      :root:has(#sys-a:checked) [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      :root:has(#sys-a:checked) [data-kind="cook"] { background: var(--tx-cross), var(--card); }
+      :root:has(#sys-a:checked) [data-kind="bake"] { background: var(--tx-cross), var(--card); }
+      :root:has(#sys-a:checked) [data-kind="chill"] { background: var(--tx-stipple), var(--card); }
+      :root:has(#sys-a:checked) [data-kind="rest"] { background: var(--tx-stipple), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="shape"] { background: var(--tx-hatch-back), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="cook"] { background: var(--tx-cross), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="bake"] { background: var(--tx-stipple-dense), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="chill"] { background: var(--tx-stipple), var(--card); }
+      :root:has(#sys-b:checked) [data-kind="rest"] { background: var(--tx-stipple), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="shape"] { background: var(--tx-vertical), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="cook"] { background: var(--tx-wave), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="bake"] { background: var(--tx-wave), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="chill"] { background: var(--tx-horizontal), var(--card); }
+      :root:has(#sys-c:checked) [data-kind="rest"] { background: var(--tx-stipple), var(--card); }
+      .legend { display: none; }
+      :root:has(#sys-a:checked) .legend[data-sys="a"], :root:has(#sys-b:checked) .legend[data-sys="b"], :root:has(#sys-c:checked) .legend[data-sys="c"] { display: grid; }
+
+      .switcher { display: flex; flex-wrap: wrap; gap: var(--space-related) var(--space-gutter); border: 0; padding: 0; margin: 0; font: var(--type-data) / var(--leading-data) var(--font-data); }
+      .switcher legend { padding: 0; margin-block-end: var(--space-related); font: var(--weight-label) var(--type-label) / var(--leading-label) var(--font-data); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+      .switcher label { display: inline-flex; align-items: center; gap: var(--space-related); min-height: var(--target); }
+      .switcher input { accent-color: var(--accent); }
+
+      .t { display: block; margin-block-start: var(--space-tight); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .deg { font-family: var(--font-data); font-size: var(--type-data); }
+
+      .specimens { display: grid; gap: var(--space-gutter); grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+      .specimens dt { height: 5rem; border: 1px solid var(--border-divider); }
+      .specimens dd { margin-block-start: var(--space-related); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .specimens b { display: block; color: var(--text-primary); font-weight: var(--weight-strong); }
+
+      .states { display: flex; flex-wrap: wrap; gap: var(--space-gutter); align-items: stretch; }
+      .state { flex: 1 1 10rem; max-width: 14rem; }
+      .state > div { display: grid; place-items: center; min-height: 7rem; padding: var(--space-group); border: 1px solid var(--border-divider); background: var(--tx-hatch), var(--card); font-size: var(--type-text); line-height: var(--leading-text); text-align: center; }
+      .state > p { margin-block-start: var(--space-related); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .state[data-state="optional"] > div { border-style: dashed; border-color: var(--border-container); }
+      .state[data-state="pause"] > div { border: 0; border-inline-start: 1px dashed var(--border-container); background: none; place-items: center start; padding-inline-start: var(--space-group); font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); text-align: left; }
+      .state .plate { padding: var(--space-related) var(--space-group); }
+
+      .plate { display: inline-block; padding: var(--space-gutter) var(--space-gutter); background: radial-gradient(ellipse closest-side, var(--card) 62%, transparent); }
+
+      .fn {
+        position: relative;
+        color: var(--accent);
+        font: var(--weight-strong) var(--type-label) / 1 var(--font-data);
+        text-decoration: none;
+      }
+      .fn:hover { text-decoration: underline; }
+      .plate .fn { vertical-align: super; margin-inline-start: 0.1em; }
+      .fn::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: var(--target);
+        min-height: var(--target);
+        translate: -50% -50%;
+      }
+
+      @container (min-width: 60rem) {
+        .rt { width: 100%; }
+        .rt th { position: static; width: auto; min-width: 0; max-width: none; padding-right: 0; box-shadow: none; white-space: nowrap; }
+        .rt th > span { display: flex; gap: 1ch; align-items: baseline; }
+        .rt th > span::after { margin-inline-start: var(--space-related); }
+        .rt th:has(+ td[data-fill]) > span::after { margin-inline-end: calc(var(--gap) * -1); }
+        .rt th > span::after, .rt td[data-fill]::before {
+          content: "";
+          display: block;
+          flex: 1 1 2rem;
+          align-self: start;
+          height: 1lh;
+          background: var(--leader) left 0 bottom calc(0.4em - 3px) / 6px 6px round no-repeat;
+        }
+        .rt td[data-fill] { padding-inline: 0; background: var(--card); font: var(--type-data) / var(--leading-data) var(--font-data); vertical-align: top; }
+        .rt td[id] { padding-inline: var(--space-related); }
+        .plate { padding-inline: var(--space-related); }
+        .rt td { min-width: 5.5rem; }
+        .rt td[data-fill] { min-width: 0; }
+      }
+
+      .notes ol { display: grid; gap: var(--space-group); max-width: 60ch; }
+      .notes li { display: grid; grid-template-columns: 1rem 1fr; gap: var(--space-related); align-items: baseline; }
+      .notes li:target { background: var(--wash); outline: var(--space-tight) solid var(--wash); }
+      .prose { max-width: 65ch; }
+
+      .kit { display: grid; gap: var(--space-group) var(--space-section); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+      .kit > div { display: grid; grid-template-columns: 4rem 1fr; gap: var(--space-group); align-items: center; }
+      .kit dd { font: var(--type-data) / var(--leading-data) var(--font-data); color: var(--text-secondary); }
+      .swatch { height: 2.5rem; background-color: var(--card); border: 1px solid var(--border-divider); }
+      .swatch[data-mark="leader"] { border: 0; background: var(--leader) left center / 6px 6px round no-repeat; }
+      .swatch[data-mark="hairline"] { border-width: 0 0 1px 1px; background: none; }
+      .swatch[data-mark="note"] { border: 0; background: none; display: grid; place-items: center; }
+      .swatch[data-mark="stack"] { position: relative; margin: 0 var(--lift) var(--lift) 0; border-color: var(--border-container); }
+      .swatch[data-mark="stack"]::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: var(--lift) calc(var(--lift) * -1 - 1px) calc(var(--lift) * -1 - 1px) var(--lift);
+        background: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
+      }
+
+      @media (forced-colors: active) {
+        .card, .rt td[id] { border-color: CanvasText; }
+        .stack::before, .rt td[id], .swatch { background-image: none; }
+        .rt th { box-shadow: none; }
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a class="back" href="#"><i class="fa-regular fa-circle-left" aria-hidden="true"></i> Desserts</a>
+
+    <header class="masthead flow" style="--flow: var(--space-group)">
+      <h1>Chocolate Chip Cookies</h1>
+      <p class="byline">Adapted from <a href="https://www.nytimes.com/2008/07/09/dining/091crex.html">New York Times</a></p>
+      <ul class="meta cluster">
+        <li><i class="fa-regular fa-clock" aria-hidden="true"></i> 25 hr, 30 min active</li>
+        <li><i class="fa-regular fa-clone" aria-hidden="true"></i> Makes 18 large cookies</li>
+        <li><i class="fa-regular fa-rectangle-list" aria-hidden="true"></i> Stand mixer with paddle, 2 oz scoop</li>
+      </ul>
+    </header>
+
+    <div class="flow" style="--flow: var(--space-page)">
+      <fieldset class="switcher">
+        <legend>Texture system</legend>
+        <label><input type="radio" name="sys" id="sys-a"> A. Four kinds (current)</label>
+        <label><input type="radio" name="sys" id="sys-b" checked> B. Lines work, dots wait</label>
+        <label><input type="radio" name="sys" id="sys-c"> C. Pictorial</label>
+      </fieldset>
+
+      <div class="stack">
+        <div class="card">
+          <div class="scroller" role="region" aria-labelledby="table-title" tabindex="0">
+            <table class="rt">
+              <caption id="table-title" hidden>Chocolate Chip Cookies recipe table</caption>
+              <tbody>
+                <tr><td data-prep data-kind="shape" colspan="8"><span><span class="tag">prep</span>Line a baking sheet with parchment</span></td></tr>
+                <tr>
+                  <th scope="row"><span><span class="qty">8.5 oz</span> cake flour</span></th>
+                  <td id="step-1" data-kind="combine" rowspan="5" colspan="2"><div class="plate">Sift together</div></td>
+                  <td id="step-4" data-kind="combine" rowspan="10"><div class="plate">Mix in dry until just combined <a class="fn" href="#note-1" aria-label="Note 1">1</a></div></td>
+                  <td id="step-5" data-kind="chill" rowspan="11"><div class="plate">Fold in. Chill <a class="fn" href="#note-2" aria-label="Note 2">2</a> <span class="t">24–36 hr</span></div></td>
+                  <td id="step-6" data-kind="shape" rowspan="11"><div class="plate">Heat oven to <span class="deg">350°</span>. Scoop <span class="deg">2 oz</span> mounds <a class="fn" href="#note-3" aria-label="Note 3">3</a></div></td>
+                  <td id="step-7" data-kind="bake" rowspan="12"><div class="plate">Sprinkle. Bake <a class="fn" href="#note-4" aria-label="Note 4">4</a> <span class="t">18–20 min</span></div></td>
+                  <td id="step-8" data-kind="rest" rowspan="12"><div class="plate">Cool on sheet <span class="t">10 min</span></div></td>
+                </tr>
+                <tr><th scope="row"><span><span class="qty">8.5 oz</span> bread flour</span></th></tr>
+                <tr><th scope="row"><span><span class="qty">1 1/4 t</span> baking soda</span></th></tr>
+                <tr><th scope="row"><span><span class="qty">1 1/2 t</span> baking powder</span></th></tr>
+                <tr><th scope="row"><span><span class="qty">1 1/2 t</span> coarse salt</span></th></tr>
+                <tr>
+                  <th scope="row"><span><span class="qty">2 1/2 sticks</span> unsalted butter</span></th>
+                  <td id="step-2" data-kind="combine" rowspan="3"><div class="plate">Cream until very light <span class="t">5 min</span></div></td>
+                  <td id="step-3" data-kind="combine" rowspan="5"><div class="plate">Beat in eggs one at a time, then vanilla</div></td>
+                </tr>
+                <tr><th scope="row"><span><span class="qty">10 oz</span> light brown sugar</span></th></tr>
+                <tr><th scope="row"><span><span class="qty">8 oz</span> granulated sugar</span></th></tr>
+                <tr><th scope="row"><span><span class="qty">2</span> large eggs</span></th><td data-fill></td></tr>
+                <tr><th scope="row"><span><span class="qty">2 t</span> vanilla extract</span></th><td data-fill></td></tr>
+                <tr><th scope="row"><span><span class="qty">1 1/4 lb</span> bittersweet chocolate</span></th><td data-fill colspan="3"></td></tr>
+                <tr><th scope="row"><span><span class="qty"></span> flaky sea salt</span></th><td data-fill colspan="5"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <section class="flow" style="--flow: var(--space-group)">
+        <h2>Key for this system</h2>
+        <dl class="kit legend" data-sys="a">
+          <div><dt class="swatch" data-tx="hatch"></dt><dd>Combine: mix, sift, cream, fold.</dd></div>
+          <div><dt class="swatch" data-tx="cross"></dt><dd>Heat: bake, simmer, fry.</dd></div>
+          <div><dt class="swatch" data-tx="stipple"></dt><dd>Wait: chill, rest, cool.</dd></div>
+          <div><dt class="swatch" ></dt><dd>Prep: shape, portion, cut.</dd></div>
+        </dl>
+        <dl class="kit legend" data-sys="b">
+          <div><dt class="swatch" data-tx="hatch"></dt><dd>Hands on. Combining.</dd></div>
+          <div><dt class="swatch" data-tx="hatch-back"></dt><dd>Hands on. Shaping, portioning, cutting.</dd></div>
+          <div><dt class="swatch" data-tx="cross"></dt><dd>Hands on, with heat. Saute, stir, fry.</dd></div>
+          <div><dt class="swatch" data-tx="stipple"></dt><dd>Hands off. Chill, rest, cool.</dd></div>
+          <div><dt class="swatch" data-tx="stipple-dense"></dt><dd>Hands off, with heat. Bake, simmer, sous vide.</dd></div>
+        </dl>
+        <dl class="kit legend" data-sys="c">
+          <div><dt class="swatch" data-tx="hatch"></dt><dd>Combine.</dd></div>
+          <div><dt class="swatch" data-tx="vertical"></dt><dd>Shape, portion, cut.</dd></div>
+          <div><dt class="swatch" data-tx="wave"></dt><dd>Heat, on the stove or in the oven.</dd></div>
+          <div><dt class="swatch" data-tx="horizontal"></dt><dd>Chill.</dd></div>
+          <div><dt class="swatch" data-tx="stipple"></dt><dd>Rest or cool.</dd></div>
+        </dl>
+      </section>
+
+      <section class="flow" style="--flow: var(--space-group)">
+        <h2>Specimens</h2>
+        <dl class="specimens">
+          <div><dt data-tx="hatch"></dt><dd><b>Hatch</b>Engraver's basic tone.</dd></div>
+          <div><dt data-tx="hatch-back"></dt><dd><b>Back hatch</b>Same weight, opposite lean.</dd></div>
+          <div><dt data-tx="cross"></dt><dd><b>Cross-hatch</b>Two passes. Reads as darker.</dd></div>
+          <div><dt data-tx="vertical"></dt><dd><b>Vertical rule</b>Reads as cut or divided.</dd></div>
+          <div><dt data-tx="horizontal"></dt><dd><b>Horizontal rule</b>Reads as still or level.</dd></div>
+          <div><dt data-tx="dash"></dt><dd><b>Staggered dash</b>Drafting's mark for liquid.</dd></div>
+          <div><dt data-tx="wave"></dt><dd><b>Wave</b>Heat rising.</dd></div>
+          <div><dt data-tx="chevron"></dt><dd><b>Chevron</b>Drafting's mark for insulation.</dd></div>
+          <div><dt data-tx="stipple"></dt><dd><b>Stipple</b>Staggered dots. Quiet tone.</dd></div>
+          <div><dt data-tx="stipple-dense"></dt><dd><b>Dense stipple</b>Same dots, closer.</dd></div>
+          <div><dt data-tx="grid"></dt><dd><b>Dot grid</b>Square, like graph paper.</dd></div>
+          <div><dt data-tx="plus"></dt><dd><b>Plus grid</b>Reads as adding or assembling.</dd></div>
+        </dl>
+      </section>
+
+      <section class="flow" style="--flow: var(--space-group)">
+        <h2>States that are not textures</h2>
+        <div class="states">
+          <div class="state"><div><span class="plate">Mix until just combined <a class="fn" href="#">1</a></span></div><p>Has a note. Red number.</p></div>
+          <div class="state"><div><span class="plate">Bake <span class="t">18–20 min</span></span></div><p>Timed. Time and temperature in mono.</p></div>
+          <div class="state" data-state="optional"><div><span class="plate">Top with whipped cream</span></div><p>Optional. Dashed edge.</p></div>
+          <div class="state" data-state="pause"><div>make ahead<br>up to 24 hr</div><p>Stopping point. A break between steps.</p></div>
+          <div class="state"><div><span class="plate">Roll and fold <span class="t">× 2</span></span></div><p>Repeated. Count in mono.</p></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

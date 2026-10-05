@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe card: type pairings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Atkinson+Hyperlegible+Next:wght@200..800&family=Andada+Pro:wght@400..840&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aleo:wght@100..900&family=Cutive&family=IBM+Plex+Serif:wght@500;600&family=Old+Standard+TT:wght@400;700&family=Zilla+Slab:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=bespoke-slab@700&display=swap">
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, dl, dd, ol, fieldset { margin: 0; padding: 0; }
+      fieldset { border: 0; }
+      table { border-collapse: separate; border-spacing: 0; }
+    }
+
+    @layer tokens {
+      :root {
+        color-scheme: light;
+        --space-2xs: 0.25rem;
+        --space-xs: 0.5rem;
+        --space-s: 0.75rem;
+        --space-m: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+        --space-l: clamp(1.75rem, 1.3rem + 2.2vw, 3rem);
+        --step-0: 1rem;
+        --step--1: 0.875rem;
+        --step--2: 0.6875rem;
+        --step-4: clamp(2.125rem, 1.5rem + 3vw, 3.75rem);
+        --pin: 8rem;
+
+        --paper: oklch(98% 0.008 90);
+        --card: oklch(99.5% 0.004 90);
+        --ink: oklch(24% 0.015 60);
+        --ink-soft: oklch(40% 0.02 60);
+        --muted: oklch(52% 0.025 65);
+        --accent: oklch(50% 0.17 30);
+        --line: oklch(24% 0.015 60 / 0.3);
+        --dot: oklch(24% 0.015 60 / 0.42);
+        --mark: oklch(24% 0.015 60 / 0.09);
+        --stipple: radial-gradient(circle, color-mix(in oklch, var(--ink) 26%, transparent) 0.5px, transparent 0.9px);
+        --leader: radial-gradient(circle, var(--dot) 0.6px, transparent 1px);
+      }
+
+      :root {
+        --font-prose: "Atkinson Hyperlegible Next", "Avenir Next", sans-serif;
+        --font-data: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+        --data-size: 0.8125rem;
+        --data-bold: 700;
+        --font-display: var(--font-prose);
+        --display-weight: 800;
+        --display-scale: 1;
+      }
+      :root:has(#d-lab:checked) {
+        --paper: oklch(98% 0.008 200);
+        --card: oklch(99.5% 0.004 200);
+        --ink: oklch(27% 0.035 255);
+        --ink-soft: oklch(40% 0.04 255);
+        --muted: oklch(50% 0.04 250);
+        --accent: oklch(47% 0.13 250);
+        --line: oklch(27% 0.035 255 / 0.35);
+        --dot: oklch(27% 0.035 255 / 0.5);
+        --mark: oklch(27% 0.035 255 / 0.1);
+        --grid: oklch(60% 0.08 230 / 0.16);
+      }
+      :root:has(#d-ditto:checked) {
+        --paper: oklch(97.5% 0.008 300);
+        --card: oklch(99% 0.005 300);
+        --ink: oklch(36% 0.13 295);
+        --ink-soft: oklch(45% 0.11 295);
+        --muted: oklch(55% 0.08 295);
+        --accent: oklch(36% 0.13 295);
+        --line: oklch(36% 0.13 295 / 0.4);
+        --dot: oklch(36% 0.13 295 / 0.55);
+        --mark: oklch(36% 0.13 295 / 0.11);
+      }
+      :root:has(#d-index:checked) {
+        --paper: oklch(91% 0.008 80);
+        --card: oklch(99% 0.006 90);
+        --rule-blue: oklch(75% 0.06 230 / 0.45);
+      }
+      :root:has(#t-andada:checked) { --font-display: "Andada Pro", Georgia, serif; --display-weight: 700; }
+      :root:has(#t-cutive:checked) { --font-display: "Cutive", Georgia, serif; --display-weight: 400; }
+      :root:has(#t-zilla:checked) { --font-display: "Zilla Slab", Georgia, serif; --display-weight: 600; }
+      :root:has(#t-plex:checked) { --font-display: "IBM Plex Serif", Georgia, serif; --display-weight: 600; }
+      :root:has(#t-aleo:checked) { --font-display: "Aleo", Georgia, serif; --display-weight: 700; }
+      :root:has(#t-oldstandard:checked) { --font-display: "Old Standard TT", Georgia, serif; --display-weight: 700; }
+      :root:has(#t-bespoke:checked) { --font-display: "Bespoke Slab", Georgia, serif; --display-weight: 700; }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font: var(--step-0) / 1.45 var(--font-prose);
+        font-variant-numeric: lining-nums;
+      }
+      h1 {
+        font: var(--display-weight) calc(var(--step-4) * var(--display-scale)) / 1 var(--font-display);
+        letter-spacing: -0.015em;
+        text-wrap: balance;
+      }
+      h2, dt, legend, .tag {
+        font: 400 var(--step--2) / 1.4 var(--font-data);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: 68rem; margin-inline: auto; padding: var(--space-m); }
+      .flow > * + * { margin-block-start: var(--flow, var(--space-m)); }
+      .cluster { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-s); }
+    }
+
+    @layer blocks {
+      .switcher { padding-block-end: var(--space-xs); border-bottom: 1px dotted var(--line); font: var(--step--1) var(--font-data); }
+      .switcher label { display: inline-flex; align-items: center; gap: var(--space-2xs); padding-block: var(--space-2xs); }
+      .switcher input { accent-color: var(--accent); }
+
+      .masthead { padding-block-end: var(--space-s); border-bottom: 4px double var(--accent); }
+
+      .spec { display: grid; gap: var(--space-xs) var(--space-l); }
+      .spec dd { font: var(--data-size) / 1.4 var(--font-data); }
+      @media (min-width: 44rem) {
+        .spec { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+        .spec > .wide { grid-column: span 2; }
+      }
+
+      .scroller {
+        container-type: inline-size;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--pin);
+        scrollbar-width: thin;
+      }
+
+      .rt {
+        min-width: 100%;
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        line-height: 1.3;
+      }
+      .rt :is(th, td) { padding: var(--space-xs) var(--space-s); }
+      .rt td[id] { border: solid var(--line); border-width: 0 0 1px 1px; }
+      .rt td[id]:last-child { border-right-width: 1px; }
+      .rt td[data-last] { border-bottom-width: 0; }
+
+      .rt th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--pin);
+        min-width: var(--pin);
+        max-width: var(--pin);
+        background: var(--card);
+        box-shadow: 1px 0 0 var(--line);
+        font: 400 var(--data-size) / 1.35 var(--font-data);
+        color: var(--ink-soft);
+        text-align: left;
+        vertical-align: top;
+      }
+      .qty { display: block; font-weight: var(--data-bold); color: var(--ink); white-space: nowrap; }
+      .qty:empty { display: none; }
+
+      .rt td {
+        min-width: min(calc(100cqi - var(--pin) - 3rem), 11rem);
+        font-size: var(--step--1);
+        text-align: center;
+        text-wrap: balance;
+        scroll-snap-align: start;
+      }
+      .rt td[data-fill] {
+        min-width: 0;
+        background: var(--card) var(--leader) left center / 6px 6px round no-repeat;
+      }
+      .rt td[id] { background-color: var(--card); }
+      :is(.rt td, .swatch)[data-tone] {
+        --hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent var(--pitch));
+        --cross: repeating-linear-gradient(45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent var(--pitch));
+        background-image: var(--hatch);
+      }
+      [data-tone="1"] { --pitch: 12px; }
+      [data-tone="2"] { --pitch: 8px; }
+      [data-tone="3"] { --pitch: 8px; }
+      :is(.rt td, .swatch)[data-tone="3"] { background-image: var(--hatch), var(--cross); }
+      :is(.rt td, .swatch)[data-rest] {
+        background-image: var(--stipple), var(--stipple);
+        background-size: 10px 10px;
+        background-position: 0 0, 5px 5px;
+      }
+      .plate { display: inline-block; padding: var(--space-s) var(--space-m); background: radial-gradient(ellipse closest-side, var(--card) 62%, transparent); }
+
+      .l-lab, :root:has(#d-lab:checked) .l-std { display: none; }
+      :root:has(#d-lab:checked) .l-lab { display: inline; }
+
+      :root:has(#d-lab:checked) body {
+        background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 1.25rem 1.25rem;
+      }
+      :root:has(:is(#d-lab, #d-ditto):checked) h1 {
+        font: 700 calc(var(--step-4) * 0.6) / 1.2 var(--font-data);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      :root:has(#d-lab:checked) .masthead { border-bottom: 0; }
+      :root:has(#d-lab:checked) .spec { gap: 0; }
+      :root:has(#d-lab:checked) .spec > div { margin: 0 -1px -1px 0; padding: var(--space-xs) var(--space-s); border: 1px solid var(--line); background: var(--card); }
+
+      :root:has(#d-ditto:checked) body { font-family: var(--font-data); text-shadow: 0 0 0.6px color-mix(in oklch, var(--ink) 55%, transparent); }
+      :root:has(#d-ditto:checked) h1 { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.25em; }
+      :root:has(#d-ditto:checked) .masthead { border-bottom: 1px dashed var(--line); }
+      :root:has(#d-ditto:checked) .rt td { font-size: var(--data-size); }
+
+      :root:has(#d-index:checked) .wrapper {
+        margin-block: var(--space-m);
+        background: var(--card) repeating-linear-gradient(transparent 0 calc(1.75rem - 1px), var(--rule-blue) calc(1.75rem - 1px) 1.75rem);
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.15), 0 8px 24px rgb(0 0 0 / 0.08);
+      }
+      :root:has(#d-index:checked) .masthead { border-bottom: 2px solid var(--accent); }
+      :root:has(#d-index:checked) .switcher { background: none; }
+
+      .asterism { border: 0; margin-block: var(--space-m); text-align: center; }
+      .asterism::before { content: "*  *  *"; white-space: pre; font: var(--data-size) var(--font-data); color: var(--muted); }
+
+      .kit { display: grid; gap: var(--space-s) var(--space-l); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+      .kit > div { display: grid; grid-template-columns: 4rem 1fr; gap: var(--space-s); align-items: center; }
+      .kit dd { font: var(--data-size) / 1.35 var(--font-data); color: var(--ink-soft); }
+      .swatch { height: 2.5rem; background-color: var(--card); border: 1px solid var(--line); }
+      .swatch[data-mark="leader"] { border: 0; background: var(--leader) left center / 6px 6px round no-repeat; }
+      .swatch[data-mark="hairline"] { border-width: 0 0 1px 1px; background: none; }
+      .swatch[data-mark="rule"] { border: 0; border-bottom: 4px double var(--accent); background: none; height: 1.25rem; }
+      .swatch[data-mark="ring"] { border: 0; background: none; display: grid; place-items: center; }
+      .swatch[data-mark="ring"] .n { margin: 0; box-shadow: inset 0 0 0 1.5px currentColor; }
+      .rt td[data-prep] {
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        text-wrap: wrap;
+      }
+      .rt td[data-prep] > span { position: sticky; left: var(--space-s); display: inline-block; max-width: calc(100cqi - var(--space-m)); }
+      .tag { margin-inline-end: var(--space-xs); text-transform: lowercase; }
+
+      .n {
+        display: grid;
+        place-items: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0 auto var(--space-2xs);
+        border-radius: 50%;
+        color: var(--accent);
+        font: var(--data-bold) var(--step--2) / 1 var(--font-data);
+        text-decoration: none;
+      }
+      a.n { box-shadow: inset 0 0 0 1.5px currentColor; }
+
+      @container (min-width: 44rem) {
+        .rt { width: 100%; }
+        .rt th { position: static; width: auto; min-width: 15rem; max-width: none; padding-right: 0; box-shadow: none; }
+        .rt th > span { display: grid; grid-template-columns: 6.5rem auto 1fr; gap: var(--space-xs); align-items: baseline; }
+        .rt th > span::after, .rt td[data-fill]::before {
+          content: "";
+          display: block;
+          align-self: start;
+          height: 1lh;
+          background: var(--leader) left 0 bottom calc(0.4em - 3px) / 6px 6px round no-repeat;
+        }
+        .rt td[data-fill] { padding-inline: 0; background: var(--card); font: var(--data-size) / 1.35 var(--font-data); vertical-align: top; }
+        .qty, .qty:empty { display: block; }
+        .rt td { min-width: 0; }
+      }
+
+      .notes ol { list-style: none; display: grid; gap: var(--space-xs); max-width: 60ch; }
+      .notes li { display: grid; grid-template-columns: 1.5rem 1fr; gap: var(--space-s); align-items: baseline; }
+      .notes li:target { background: color-mix(in oklch, var(--accent) 14%, transparent); outline: var(--space-2xs) solid color-mix(in oklch, var(--accent) 14%, transparent); }
+      .notes .n { margin: 0; }
+      .prose { max-width: 60ch; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper flow">
+    <form class="switcher">
+      <fieldset class="cluster">
+        <legend>Direction</legend>
+        <label><input type="radio" name="d" id="d-card" checked> Recipe card</label>
+        <label><input type="radio" name="d" id="d-lab"> Lab notebook</label>
+        <label><input type="radio" name="d" id="d-ditto"> Ditto sheet</label>
+        <label><input type="radio" name="d" id="d-index"> Index card</label>
+      </fieldset>
+      <fieldset class="cluster">
+        <legend>Title face</legend>
+        <label><input type="radio" name="t" id="t-andada" checked> Andada</label>
+        <label><input type="radio" name="t" id="t-cutive"> Cutive</label>
+        <label><input type="radio" name="t" id="t-zilla"> Zilla Slab</label>
+        <label><input type="radio" name="t" id="t-plex"> IBM Plex Serif</label>
+        <label><input type="radio" name="t" id="t-aleo"> Aleo</label>
+        <label><input type="radio" name="t" id="t-oldstandard"> Old Standard</label>
+        <label><input type="radio" name="t" id="t-bespoke"> Bespoke Slab</label>
+      </fieldset>
+    </form>
+
+    <header class="masthead flow" style="--flow: var(--space-s)">
+      <h1>Chocolate Chip Cookies</h1>
+      <dl class="spec">
+        <div><dt><span class="l-std">Makes</span><span class="l-lab">Yield</span></dt><dd>18 large cookies</dd></div>
+        <div><dt>Time</dt><dd>25 hr (30 min active)</dd></div>
+        <div><dt>Source</dt><dd>Adapted from <a href="https://www.nytimes.com/2008/07/09/dining/091crex.html">New York Times</a></dd></div>
+        <div class="wide"><dt><span class="l-std">Equipment</span><span class="l-lab">Apparatus</span></dt><dd>stand mixer with paddle, 2 oz scoop</dd></div>
+      </dl>
+    </header>
+
+    <div class="scroller" role="region" aria-labelledby="table-title" tabindex="0">
+      <table class="rt">
+        <caption id="table-title" hidden>Chocolate Chip Cookies recipe table</caption>
+        <tbody>
+          <tr><td data-prep colspan="8"><span><span class="tag"><span class="l-std">prep</span><span class="l-lab">setup</span></span>Line a baking sheet with parchment</span></td></tr>
+          <tr>
+            <th scope="row"><span><span class="qty">8.5 oz</span> cake flour</span></th>
+            <td id="step-1" data-tone="1" rowspan="5" colspan="2" style="--i: 0"><div class="plate"><span class="n">1</span>Sift together</div></td>
+            <td id="step-4" data-tone="2" rowspan="10" style="--i: 2"><div class="plate"><a class="n" href="#note-4" aria-label="Step 4, see note">4</a>Mix in dry until just combined</div></td>
+            <td id="step-5" data-rest rowspan="11" style="--i: 3"><div class="plate"><a class="n" href="#note-5" aria-label="Step 5, see note">5</a>Fold in. Chill 24–36 hrs</div></td>
+            <td id="step-6" data-tone="2" rowspan="11" style="--i: 4"><div class="plate"><a class="n" href="#note-6" aria-label="Step 6, see note">6</a>Heat oven to 350°. Scoop 2 oz mounds</div></td>
+            <td id="step-7" data-tone="3" rowspan="12" style="--i: 5" data-last><div class="plate"><a class="n" href="#note-7" aria-label="Step 7, see note">7</a>Sprinkle. Bake 18–20 min</div></td>
+            <td id="step-8" data-rest rowspan="12" style="--i: 6" data-last><div class="plate"><span class="n">8</span>Cool on sheet 10 min</div></td>
+          </tr>
+          <tr><th scope="row"><span><span class="qty">8.5 oz</span> bread flour</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1 1/4 t</span> baking soda</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1 1/2 t</span> baking powder</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1 1/2 t</span> coarse salt</span></th></tr>
+          <tr>
+            <th scope="row"><span><span class="qty">2 1/2 sticks</span> unsalted butter</span></th>
+            <td id="step-2" data-tone="1" rowspan="3" style="--i: 0"><div class="plate"><span class="n">2</span>Cream 5 min, until very light</div></td>
+            <td id="step-3" data-tone="1" rowspan="5" style="--i: 1"><div class="plate"><span class="n">3</span>Beat in eggs one at a time, then vanilla</div></td>
+          </tr>
+          <tr><th scope="row"><span><span class="qty">10 oz</span> light brown sugar</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">8 oz</span> granulated sugar</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">2</span> large eggs</span></th><td data-fill></td></tr>
+          <tr><th scope="row"><span><span class="qty">2 t</span> vanilla extract</span></th><td data-fill></td></tr>
+          <tr><th scope="row"><span><span class="qty">1 1/4 lb</span> bittersweet chocolate</span></th><td data-fill colspan="3"></td></tr>
+          <tr><th scope="row"><span><span class="qty"></span> flaky sea salt</span></th><td data-fill colspan="5"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section class="notes flow" style="--flow: var(--space-xs)">
+      <h2><span class="l-std">Step notes</span><span class="l-lab">Observations</span></h2>
+      <ol>
+        <li id="note-4"><a class="n" href="#step-4" aria-label="Back to step 4">4</a><span>5 to 10 seconds on low. Stop the moment the flour disappears.</span></li>
+        <li id="note-5"><a class="n" href="#step-5" aria-label="Back to step 5">5</a><span>Press plastic wrap against the dough. It keeps up to 72 hours.</span></li>
+        <li id="note-6"><a class="n" href="#step-6" aria-label="Back to step 6">6</a><span>6 to 9 mounds per sheet. Turn any chocolate that pokes up flat. It makes a better-looking cookie.</span></li>
+        <li id="note-7"><a class="n" href="#step-7" aria-label="Back to step 7">7</a><span>Surface cracked, edges golden, center still soft.</span></li>
+      </ol>
+    </section>
+
+    <hr class="asterism">
+
+    <section class="prose flow" style="--flow: var(--space-xs)">
+      <h2><span class="l-std">Notes</span><span class="l-lab">Remarks</span></h2>
+      <p>The original calls for 3.5 oz cookies. 2 oz yields far more, and they're still large with every texture you want.</p>
+    </section>
+
+    <hr class="asterism">
+
+    <section class="flow" style="--flow: var(--space-s)">
+      <h2>The kit</h2>
+      <dl class="kit">
+        <div><dt class="swatch" data-mark="leader"></dt><dd>Leader. An ingredient waiting to join.</dd></div>
+        <div><dt class="swatch" data-mark="hairline"></dt><dd>Hairline. These things get combined.</dd></div>
+        <div><dt class="swatch" data-tone="1"></dt><dd>Open hatch. Early work.</dd></div>
+        <div><dt class="swatch" data-tone="2"></dt><dd>Close hatch. Further along.</dd></div>
+        <div><dt class="swatch" data-tone="3"></dt><dd>Cross-hatch. The last active step.</dd></div>
+        <div><dt class="swatch" data-rest></dt><dd>Stipple. Resting. Hands off.</dd></div>
+        <div><dt class="swatch" data-mark="ring"><span class="n">4</span></dt><dd>Ringed number. This step has a note.</dd></div>
+        <div><dt class="swatch" data-mark="rule"></dt><dd>Double rule. The card starts here.</dd></div>
+      </dl>
+    </section>
+  </div>
+</body>
+</html>

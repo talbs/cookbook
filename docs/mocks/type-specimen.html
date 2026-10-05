@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Type specimen | Cookbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Atkinson+Hyperlegible+Next:wght@200..800&display=swap">
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, ul, ol, dl, dd { margin: 0; padding: 0; }
+      ul, ol { list-style: none; }
+      table { border-collapse: separate; border-spacing: 0; }
+    }
+
+    @layer tokens {
+      :root {
+        color-scheme: light;
+
+        --unit: 0.25rem;
+        --space-tight: var(--unit);
+        --space-related: calc(var(--unit) * 2);
+        --space-group: calc(var(--unit) * 3);
+        --space-gutter: clamp(calc(var(--unit) * 4), 0.5rem + 1.25vw, calc(var(--unit) * 6));
+        --space-section: clamp(calc(var(--unit) * 8), 1rem + 2.5vw, calc(var(--unit) * 12));
+
+        --size-page: 90rem;
+        --size-measure: 55ch;
+        --size-target: calc(var(--unit) * 11);
+        --size-row: calc(var(--unit) * 12);
+        --size-pin: calc(var(--unit) * 32);
+        --size-step-min: calc(var(--unit) * 22);
+        --size-step-max: calc(var(--unit) * 44);
+        --size-step-peek: calc(var(--unit) * 12);
+        --size-label: calc(var(--unit) * 13);
+        --size-noteref: calc(var(--unit) * 4);
+        --size-lift: var(--space-related);
+        --size-gap: var(--space-group);
+        --size-stroke: 1px;
+        --size-stroke-strong: 2px;
+
+        --font-size-xs: 0.6875rem;
+        --font-size-s: 0.8125rem;
+        --font-size-m: 0.9375rem;
+        --font-size-l: 1.0625rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.4375rem;
+        --font-size-3xl: 1.625rem;
+        --font-size-4xl: 1.875rem;
+
+        --leading-display: 1.05;
+        --leading-heading: 1.2;
+        --leading-data: 1.35;
+        --leading-text: 1.4;
+        --leading-label: 1.4;
+        --leading-prose: 1.5;
+
+        --weight-body: 400;
+        --weight-label: 500;
+        --weight-action: 600;
+        --weight-strong: 700;
+
+        --tracking-display: -0.025em;
+        --tracking-label: 0.08em;
+
+        --font-prose: "Atkinson Hyperlegible Next", "Avenir Next", sans-serif;
+        --font-data: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+
+        --heading-l: var(--weight-strong) clamp(var(--font-size-2xl), 1.2rem + 1.4vw, var(--font-size-4xl)) / var(--leading-display) var(--font-prose);
+        --heading-m: var(--weight-strong) var(--font-size-xl) / var(--leading-heading) var(--font-prose);
+        --heading-s: var(--weight-action) var(--font-size-l) / var(--leading-heading) var(--font-prose);
+        --body-l: var(--weight-body) var(--font-size-l) / var(--leading-prose) var(--font-prose);
+        --body-m: var(--weight-body) var(--font-size-m) / var(--leading-text) var(--font-prose);
+        --body-s: var(--weight-body) var(--font-size-s) / var(--leading-prose) var(--font-prose);
+        --data-l: var(--weight-body) var(--font-size-m) / var(--leading-data) var(--font-data);
+        --data-m: var(--weight-body) var(--font-size-s) / var(--leading-data) var(--font-data);
+        --data-s: var(--weight-label) var(--font-size-xs) / var(--leading-label) var(--font-data);
+        --caption-m: var(--weight-label) var(--font-size-s) / var(--leading-label) var(--font-data);
+        --caption-s: var(--weight-label) var(--font-size-xs) / var(--leading-label) var(--font-data);
+
+        --type-title: var(--heading-l);
+        --type-step: var(--body-m);
+        --type-setup: var(--body-m);
+        --type-note: var(--body-m);
+        --type-crumb: var(--body-s);
+        --type-ingredient: var(--data-m);
+        --type-fact: var(--data-m);
+        --type-fact-number: var(--data-l);
+        --type-time: var(--data-s);
+        --type-noteref: var(--data-s);
+        --type-label: var(--caption-s);
+
+        --paper: oklch(98% 0.008 90);
+        --card: oklch(99.5% 0.004 90);
+        --ink: oklch(24% 0.015 60);
+        --accent: oklch(52% 0.2 29);
+
+        --alpha-secondary: 82%;
+        --alpha-tertiary: 68%;
+        --alpha-container: 34%;
+        --alpha-divider: 15%;
+        --alpha-dot: 40%;
+        --alpha-stipple: 24%;
+        --alpha-mark: 8%;
+        --alpha-shadow: 10%;
+        --alpha-wash: 16%;
+
+        --text-primary: var(--ink);
+        --text-secondary: alpha(from var(--ink) / var(--alpha-secondary));
+        --text-tertiary: alpha(from var(--ink) / var(--alpha-tertiary));
+        --border-current: var(--ink);
+        --border-container: alpha(from var(--ink) / var(--alpha-container));
+        --border-divider: alpha(from var(--ink) / var(--alpha-divider));
+        --mark-dot: alpha(from var(--ink) / var(--alpha-dot));
+        --mark-stipple: alpha(from var(--ink) / var(--alpha-stipple));
+        --mark-line: alpha(from var(--ink) / var(--alpha-mark));
+        --shadow-ink: alpha(from var(--ink) / var(--alpha-shadow));
+        --accent-wash: alpha(from var(--accent) / var(--alpha-wash));
+
+        --pitch-hatch: 9px;
+        --pitch-stipple: 10px;
+        --pitch-stipple-dense: 6px;
+        --pitch-leader: 6px;
+
+        --hatch-stops: transparent 0, var(--mark-line) 0.5px, var(--mark-line) 1px, transparent 1.5px, transparent var(--pitch-hatch);
+        --tx-hatch: repeating-linear-gradient(-45deg, var(--hatch-stops));
+        --tx-hatch-back: repeating-linear-gradient(45deg, var(--hatch-stops));
+        --tx-stipple-dot: radial-gradient(circle, var(--mark-stipple) 0.5px, transparent 0.9px);
+        --tx-leader-dot: radial-gradient(circle, var(--mark-dot) 0.6px, transparent 1px);
+        --tx-leader-size: var(--pitch-leader) var(--pitch-leader);
+        --tx-fade: radial-gradient(ellipse closest-side, var(--card) 62%, transparent);
+        --tx-highlight: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M0.6 3.4C14 1.6 29 4.3 47 2.6S83 3.9 99.2 1.8L99.6 7.4C82 8.6 63 6.9 42 8.2S13 7.3 0.3 8.9Z' fill='%23c0302a' fill-opacity='.11'/%3E%3C/svg%3E");
+
+        --underline-rest: 0.35em;
+        --underline-hover: 0.25em;
+        --shadow-stack: 0 1px 3px var(--shadow-ink);
+        --dim: 0.45;
+        --ease: ease-out;
+        --duration-step: 150ms;
+        --duration-link: 200ms;
+      }
+
+      @supports not (color: alpha(from red / 50%)) {
+        :root {
+          --text-secondary: color-mix(in srgb, var(--ink) var(--alpha-secondary), transparent);
+          --text-tertiary: color-mix(in srgb, var(--ink) var(--alpha-tertiary), transparent);
+          --border-container: color-mix(in srgb, var(--ink) var(--alpha-container), transparent);
+          --border-divider: color-mix(in srgb, var(--ink) var(--alpha-divider), transparent);
+          --mark-dot: color-mix(in srgb, var(--ink) var(--alpha-dot), transparent);
+          --mark-stipple: color-mix(in srgb, var(--ink) var(--alpha-stipple), transparent);
+          --mark-line: color-mix(in srgb, var(--ink) var(--alpha-mark), transparent);
+          --shadow-ink: color-mix(in srgb, var(--ink) var(--alpha-shadow), transparent);
+          --accent-wash: color-mix(in srgb, var(--accent) var(--alpha-wash), transparent);
+        }
+      }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--text-primary);
+        font: var(--type-step);
+      }
+      ::selection { background: var(--accent-wash); }
+
+      h1 {
+        font: var(--type-title);
+        letter-spacing: var(--tracking-display);
+        text-wrap: balance;
+      }
+      h2, dt {
+        font: var(--type-label);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+      }
+
+      a {
+        color: inherit;
+        text-decoration-line: underline;
+        text-decoration-thickness: var(--size-stroke);
+        text-decoration-color: var(--border-container);
+        text-underline-offset: var(--underline-rest);
+      }
+      a:hover {
+        text-decoration-thickness: var(--size-stroke-strong);
+        text-decoration-color: var(--accent);
+        text-underline-offset: var(--underline-hover);
+      }
+      a:active { color: var(--accent); }
+      :focus-visible { outline: var(--size-stroke-strong) solid var(--accent); outline-offset: var(--size-stroke-strong); }
+
+      @media (prefers-reduced-motion: no-preference) {
+        a {
+          transition-property: text-decoration-color, text-decoration-thickness, text-underline-offset;
+          transition-duration: var(--duration-link);
+          transition-timing-function: var(--ease);
+        }
+      }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: var(--size-page); margin-inline: auto; padding: var(--space-gutter); }
+    }
+
+    @layer blocks {
+      .crumb {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-related);
+        min-height: var(--size-target);
+        margin-block-end: var(--space-related);
+        color: var(--text-tertiary);
+        font: var(--type-crumb);
+        text-decoration-line: none;
+      }
+      .crumb:hover { color: var(--text-primary); text-decoration-line: underline; }
+
+      .stack {
+        position: relative;
+        isolation: isolate;
+        margin: 0 calc(var(--size-lift) * 2) calc(var(--size-lift) * 2) 0;
+      }
+      .stack::before, .stack::after {
+        content: "";
+        position: absolute;
+        border: var(--size-stroke) solid var(--border-container);
+        background: var(--card);
+      }
+      .stack::before { inset: var(--size-lift) calc(var(--size-lift) * -1) calc(var(--size-lift) * -1) var(--size-lift); }
+      .stack::after {
+        z-index: -1;
+        inset: calc(var(--size-lift) * 2) calc(var(--size-lift) * -2) calc(var(--size-lift) * -2) calc(var(--size-lift) * 2);
+        box-shadow: var(--shadow-stack);
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        padding: var(--space-gutter);
+        border: var(--size-stroke) solid var(--border-container);
+        background: var(--card);
+      }
+
+      .card-head, .card-notes { display: grid; gap: var(--space-gutter) var(--space-section); }
+      .card-head { align-items: start; margin: var(--size-gap) var(--size-gap) calc(var(--space-gutter) - var(--size-gap)); }
+      .card-notes { margin: max(0px, calc(var(--space-gutter) - var(--size-gap) - var(--space-related))) var(--size-gap) 0; padding-block-end: var(--space-related); }
+      .card-head::after, .card-notes::before {
+        content: "";
+        grid-column: 1 / -1;
+        border-top: var(--size-stroke) solid var(--border-divider);
+      }
+
+      .card-title { display: grid; gap: var(--space-group); }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-related) var(--space-gutter);
+        font: var(--type-fact);
+        color: var(--text-secondary);
+      }
+      .facts li { display: inline-flex; align-items: baseline; gap: var(--space-related); }
+      .facts b { font: var(--type-fact-number); font-weight: var(--weight-strong); color: var(--text-primary); }
+      .facts i { color: var(--text-tertiary); }
+
+      .card-setup { display: grid; gap: var(--space-related); font: var(--type-setup); color: var(--text-secondary); }
+      .card-setup > div { display: grid; grid-template-columns: var(--size-label) 1fr; align-items: baseline; }
+      .card-setup ul { display: grid; gap: var(--space-tight); }
+
+      .scroller {
+        container-type: inline-size;
+        padding-block-end: var(--space-related);
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--size-pin);
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-container) transparent;
+      }
+
+      .recipe-table { min-width: 100%; border-spacing: var(--size-gap); }
+      .recipe-table caption { height: 0; overflow: hidden; }
+
+      .ingredient {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--size-pin);
+        min-width: var(--size-pin);
+        max-width: var(--size-pin);
+        padding: var(--space-related) var(--space-group) var(--space-related) var(--space-tight);
+        background: var(--card);
+        box-shadow: 0 0 0 var(--size-gap) var(--card);
+        font: var(--type-ingredient);
+        color: var(--text-secondary);
+        text-align: left;
+        vertical-align: middle;
+      }
+      .ingredient::after {
+        content: "";
+        position: absolute;
+        inset-block: calc(var(--size-gap) * -1) 0;
+        inset-inline-end: calc(var(--size-gap) * -1);
+        border-inline-end: var(--size-stroke) solid var(--border-divider);
+      }
+      .qty {
+        display: block;
+        font-weight: var(--weight-strong);
+        font-variant-numeric: tabular-nums;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .step, .fill { scroll-snap-align: start; }
+      .step {
+        position: relative;
+        min-width: min(calc(100cqi - var(--size-pin) - var(--size-step-peek)), var(--size-step-max));
+        padding: var(--space-group);
+        border: var(--size-stroke) solid var(--border-divider);
+        background: var(--card);
+        text-align: center;
+      }
+      .step:is(:focus, :target) { border-color: var(--border-current); }
+      .fill { background: var(--tx-leader-dot) left center / var(--tx-leader-size) round no-repeat; }
+
+      [data-kind="combine"] { background: var(--tx-hatch), var(--card); }
+      [data-kind="shape"] { background: var(--tx-hatch-back), var(--card); }
+      [data-kind="cook"] { background: var(--tx-hatch), var(--tx-hatch-back), var(--card); }
+      [data-kind="wait"] { --pitch: var(--pitch-stipple); }
+      [data-kind="bake"] { --pitch: var(--pitch-stipple-dense); }
+      [data-kind="wait"], [data-kind="bake"] {
+        background:
+          var(--tx-stipple-dot) 0 0 / var(--pitch) var(--pitch),
+          var(--tx-stipple-dot) calc(var(--pitch) / 2) calc(var(--pitch) / 2) / var(--pitch) var(--pitch),
+          var(--card);
+      }
+
+      .step-body { display: inline-block; padding: var(--space-gutter); background: var(--tx-fade); }
+      .step-do { color: var(--text-secondary); text-wrap: balance; }
+      .step-do b { font-weight: var(--weight-action); color: var(--text-primary); }
+      .step-do + .step-do { margin-block-start: var(--space-tight); }
+      .step-time {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline: 0;
+        width: fit-content;
+        margin-inline: auto;
+        padding-inline: calc(var(--unit) * 1.5);
+        translate: 0 50%;
+        background: var(--card);
+        font: var(--type-time);
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+
+      .noteref {
+        position: relative;
+        color: var(--accent);
+        font: var(--type-noteref);
+        line-height: 1;
+        text-decoration-line: none;
+      }
+      .noteref:hover { text-decoration-line: underline; }
+      .noteref::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: var(--size-target);
+        min-height: var(--size-target);
+        translate: -50% -50%;
+      }
+      sup { margin-inline-start: 0.3em; line-height: 0; }
+
+      .recipe-table:has(.step:focus) :is(.step:not(:focus), .fill, .ingredient) { opacity: var(--dim); }
+
+      @media (hover: hover) {
+        .step:hover:not(:focus, :target) { border-color: var(--border-container); }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .recipe-table :is(th, td) {
+          transition: opacity var(--duration-step) var(--ease), border-color var(--duration-step) var(--ease);
+        }
+      }
+
+      .card-notes { font: var(--type-note); color: var(--text-secondary); }
+      .card-notes > section { display: grid; gap: var(--space-related); align-content: start; }
+      .card-notes > section:first-child { grid-row: span 2; }
+      .card-notes ol { display: grid; gap: var(--space-related); }
+      .card-notes li { display: grid; grid-template-columns: var(--size-noteref) 1fr; gap: var(--space-tight); align-items: baseline; }
+      .card-notes p { max-width: var(--size-measure); }
+      .card-notes li:target > p > span {
+        margin-inline: calc(var(--space-tight) * -1);
+        padding: 0 var(--space-tight) 0.1em;
+        background: var(--tx-highlight) no-repeat 0 100% / 100% 62%;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
+
+      @media (min-width: 44rem) {
+        .card { padding: var(--space-section); }
+      }
+      @media (min-width: 48rem) {
+        .card-notes { grid-template-columns: 3fr 2fr; }
+      }
+      @media (min-width: 60rem) {
+        .card-head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+        .card-head:not(:has(.card-setup)) { grid-template-columns: 1fr; }
+        .card-setup { justify-self: end; }
+      }
+
+      @container (min-width: 60rem) {
+        .recipe-table { width: 100%; }
+        .ingredient {
+          position: static;
+          width: auto;
+          min-width: 0;
+          max-width: none;
+          height: var(--size-row);
+          padding-block: 0;
+          padding-inline-end: 0;
+          box-shadow: none;
+          white-space: nowrap;
+        }
+        .ingredient::after { content: none; }
+        .ingredient > span { display: flex; gap: 1ch; align-items: baseline; }
+        .ingredient > span::after, .fill::before {
+          content: "";
+          display: block;
+          flex: 1 1 var(--space-gutter);
+          align-self: start;
+          height: 1lh;
+          background: var(--tx-leader-dot) left 0 bottom calc(0.4em - var(--pitch-leader) / 2) / var(--tx-leader-size) round no-repeat;
+        }
+        .ingredient > span::after { min-width: var(--space-gutter); margin-inline-start: var(--space-related); }
+        .ingredient:has(+ .fill) > span::after { margin-inline-end: calc(var(--size-gap) * -1); }
+        .qty { display: inline; }
+        .step { min-width: var(--size-step-min); padding-inline: var(--space-related); }
+        .step:has(.step-time) { min-width: calc(var(--size-step-min) + var(--space-group)); }
+        .step-body { padding-inline: var(--space-tight); }
+        .fill {
+          padding: 0;
+          background: none;
+          font: var(--type-ingredient);
+          vertical-align: middle;
+        }
+      }
+
+      @media (forced-colors: active) {
+        .card, .step { border-color: CanvasText; }
+        .step, .step-body { background-image: none; }
+        .ingredient { box-shadow: none; }
+      }
+    }
+    </style>
+  <style>
+    @layer specimen {
+      main { display: grid; gap: var(--space-section); }
+      section { display: grid; gap: var(--space-group); }
+      .intro { max-width: var(--size-measure); color: var(--text-secondary); }
+      .scroll { overflow-x: auto; }
+      table { width: 100%; border-spacing: 0; }
+      :is(th, td) { padding: var(--space-related) var(--space-group) var(--space-related) 0; border-bottom: var(--size-stroke) solid var(--border-divider); text-align: left; vertical-align: baseline; }
+      thead th, tbody th, td { font: var(--type-note); color: var(--text-secondary); }
+      thead th { font: var(--type-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-tertiary); white-space: nowrap; }
+      tbody th { color: var(--text-primary); white-space: nowrap; }
+      code { font: var(--type-ingredient); color: var(--text-primary); white-space: nowrap; }
+      td:has(.noise) { white-space: nowrap; }
+      strong { color: var(--accent); font-weight: var(--weight-body); }
+      .rules { display: grid; gap: var(--space-related); max-width: var(--size-measure); font: var(--type-note); color: var(--text-secondary); }
+      .rules li { display: grid; grid-template-columns: var(--size-noteref) 1fr; }
+      .rules li::before { content: "–"; color: var(--text-tertiary); }
+      .noise {
+        display: inline-block;
+        width: calc(var(--unit) * 12.5);
+        height: var(--space-related);
+        margin-inline-end: var(--space-tight);
+        vertical-align: -1px;
+        background:
+          repeating-linear-gradient(90deg, var(--text-primary) 0 calc(var(--unit) * 2), transparent calc(var(--unit) * 2) calc(var(--unit) * 2.5)) 0 0 / calc(var(--n) * var(--unit) * 2.5) 100% no-repeat,
+          repeating-linear-gradient(90deg, var(--border-divider) 0 calc(var(--unit) * 2), transparent calc(var(--unit) * 2) calc(var(--unit) * 2.5));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <nav aria-label="Breadcrumb">
+      <a class="crumb" href="recipe-card.html"><i aria-hidden="true"></i>Recipe card</a>
+    </nav>
+    <main>
+      <header>
+        <h1>Type specimen</h1>
+      </header>
+
+      <section aria-labelledby="scale-title">
+        <h2 id="scale-title">1. The scale</h2>
+        <p class="intro">Eight sizes, each about 1.15 times the one before. Only the family styles below read these. Components never do.</p>
+        <div class="scroll"><table>
+          <thead><tr><th scope="col">Step</th><th scope="col">Size</th><th scope="col">Sans</th><th scope="col">Mono</th></tr></thead>
+          <tbody>
+<tr><th scope="row"><code>--font-size-xs</code></th><td>11px</td><td style="font: var(--weight-body) var(--font-size-xs) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-xs) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-s</code></th><td>13px</td><td style="font: var(--weight-body) var(--font-size-s) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-s) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-m</code></th><td>15px</td><td style="font: var(--weight-body) var(--font-size-m) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-m) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-l</code></th><td>17px</td><td style="font: var(--weight-body) var(--font-size-l) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-l) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-xl</code></th><td>20px</td><td style="font: var(--weight-body) var(--font-size-xl) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-xl) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-2xl</code></th><td>23px</td><td style="font: var(--weight-body) var(--font-size-2xl) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-2xl) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-3xl</code></th><td>26px</td><td style="font: var(--weight-body) var(--font-size-3xl) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-3xl) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+<tr><th scope="row"><code>--font-size-4xl</code></th><td>30px</td><td style="font: var(--weight-body) var(--font-size-4xl) / var(--leading-text) var(--font-prose)">Cream until very light</td><td style="font: var(--weight-body) var(--font-size-4xl) / var(--leading-text) var(--font-data)">2 1/2 sticks</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section aria-labelledby="family-title">
+        <h2 id="family-title">2. Families</h2>
+        <p class="intro">Each style bundles a face, a weight, a size and a line height. Heading and body are the sans. Data and caption are the mono: data for content, caption for labels.</p>
+        <div class="scroll"><table>
+          <thead><tr><th scope="col">Style</th><th scope="col">Sample</th><th scope="col">Face</th><th scope="col">Size</th><th scope="col">Weight</th><th scope="col">Leading</th><th scope="col">Used for</th></tr></thead>
+          <tbody>
+<tr><th scope="row"><code>--heading-l</code></th><td style="font: var(--heading-l)">Beat in eggs one at a time</td><td>Sans</td><td>23 to 30px</td><td>700</td><td>1.05</td><td>Recipe title</td></tr>
+<tr><th scope="row"><code>--heading-m</code></th><td style="font: var(--heading-m)">Beat in eggs one at a time</td><td>Sans</td><td>20px</td><td>700</td><td>1.2</td><td>Reserved: category heading on the home page</td></tr>
+<tr><th scope="row"><code>--heading-s</code></th><td style="font: var(--heading-s)">Beat in eggs one at a time</td><td>Sans</td><td>17px</td><td>600</td><td>1.2</td><td>Reserved: recipe name in a list</td></tr>
+<tr><th scope="row"><code>--body-l</code></th><td style="font: var(--body-l)">Beat in eggs one at a time</td><td>Sans</td><td>17px</td><td>400</td><td>1.5</td><td>Reserved: an intro or long notes</td></tr>
+<tr><th scope="row"><code>--body-m</code></th><td style="font: var(--body-m)">Beat in eggs one at a time</td><td>Sans</td><td>15px</td><td>400</td><td>1.4</td><td>Step text, tools and prep, notes</td></tr>
+<tr><th scope="row"><code>--body-s</code></th><td style="font: var(--body-s)">Beat in eggs one at a time</td><td>Sans</td><td>13px</td><td>400</td><td>1.5</td><td>Breadcrumb</td></tr>
+<tr><th scope="row"><code>--data-l</code></th><td style="font: var(--data-l)">Beat in eggs one at a time</td><td>Mono</td><td>15px</td><td>400</td><td>1.35</td><td>Fact numbers</td></tr>
+<tr><th scope="row"><code>--data-m</code></th><td style="font: var(--data-m)">Beat in eggs one at a time</td><td>Mono</td><td>13px</td><td>400</td><td>1.35</td><td>Ingredients, facts</td></tr>
+<tr><th scope="row"><code>--data-s</code></th><td style="font: var(--data-s)">Beat in eggs one at a time</td><td>Mono</td><td>11px</td><td>500</td><td>1.4</td><td>Step times, note markers</td></tr>
+<tr><th scope="row"><code>--caption-m</code></th><td style="font: var(--caption-m)">Beat in eggs one at a time</td><td>Mono</td><td>13px</td><td>500</td><td>1.4</td><td>Reserved: a key or table header</td></tr>
+<tr><th scope="row"><code>--caption-s</code></th><td style="font: var(--caption-s)">Beat in eggs one at a time</td><td>Mono</td><td>11px</td><td>500</td><td>1.4</td><td>Section and setup labels</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section aria-labelledby="recipes-title">
+        <h2 id="recipes-title">3. Recipes</h2>
+        <p class="intro">Every piece of text on the card, loudest first. Each takes one family style, then a weight and an ink. Noise is how loud the result is, from 1 to 5.</p>
+        <div class="scroll"><table>
+          <thead><tr><th scope="col">Role</th><th scope="col">Sample</th><th scope="col">Style</th><th scope="col">Weight</th><th scope="col">Ink</th><th scope="col">Noise</th><th scope="col">Where</th></tr></thead>
+          <tbody>
+<tr><th scope="row">Recipe title</th><td><span style="font: var(--type-title); letter-spacing: var(--tracking-display); color: var(--text-primary)">Chocolate Chip Cookies</span></td><td><code>--heading-l</code></td><td>700</td><td>primary</td><td><span class="noise" style="--n: 5" role="img" aria-label="Noise 5 of 5"></span> 5</td><td>Top of the card. Once per page.</td></tr>
+<tr><th scope="row">Fact number</th><td><span style="font: var(--type-fact-number); font-weight: var(--weight-strong); color: var(--text-primary)">25 hr</span></td><td><code>--data-l</code></td><td>700</td><td>primary</td><td><span class="noise" style="--n: 4" role="img" aria-label="Noise 4 of 5"></span> 4</td><td>Under the title: total, active, yield.</td></tr>
+<tr><th scope="row">Quantity</th><td><span style="font: var(--type-ingredient); font-weight: var(--weight-strong); color: var(--text-primary)">2 1/2 sticks</span></td><td><code>--data-m</code></td><td>700</td><td>primary</td><td><span class="noise" style="--n: 4" role="img" aria-label="Noise 4 of 5"></span> 4</td><td>Start of every ingredient row.</td></tr>
+<tr><th scope="row">Step action</th><td><span style="font: var(--type-step); font-weight: var(--weight-action); color: var(--text-primary)">Cream</span></td><td><code>--body-m</code></td><td>600</td><td>primary</td><td><span class="noise" style="--n: 4" role="img" aria-label="Noise 4 of 5"></span> 4</td><td>First word or two of each step line.</td></tr>
+<tr><th scope="row">Step text</th><td><span style="font: var(--type-step); color: var(--text-secondary)">until very light</span></td><td><code>--body-m</code></td><td>400</td><td>secondary</td><td><span class="noise" style="--n: 3" role="img" aria-label="Noise 3 of 5"></span> 3</td><td>The rest of a step line.</td></tr>
+<tr><th scope="row">Setup text</th><td><span style="font: var(--type-setup); color: var(--text-secondary)">Stand mixer with paddle, 2 oz scoop</span></td><td><code>--body-m</code></td><td>400</td><td>secondary</td><td><span class="noise" style="--n: 3" role="img" aria-label="Noise 3 of 5"></span> 3</td><td>Tools and prep values in the card head.</td></tr>
+<tr><th scope="row">Note text</th><td><span style="font: var(--type-note); color: var(--text-secondary)">Press plastic wrap against the dough.</span></td><td><code>--body-m</code></td><td>400</td><td>secondary</td><td><span class="noise" style="--n: 3" role="img" aria-label="Noise 3 of 5"></span> 3</td><td>Step notes, notes, source.</td></tr>
+<tr><th scope="row">Step time</th><td><span style="font: var(--type-time); font-weight: var(--weight-strong); color: var(--text-primary)">18–20 min</span></td><td><code>--data-s</code></td><td>700</td><td>primary</td><td><span class="noise" style="--n: 3" role="img" aria-label="Noise 3 of 5"></span> 3</td><td>On the bottom edge of a step box.</td></tr>
+<tr><th scope="row">Ingredient name</th><td><span style="font: var(--type-ingredient); color: var(--text-secondary)">unsalted butter</span></td><td><code>--data-m</code></td><td>400</td><td>secondary</td><td><span class="noise" style="--n: 2" role="img" aria-label="Noise 2 of 5"></span> 2</td><td>After the quantity.</td></tr>
+<tr><th scope="row">Fact word</th><td><span style="font: var(--type-fact); color: var(--text-secondary)">total</span></td><td><code>--data-m</code></td><td>400</td><td>secondary</td><td><span class="noise" style="--n: 2" role="img" aria-label="Noise 2 of 5"></span> 2</td><td>After a fact number.</td></tr>
+<tr><th scope="row">Note marker</th><td><span style="font: var(--type-noteref); color: var(--accent)">3</span></td><td><code>--data-s</code></td><td>500</td><td>accent</td><td><span class="noise" style="--n: 2" role="img" aria-label="Noise 2 of 5"></span> 2</td><td>After a step line, and beside its note.</td></tr>
+<tr><th scope="row">Section label</th><td><span style="font: var(--type-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-tertiary)">Step notes</span></td><td><code>--caption-s</code></td><td>500</td><td>tertiary</td><td><span class="noise" style="--n: 1" role="img" aria-label="Noise 1 of 5"></span> 1</td><td>Above each block in the card footer.</td></tr>
+<tr><th scope="row">Setup label</th><td><span style="font: var(--type-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-tertiary)">tools</span></td><td><code>--caption-s</code></td><td>500</td><td>tertiary</td><td><span class="noise" style="--n: 1" role="img" aria-label="Noise 1 of 5"></span> 1</td><td>Before tools and prep.</td></tr>
+<tr><th scope="row">Breadcrumb</th><td><span style="font: var(--type-crumb); color: var(--text-tertiary)">Desserts</span></td><td><code>--body-s</code></td><td>400</td><td>tertiary</td><td><span class="noise" style="--n: 1" role="img" aria-label="Noise 1 of 5"></span> 1</td><td>Above the card.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section aria-labelledby="noise-title">
+        <h2 id="noise-title">4. How noise is scored</h2>
+        <ul class="rules">
+          <li>Start from size: 11px is 1, 13px is 2, 15 and 17px are 3, 20px is 4, 23px and up is 5.</li>
+          <li>Add 1 for full-strength ink. Take 1 off for the faintest ink.</li>
+          <li>Add 1 for weight 600 or more.</li>
+          <li>Add 1 for the red accent.</li>
+          <li>Nothing goes below 1. Only heading sizes can reach 5.</li>
+        </ul>
+        <h2>Rules for using it</h2>
+        <ul class="rules">
+          <li>One level 5 per page.</li>
+          <li>Level 4 is for the things a cook scans for: quantities, fact numbers, action words.</li>
+          <li>Levels 1 and 2 are for labels, reference and navigation.</li>
+          <li>Capitals and letter-spacing only at level 1.</li>
+          <li>Red never goes above level 2.</li>
+          <li>To make something louder, first make its neighbors quieter.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

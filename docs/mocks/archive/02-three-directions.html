@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe table: three directions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Martian+Mono:wdth,wght@75..112.5,100..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap">
+  <style>
+    @layer reset, tokens, base, compositions, blocks;
+
+    @layer reset {
+      *, *::before, *::after { box-sizing: border-box; }
+      body, h1, h2, p, dl, dd, ol, fieldset { margin: 0; padding: 0; }
+      fieldset { border: 0; }
+      table { border-collapse: separate; }
+    }
+
+    @layer tokens {
+      :root {
+        --space-2xs: 0.25rem;
+        --space-xs: 0.5rem;
+        --space-s: 0.75rem;
+        --space-m: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+        --space-l: clamp(1.75rem, 1.3rem + 2.2vw, 3rem);
+        --step-0: 1rem;
+        --step--1: 0.875rem;
+        --step--2: 0.75rem;
+        --step-4: clamp(2rem, 1.5rem + 2.6vw, 3.5rem);
+        --pin: 7.75rem;
+      }
+
+      :root:has(#d-kitchen:checked) {
+        color-scheme: light;
+        --font-display: "Vollkorn", Georgia, serif;
+        --font-text: "Vollkorn", Georgia, serif;
+        --font-qty: "Vollkorn", Georgia, serif;
+        --display-weight: 600;
+        --display-tracking: -0.01em;
+        --display-stretch: 100%;
+        --cell-stretch: 100%;
+        --label-caps: all-small-caps;
+        --label-tracking: 0.06em;
+        --label-size: var(--step-0);
+        --label-weight: 600;
+        --paper: oklch(99% 0.004 90);
+        --ink: oklch(22% 0.01 60);
+        --muted: oklch(48% 0.01 60);
+        --accent: oklch(45% 0.15 28);
+        --line: oklch(22% 0.01 60 / 0.35);
+        --rule: 2px solid var(--ink);
+        --bw: 1px;
+        --gap: 0;
+        --cell: var(--paper);
+        --step-from: oklch(97% 0.008 90);
+        --step-to: oklch(97% 0.008 90);
+        --leader: radial-gradient(circle, var(--line) 1px, transparent 1.25px);
+        --n-ink: var(--accent);
+        --n-bg: transparent;
+        --qty-weight: 700;
+        --qty-size: 1em;
+      }
+
+      :root:has(#d-milk:checked) {
+        color-scheme: light;
+        --font-display: "Instrument Sans", "Avenir Next", system-ui, sans-serif;
+        --font-text: "Instrument Sans", "Avenir Next", system-ui, sans-serif;
+        --font-qty: "Instrument Sans", "Avenir Next", system-ui, sans-serif;
+        --display-weight: 700;
+        --display-tracking: -0.03em;
+        --display-stretch: 78%;
+        --cell-stretch: 88%;
+        --label-caps: all-small-caps;
+        --label-tracking: 0.1em;
+        --label-size: var(--step--1);
+        --label-weight: 700;
+        --paper: oklch(95.5% 0.022 85);
+        --ink: oklch(20% 0.012 70);
+        --muted: oklch(44% 0.02 70);
+        --accent: oklch(52% 0.13 55);
+        --line: transparent;
+        --rule: 0 solid transparent;
+        --bw: 0px;
+        --gap: 3px;
+        --cell: oklch(99% 0.006 85);
+        --step-from: oklch(89% 0.085 88);
+        --step-to: oklch(80% 0.14 82);
+        --leader: none;
+        --n-ink: var(--paper);
+        --n-bg: var(--ink);
+        --qty-weight: 700;
+        --qty-size: 1em;
+      }
+
+      :root:has(#d-bench:checked) {
+        color-scheme: dark;
+        --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+        --font-text: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+        --font-qty: "Martian Mono", ui-monospace, monospace;
+        --display-weight: 750;
+        --display-tracking: -0.04em;
+        --display-stretch: 90%;
+        --cell-stretch: 85%;
+        --label-caps: normal;
+        --label-tracking: 0.02em;
+        --label-size: var(--step--2);
+        --label-weight: 500;
+        --paper: oklch(20% 0.006 70);
+        --ink: oklch(94% 0.01 90);
+        --muted: oklch(70% 0.012 80);
+        --accent: oklch(68% 0.17 45);
+        --line: oklch(94% 0.01 90 / 0.24);
+        --rule: 1px solid var(--line);
+        --bw: 1px;
+        --gap: 0;
+        --cell: var(--paper);
+        --step-from: oklch(25% 0.03 50);
+        --step-to: oklch(36% 0.085 45);
+        --leader: none;
+        --n-ink: var(--accent);
+        --n-bg: transparent;
+        --qty-weight: 600;
+        --qty-size: 0.8em;
+      }
+    }
+
+    @layer base {
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font: var(--step-0) / 1.45 var(--font-text);
+        font-variant-numeric: lining-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1 {
+        font: var(--display-weight) var(--step-4) / 1 var(--font-display);
+        font-stretch: var(--display-stretch);
+        letter-spacing: var(--display-tracking);
+        text-wrap: balance;
+      }
+
+      h2, dt, legend {
+        font-size: var(--label-size);
+        font-weight: var(--label-weight);
+        font-variant-caps: var(--label-caps);
+        letter-spacing: var(--label-tracking);
+        color: var(--accent);
+      }
+
+      a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    @layer compositions {
+      .wrapper { max-width: 68rem; margin-inline: auto; padding: var(--space-m); }
+      .flow > * + * { margin-block-start: var(--flow, var(--space-m)); }
+      .cluster { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-s); }
+    }
+
+    @layer blocks {
+      .switcher {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        padding-block: var(--space-xs);
+        background: var(--paper);
+        border-bottom: 1px solid color-mix(in oklch, var(--ink) 15%, transparent);
+        font-size: var(--step--1);
+      }
+      .switcher label { display: inline-flex; align-items: center; gap: var(--space-2xs); padding-block: var(--space-2xs); }
+      .switcher input { accent-color: var(--accent); }
+
+      .spec {
+        display: grid;
+        gap: var(--space-xs) var(--space-l);
+        padding-block: var(--space-s);
+        border-block: var(--rule);
+        font-size: var(--step--1);
+      }
+      .spec dd { color: var(--ink); }
+      @media (min-width: 44rem) {
+        .spec { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+        .spec > .wide { grid-column: span 2; }
+      }
+
+      .scroller {
+        container-type: inline-size;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline-start: var(--pin);
+        scrollbar-width: thin;
+      }
+
+      .rt {
+        min-width: 100%;
+        border-spacing: var(--gap);
+        border-top: var(--rule);
+        border-bottom: var(--rule);
+        font-size: var(--step--1);
+        line-height: 1.3;
+        font-stretch: var(--cell-stretch);
+      }
+      .rt :is(th, td) {
+        padding: var(--space-xs) var(--space-s);
+        border-right: var(--bw) solid var(--line);
+        border-bottom: var(--bw) solid var(--line);
+      }
+      .rt tr:last-child > *, .rt td[data-last] { border-bottom-width: 0; }
+      .rt td:last-child { border-right-width: 0; }
+
+      .rt th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: var(--pin);
+        min-width: var(--pin);
+        max-width: var(--pin);
+        background: var(--cell);
+        font-weight: 400;
+        text-align: left;
+        vertical-align: top;
+        border-right: max(var(--bw), 1px) solid color-mix(in oklch, var(--ink) 30%, transparent);
+        box-shadow: 0 0 0 var(--gap) var(--paper);
+      }
+      .qty:empty { display: none; }
+      .qty {
+        display: block;
+        font-family: var(--font-qty);
+        font-size: var(--qty-size);
+        font-weight: var(--qty-weight);
+        font-variant-numeric: tabular-nums lining-nums;
+        font-stretch: 75%;
+        white-space: nowrap;
+      }
+
+      .rt td {
+        min-width: min(calc(100cqi - var(--pin) - 3rem), 11rem);
+        background: color-mix(in oklch, var(--step-from), var(--step-to) calc(var(--i, 0) * 16%));
+        text-align: center;
+        text-wrap: balance;
+        scroll-snap-align: start;
+      }
+      .rt td[data-fill] {
+        min-width: 0;
+        background: var(--cell) var(--leader) left center / 7px 7px repeat-x;
+      }
+
+      .n {
+        display: grid;
+        place-items: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0 auto var(--space-2xs);
+        border-radius: 50%;
+        background: var(--n-bg);
+        color: var(--n-ink);
+        font-family: var(--font-qty);
+        font-size: var(--step--2);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums lining-nums;
+        text-decoration: none;
+      }
+      a.n { box-shadow: inset 0 0 0 1.5px currentColor; }
+      :root:has(#d-milk:checked) a.n { box-shadow: 0 0 0 2px var(--accent); }
+
+      @container (min-width: 44rem) {
+        .rt { width: 100%; }
+        .rt th { position: static; width: auto; min-width: 14rem; max-width: none; }
+        .rt th > span { display: grid; grid-template-columns: 4.25rem 1fr; gap: var(--space-xs); align-items: baseline; }
+        .qty, .qty:empty { display: block; text-align: right; }
+        .rt td { min-width: 0; }
+      }
+
+      .notes ol { list-style: none; display: grid; gap: var(--space-xs); max-width: 60ch; }
+      .notes li { display: grid; grid-template-columns: 1.5rem 1fr; gap: var(--space-s); align-items: baseline; }
+      .notes li:target { background: color-mix(in oklch, var(--accent) 16%, transparent); outline: var(--space-2xs) solid color-mix(in oklch, var(--accent) 16%, transparent); }
+      .notes .n { margin: 0; }
+      .prose { max-width: 60ch; }
+
+      @media print {
+        .switcher { display: none; }
+        .scroller { overflow: visible; }
+        .rt td { min-width: 0; }
+        .rt th { position: static; }
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper flow">
+    <form class="switcher">
+      <fieldset class="cluster">
+        <legend>Direction</legend>
+        <label><input type="radio" name="d" id="d-kitchen" checked> Test kitchen</label>
+        <label><input type="radio" name="d" id="d-milk"> Milk Street</label>
+        <label><input type="radio" name="d" id="d-bench"> Workbench</label>
+      </fieldset>
+    </form>
+
+    <header class="flow" style="--flow: var(--space-s)">
+      <h1>Chocolate Chip Cookies</h1>
+      <dl class="spec">
+        <div><dt>Makes</dt><dd>18 large cookies</dd></div>
+        <div><dt>Time</dt><dd>25 hours (30 minutes active)</dd></div>
+        <div><dt>Source</dt><dd>Adapted from <a href="https://www.nytimes.com/2008/07/09/dining/091crex.html">New York Times</a></dd></div>
+        <div class="wide"><dt>Equipment</dt><dd>stand mixer with paddle, 2 oz scoop, parchment</dd></div>
+      </dl>
+    </header>
+
+    <div class="scroller" role="region" aria-labelledby="table-title" tabindex="0">
+      <table class="rt">
+        <caption id="table-title" hidden>Chocolate Chip Cookies recipe table</caption>
+        <tbody>
+          <tr>
+            <th scope="row"><span><span class="qty">8.5 oz</span> cake flour</span></th>
+            <td id="step-1" rowspan="5" colspan="2" style="--i: 0"><span class="n">1</span>Sift together</td>
+            <td id="step-4" rowspan="10" style="--i: 2"><a class="n" href="#note-4" aria-label="Step 4, see note">4</a>Mix in dry until just combined</td>
+            <td id="step-5" rowspan="11" style="--i: 3"><a class="n" href="#note-5" aria-label="Step 5, see note">5</a>Fold in. Chill 24–36 hrs</td>
+            <td id="step-6" rowspan="11" style="--i: 4"><a class="n" href="#note-6" aria-label="Step 6, see note">6</a>Heat oven to 350°. Scoop 2 oz mounds</td>
+            <td id="step-7" rowspan="12" style="--i: 5" data-last><a class="n" href="#note-7" aria-label="Step 7, see note">7</a>Sprinkle. Bake 18–20 min</td>
+            <td id="step-8" rowspan="12" style="--i: 6" data-last><span class="n">8</span>Cool on sheet 10 min</td>
+          </tr>
+          <tr><th scope="row"><span><span class="qty">8.5 oz</span> bread flour</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1¼ t</span> baking soda</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1½ t</span> baking powder</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">1½ t</span> coarse salt</span></th></tr>
+          <tr>
+            <th scope="row"><span><span class="qty">2½ sticks</span> unsalted butter</span></th>
+            <td id="step-2" rowspan="3" style="--i: 0"><span class="n">2</span>Cream 5 min, until very light</td>
+            <td id="step-3" rowspan="5" style="--i: 1"><span class="n">3</span>Beat in eggs one at a time, then vanilla</td>
+          </tr>
+          <tr><th scope="row"><span><span class="qty">10 oz</span> light brown sugar</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">8 oz</span> granulated sugar</span></th></tr>
+          <tr><th scope="row"><span><span class="qty">2</span> large eggs</span></th><td data-fill></td></tr>
+          <tr><th scope="row"><span><span class="qty">2 t</span> vanilla extract</span></th><td data-fill></td></tr>
+          <tr><th scope="row"><span><span class="qty">1¼ lb</span> bittersweet chocolate</span></th><td data-fill colspan="3"></td></tr>
+          <tr><th scope="row"><span><span class="qty"></span> flaky sea salt</span></th><td data-fill colspan="5"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section class="notes flow" style="--flow: var(--space-xs)">
+      <h2>Step notes</h2>
+      <ol>
+        <li id="note-4"><a class="n" href="#step-4" aria-label="Back to step 4">4</a><span>5 to 10 seconds on low. Stop the moment the flour disappears.</span></li>
+        <li id="note-5"><a class="n" href="#step-5" aria-label="Back to step 5">5</a><span>Press plastic wrap against the dough. It keeps up to 72 hours.</span></li>
+        <li id="note-6"><a class="n" href="#step-6" aria-label="Back to step 6">6</a><span>6 to 9 mounds per sheet. Turn any chocolate that pokes up flat. It makes a better-looking cookie.</span></li>
+        <li id="note-7"><a class="n" href="#step-7" aria-label="Back to step 7">7</a><span>Surface cracked, edges golden, center still soft.</span></li>
+      </ol>
+    </section>
+
+    <section class="prose flow" style="--flow: var(--space-xs)">
+      <h2>Notes</h2>
+      <p>The original calls for 3.5 oz cookies. 2 oz yields far more, and they're still large with every texture you want.</p>
+    </section>
+  </div>
+</body>
+</html>
