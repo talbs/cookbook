@@ -1,0 +1,17 @@
+---
+layout: base.njk
+pagination:
+  data: collections
+  size: 1
+  alias: tag
+  # The same names as RESERVED_TAGS in lib/validate-recipe.js; YAML front matter can't import it.
+  filter: [all, recipes]
+permalink: /tags/{{ tag }}/
+eleventyComputed:
+  title: "{{ tag }}"
+  description: "Recipes tagged {{ tag }}."
+---
+<h1>{{ tag }}</h1>
+<p><a href="/tags/">All tags</a></p>
+{% set recipeList = collections[tag] | sortByTitle %}
+{% include "recipe-list.njk" %}

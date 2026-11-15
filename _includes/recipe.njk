@@ -1,0 +1,78 @@
+{% extends "base.njk" %}
+
+{% block head %}
+    <script type="application/ld+json">{{ jsonLd | safe }}</script>
+{% endblock %}
+
+{% block content %}
+<article>
+  <h1>{{ title }}</h1>
+  <p>{{ description }}</p>
+
+  {%- set hasSource = source and source.name %}
+  {%- set hasTags = tags and tags.length %}
+  {%- if servings or yield or timeMinutes != null or author or hasSource or course or cuisine or hasTags %}
+  {%- set separator = joiner(" · ") %}
+  <p>
+    {%- if servings %}{{ separator() }}Serves {{ servings }}{% endif %}
+    {%- if yield %}{{ separator() }}Makes {{ yield }}{% endif %}
+    {%- if prepMinutes != null %}{{ separator() }}Prep <time datetime="{{ prepMinutes | isoDuration }}">{{ prepMinutes | duration }}</time>{% endif %}
+    {%- if cookMinutes != null %}{{ separator() }}Cook <time datetime="{{ cookMinutes | isoDuration }}">{{ cookMinutes | duration }}</time>{% endif %}
+    {%- if timeMinutes != null %}{{ separator() }}<time datetime="{{ timeMinutes | isoDuration }}">{{ timeMinutes | duration }}</time>{% endif %}
+    {%- if author %}{{ separator() }}Recipe by {{ author }}{% endif %}
+    {%- if hasSource %}{{ separator() }}{{ "Adapted from" if adapted else "Source:" }} {% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% endif %}
+    {%- if course %}{{ separator() }}{{ course }}{% endif %}
+    {%- if cuisine %}{{ separator() }}{{ cuisine }}{% endif %}
+    {%- if hasTags %}{{ separator() }}{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}{% endif -%}
+  </p>
+  {%- endif %}
+
+  <h2>Ingredients</h2>
+  <ul>
+    {%- for ingredient in recipe.ingredients %}
+    <li>{{ ingredient.text }}</li>
+    {%- endfor %}
+  </ul>
+
+  {%- if recipe.cookware.length %}
+  <h2>Equipment</h2>
+  <ul>
+    {%- for item in recipe.cookware %}
+    <li>{{ item }}</li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+
+  {%- for section in recipe.sections %}
+  <section>
+    {%- if section.name %}
+    <h2>{{ section.name }}</h2>
+    {%- else %}
+    <h2>Directions</h2>
+    {%- endif %}
+    {%- for block in section.blocks %}
+    {%- if block.type == "steps" %}
+    <ol start="{{ block.steps[0].number }}">
+      {%- for step in block.steps %}
+      <li>
+        <p>{{ step.text }}</p>
+        {%- if step.ingredients.length %}
+        <ul>
+          {%- for ingredient in step.ingredients %}
+          <li>{{ ingredient }}</li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ol>
+    {%- else %}
+    <aside>
+      {{ block.html | safe }}
+    </aside>
+    {%- endif %}
+    {%- endfor %}
+  </section>
+  {%- endfor %}
+</article>
+{% endblock %}
