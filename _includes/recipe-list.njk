@@ -1,0 +1,11 @@
+<ul>
+  {%- for item in recipeList %}
+  <li>
+    <a href="{{ item.url }}">{{ item.data.title }}</a>
+    <p>{{ item.data.description }}</p>
+    {%- if item.data.tags and item.data.tags.length %}
+    <p>{% for tag in item.data.tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>

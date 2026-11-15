@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {%- set pageDescription = description or site.description %}
+    {%- if page.url == "/" %}
+    <title>{{ site.title }}</title>
+    {%- else %}
+    <title>{{ title }} · {{ site.title }}</title>
+    {%- endif %}
+    <meta name="description" content="{{ pageDescription }}">
+    <meta property="og:title" content="{{ title or site.title }}">
+    <meta property="og:description" content="{{ pageDescription }}">
+    <meta property="og:type" content="{{ 'article' if recipe else 'website' }}">
+    {%- block head %}{% endblock %}
+  </head>
+  <body>
+    <main>
+      {%- block content %}{{ content | safe }}{% endblock %}
+    </main>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+---
+layout: base.njk
+permalink: /tags/
+title: Tags
+description: Every tag in the cookbook.
+---
+<h1>Tags</h1>
+<ul>
+  {%- for tag in collections | tagNames %}
+  <li><a href="/tags/{{ tag }}/">{{ tag }}</a> ({{ collections[tag].length }})</li>
+  {%- endfor %}
+</ul>

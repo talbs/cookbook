@@ -1,0 +1,8 @@
+---
+layout: base.njk
+permalink: /
+---
+<h1>{{ site.title }}</h1>
+<p><a href="/tags/">Browse by tag</a></p>
+{% set recipeList = collections.recipes %}
+{% include "recipe-list.njk" %}
