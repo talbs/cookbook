@@ -4,6 +4,16 @@
     <script type="application/ld+json">{{ jsonLd | safe }}</script>
 {% endblock %}
 
+{% macro ingredientLine(ingredient, recipes) %}
+  {%- if ingredient.amount %}{{ ingredient.amount }} {% endif -%}
+  {%- if ingredient.linkedRecipeName -%}
+    <a href="{{ (recipes | recipeNamed(ingredient.linkedRecipeName)).url }}">{{ ingredient.name }}</a>
+  {%- else -%}
+    {{ ingredient.name }}
+  {%- endif -%}
+  {%- if ingredient.detail %} {{ ingredient.detail }}{% endif -%}
+{% endmacro %}
+
 {% block content %}
 <article>
   <h1>{{ title }}</h1>
@@ -27,10 +37,15 @@
   </p>
   {%- endif %}
 
+  {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
+  {%- if usedIn.length %}
+  <p>Used in: {% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {%- endif %}
+
   <h2>Ingredients</h2>
   <ul>
     {%- for ingredient in recipe.ingredients %}
-    <li>{{ ingredient.text }}</li>
+    <li>{{ ingredientLine(ingredient, collections.recipes) }}</li>
     {%- endfor %}
   </ul>
 
@@ -59,7 +74,7 @@
         {%- if step.ingredients.length %}
         <ul>
           {%- for ingredient in step.ingredients %}
-          <li>{{ ingredient }}</li>
+          <li>{{ ingredientLine(ingredient, collections.recipes) }}</li>
           {%- endfor %}
         </ul>
         {%- endif %}

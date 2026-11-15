@@ -15,6 +15,14 @@ function listTagNames(collections) {
     .sort();
 }
 
+function findRecipeNamed(recipes, recipeName) {
+  return recipes.find(item => item.fileSlug === recipeName);
+}
+
+function listRecipesThatUse(recipes, recipeName) {
+  return recipes.filter(item => item.data.linkedRecipeNames.includes(recipeName));
+}
+
 export default function (eleventyConfig) {
   eleventyConfig.setTemplateFormats(['njk', '11ty.js', 'cook']);
   eleventyConfig.ignores.add('.claude/**');
@@ -36,6 +44,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('duration', minutes => formatDuration(minutes));
   eleventyConfig.addFilter('sortByTitle', sortByTitle);
   eleventyConfig.addFilter('tagNames', listTagNames);
+  eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
+  eleventyConfig.addFilter('recipesThatUse', listRecipesThatUse);
 
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))
