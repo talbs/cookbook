@@ -139,6 +139,7 @@ The build names the file and says what's wrong. What each message means:
 | `"..." in step N is mentioned again: write @&...`     | Add `&` to the repeat                                                                                                               |
 | `linked recipe "..." doesn't exist`                   | The `@./name{}` mark points at a file that isn't in `recipes/`. Fix the spelling, or add the recipe                                 |
 | `linked recipe "..." must be written @./name{}`       | Drop the folder from the mark. Every recipe sits directly in `recipes/`                                                             |
+| `linked recipe "..." needs {} after it`               | `@./name` becomes `@./name{}`. Without the braces the mark prints as typed                                                          |
 | `linked recipe "..." is this recipe`                  | A recipe can't use itself. Point the mark at the other recipe                                                                       |
 | `no steps` / `no ingredients`                         | The recipe needs at least one step and one `@` ingredient                                                                           |
 
