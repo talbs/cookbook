@@ -62,6 +62,16 @@ test("every recipe page's JSON-LD parses and carries its ingredients and steps",
   }
 });
 
+test('a recipe that uses another recipe links to it, and the other one links back', () => {
+  const parentUrl = '/recipes/chocolate-pot-de-creme/';
+  const linkedUrl = '/recipes/oreo-cookie-crumble/';
+  const parentPage = builtPages.find(page => page.url === parentUrl);
+  const linkedPage = builtPages.find(page => page.url === linkedUrl);
+
+  assert.ok(parentPage.content.includes(`href="${linkedUrl}"`), `${parentUrl} has no link to ${linkedUrl}`);
+  assert.ok(linkedPage.content.includes(`href="${parentUrl}"`), `${linkedUrl} has no link to ${parentUrl}`);
+});
+
 test("every search.json entry has the documented shape", () => {
   const searchPage = builtPages.find((page) => page.url === "/search.json");
   assert.ok(searchPage, "no /search.json page");

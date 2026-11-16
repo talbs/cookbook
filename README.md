@@ -81,6 +81,7 @@ Cooklang also accepts other names for some keys (`serves`, `category`, `introduc
 - `#name{}` for cookware. This builds the Equipment list. Repeats work the same way: `#&bowl{}`.
 - Every timer gets a one-word name: `~bake{20%minutes}`, `~chill{24-36%hours}`. Timers know seconds, minutes, hours and days. Write longer waits as plain words ("at least 1 week").
 - A second unit or a count goes in the note: `@egg yolks{110%g}(4 oz, about 7)`.
+- `@./other-recipe{}` uses another recipe as an ingredient. Write the other recipe's file name. The page shows its title as a link, and the other recipe's page says where it's used. `@?./other-recipe{}` marks it optional.
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
 - Type `1/2`, not `½`.
 - Temperatures go in the step text as `350°F (175°C)`.
@@ -136,6 +137,10 @@ The build names the file and says what's wrong. What each message means:
 | `timer in step N has no name`                         | `~{5%minutes}` becomes `~rest{5%minutes}`                                                                                           |
 | `unit "..." in step N isn't one Cooklang knows`       | Use the spelling the message gives: `Tbsp` becomes `tbsp`, `T` becomes `tbsp`, `lbs` becomes `lb`                                   |
 | `"..." in step N is mentioned again: write @&...`     | Add `&` to the repeat                                                                                                               |
+| `linked recipe "..." doesn't exist`                   | The `@./name{}` mark points at a file that isn't in `recipes/`. Fix the spelling, or add the recipe                                 |
+| `linked recipe "..." must be written @./name{}`       | Drop the folder from the mark. Every recipe sits directly in `recipes/`                                                             |
+| `linked recipe "..." needs {} after it`               | `@./name` becomes `@./name{}`. Without the braces the mark prints as typed                                                          |
+| `linked recipe "..." is this recipe`                  | A recipe can't use itself. Point the mark at the other recipe                                                                       |
 | `no steps` / `no ingredients`                         | The recipe needs at least one step and one `@` ingredient                                                                           |
 
 Warnings print during the build but don't stop it.

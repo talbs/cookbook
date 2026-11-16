@@ -24,6 +24,10 @@ const malformedRecipes = [
   ['text-yield.cook', /yield "24 bars" must be an amount and unit/],
   ['time-and-prep.cook', /use time, or prep time and cook time, not both/],
   ['reserved-tag.cook', /tag "all" is reserved/],
+  ['missing-linked-recipe.cook', /linked recipe "no-such-recipe" doesn't exist/],
+  ['linked-recipe-in-subfolder.cook', /linked recipe "\.\/toppings\/good" must be written @\.\/good\{\}/],
+  ['linked-recipe-without-braces.cook', /linked recipe "\.\/good" needs \{\} after it: write @\.\/good\{\}/],
+  ['links-to-itself.cook', /linked recipe "links-to-itself" is this recipe/],
 ];
 
 test('a malformed recipe fails to load and names its file', () => {
