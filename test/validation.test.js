@@ -28,6 +28,10 @@ const malformedRecipes = [
   ['linked-recipe-in-subfolder.cook', /linked recipe "\.\/toppings\/good" must be written @\.\/good\{\}/],
   ['linked-recipe-without-braces.cook', /linked recipe "\.\/good" needs \{\} after it: write @\.\/good\{\}/],
   ['links-to-itself.cook', /linked recipe "links-to-itself" is this recipe/],
+  ['missing-course.cook', /missing course/],
+  ['bad-course.cook', /course "brunch" must be one of main, side, dessert, breakfast, drink, condiment/],
+  ['bad-difficulty.cook', /difficulty "medium" must be easy, or left off/],
+  ['wrong-season-word.cook', /tag "summer" isn't a season here: write early-summer, midsummer or late-summer/],
 ];
 
 test('a malformed recipe fails to load and names its file', () => {
