@@ -49,25 +49,25 @@ Beat the browned @&unsalted butter{} with @sugar{100%g}(1/2 cup) and @flour{240%
 
 These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), so a recipe written here works in other Cooklang apps too.
 
-| Key           | Required | What it holds                                                                                     |
-| ------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `title`       | yes      | The recipe's name                                                                                 |
-| `description` | yes      | One sentence. Shows in link previews and search results                                           |
-| `tags`        | no       | A list: `[cookies, baking]`. Lowercase words joined by hyphens. `all` and `recipes` are taken     |
-| `course`      | no       | `dessert`, `main`, `side`, `condiment`                                                            |
-| `cuisine`     | no       | `French`, `Mexican`                                                                               |
-| `author`      | no       | Who created the recipe                                                                            |
-| `source`      | no       | A name, a URL, or `{ name, url, author }`. `author` is who wrote the article or book              |
-| `adapted`     | no       | `true` shows "Adapted from" instead of "Source:". This one is ours, not Cooklang's                |
-| `servings`    | no       | How many it serves                                                                                |
-| `yield`       | no       | What it makes, as an amount and unit: `16%cookies`, or a list: `[500%ml, 350%g]`                  |
-| `time`        | no       | Total time: `1h30m`, `45m`. Use this, or `prep time` and `cook time`, not both                    |
-| `prep time`   | no       | Prep time only: `15m`                                                                             |
-| `cook time`   | no       | Cooking time only: `1h`. With prep time, the page shows both and the total goes to search engines |
-| `image`       | no       | An image URL, or a list of them. Search engines need one to show a recipe card                    |
-| `diet`        | no       | `vegetarian`, or a list. Not shown on the page yet                                                |
-| `difficulty`  | no       | `easy`. Not shown on the page yet                                                                 |
-| `locale`      | no       | `en_GB`. Not used yet                                                                             |
+| Key           | Required | What it holds                                                                                                                                                                                                                                                                        |
+| ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `title`       | yes      | The recipe's name                                                                                                                                                                                                                                                                    |
+| `description` | yes      | One sentence. Shows in link previews and search results                                                                                                                                                                                                                              |
+| `tags`        | no       | A list: `[cookies, baking]`, in lowercase words joined by hyphens. Three kinds: dish type (`pasta`), method or gear (`sheet-pan`) and season. The seasons are `spring`, `early-summer`, `midsummer`, `late-summer`, `fall`, `winter` and `year-round`. `all` and `recipes` are taken |
+| `course`      | yes      | One of `main`, `side`, `dessert`, `breakfast`, `drink`, `condiment`                                                                                                                                                                                                                  |
+| `cuisine`     | no       | `French`, `Mexican`                                                                                                                                                                                                                                                                  |
+| `author`      | no       | Who created the recipe                                                                                                                                                                                                                                                               |
+| `source`      | no       | A name, a URL, or `{ name, url, author }`. `author` is who wrote the article or book                                                                                                                                                                                                 |
+| `adapted`     | no       | `true` shows "Adapted from" instead of "Source:". This one is ours, not Cooklang's                                                                                                                                                                                                   |
+| `servings`    | no       | How many it serves                                                                                                                                                                                                                                                                   |
+| `yield`       | no       | What it makes, as an amount and unit: `16%cookies`, or a list: `[500%ml, 350%g]`                                                                                                                                                                                                     |
+| `time`        | no       | Total time: `1h30m`, `45m`. Use this, or `prep time` and `cook time`, not both                                                                                                                                                                                                       |
+| `prep time`   | no       | Prep time only: `15m`                                                                                                                                                                                                                                                                |
+| `cook time`   | no       | Cooking time only: `1h`. With prep time, the page shows both and the total goes to search engines                                                                                                                                                                                    |
+| `image`       | no       | An image URL, or a list of them. Search engines need one to show a recipe card                                                                                                                                                                                                       |
+| `diet`        | no       | `vegetarian`, or a list. Not shown on the page yet                                                                                                                                                                                                                                   |
+| `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Not shown on the page yet                                                                                                                             |
+| `locale`      | no       | `en_GB`. Not used yet                                                                                                                                                                                                                                                                |
 
 Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `duration`, `images`). The build asks for the names above so every page reads the same key. Any other key stops the build.
 
@@ -121,6 +121,10 @@ The build names the file and says what's wrong. What each message means:
 | `parser error: ...`                                   | A Cooklang mistake. The message quotes the line. Common ones: a repeat with a note, a `@&` with no earlier mention, a timer in cups |
 | `parser error: unreachable`                           | The parser crashed. Look for a mark with no amount, like `~rest` or `@{1%cup}`                                                      |
 | `missing title` / `missing description`               | Add the key. If both appear, the front matter's YAML is probably broken                                                             |
+| `missing course`                                      | Add `course:` with one of the six courses in the table above                                                                        |
+| `course "..." must be one of ...`                     | Pick one of the six the message lists: `brunch` becomes `breakfast`                                                                 |
+| `difficulty "..." must be easy, or left off`          | Write `difficulty: easy`, or delete the line                                                                                        |
+| `tag "..." isn't a season here`                       | Use the season the message gives: `autumn` becomes `fall`, `summer` becomes `early-summer`, `midsummer` or `late-summer`            |
 | `unknown front matter key "..."`                      | Fix the typo, or move it to a key from the table above                                                                              |
 | `write servings, not serves` (or another name)        | Rename the key to the one the message gives                                                                                         |
 | `time "..." isn't a time the parser understands`      | Write it like `1h30m`. The same goes for `prep time` and `cook time`                                                                |
