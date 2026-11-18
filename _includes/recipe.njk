@@ -96,11 +96,6 @@
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
       {%- if servings or yield or course or timeMinutes != null or prepMinutes != null or cookMinutes != null %}
-      <div class="recipe-icons" aria-hidden="true">
-        {%- for name in icons %}
-        <wa-icon name="{{ name }}" family="duotone" variant="regular"></wa-icon>
-        {%- endfor %}
-      </div>
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
         <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
@@ -259,7 +254,7 @@
   {%- endif %}
 
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
-  {%- if hasSource or author or usedIn.length or tags.length %}
+  {%- if hasSource or author or usedIn.length or tags.length or icons.length %}
   <footer class="attribution wa-caption-s">
     {%- if hasSource or author %}
     <dl class="credit">
@@ -281,6 +276,13 @@
       <div><dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd></div>
       {%- endif %}
     </dl>
+    {%- endif %}
+    {%- if icons.length %}
+    <div class="recipe-icons" aria-hidden="true">
+      {%- for name in icons %}
+      <wa-icon name="{{ name }}" family="duotone" variant="regular"></wa-icon>
+      {%- endfor %}
+    </div>
     {%- endif %}
   </footer>
   {%- endif %}
