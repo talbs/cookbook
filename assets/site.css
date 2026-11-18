@@ -862,6 +862,25 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-inline-start: 0;
 }
 
+/* A step or note reached from a timing row or a note marker is marked once, so the eye lands on it.
+   The mark is the switch's hatch, behind the text and a little beyond it. It rests invisible; the animations show it. */
+.step:target .step-text,
+.footnote:target {
+  position: relative;
+  isolation: isolate;
+}
+
+.step:target .step-text::before,
+.footnote:target::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--wa-space-s)) calc(-1 * var(--wa-space-m));
+  z-index: -1;
+  border-radius: var(--wa-border-radius-m);
+  background: var(--hatch);
+  opacity: 0;
+}
+
 /* Asides sit a size down from the steps. */
 .recipe-note {
   position: relative;
@@ -1160,10 +1179,21 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     animation: spring-from-press 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
   }
 
-  /* A step or note reached from a timing row or a note marker flashes once, so the eye lands on it. */
-  .step:target .step-text,
-  .footnote:target {
-    animation: arrival-flash 1.2s var(--wa-transition-easing);
+  /* The hatch sweeps across like a highlighter stroke, holds, then leaves on the page's own fade.
+     Two animations, so the fade has its own curve and is not the tail of the sweep. */
+  .step:target .step-text::before,
+  .footnote:target::before {
+    animation:
+      arrival-sweep 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      arrival-leave calc(2 * var(--wa-transition-slow)) var(--wa-transition-easing) 1.1s forwards;
+  }
+}
+
+/* Without motion the mark simply shows, then is gone. */
+@media (prefers-reduced-motion: reduce) {
+  .step:target .step-text::before,
+  .footnote:target::before {
+    animation: arrival-hold 1.7s step-end both;
   }
 }
 
@@ -1199,10 +1229,31 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-@keyframes arrival-flash {
+@keyframes arrival-sweep {
   from {
-    background-color: color-mix(in oklab, var(--ink) 8%, transparent);
-    box-shadow: 0 0 0 var(--wa-space-xs) color-mix(in oklab, var(--ink) 8%, transparent);
+    opacity: 0.55;
+    clip-path: inset(0 100% 0 0 round var(--wa-border-radius-m));
+  }
+
+  to {
+    opacity: 0.55;
+    clip-path: inset(0 0 0 0 round var(--wa-border-radius-m));
+  }
+}
+
+@keyframes arrival-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes arrival-hold {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 0;
   }
 }
 
