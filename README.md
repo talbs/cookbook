@@ -69,6 +69,7 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Not shown on the page yet                                                                                                                             |
 | `locale`      | no       | `en_GB`. Not used yet                                                                                                                                                                                                                                                                |
 | `why`         | no       | Why the method works, as a list of sentences. Shows under "Why it works" in Overview only                                                                                                                                                                                            |
+| `icons`       | yes      | Three Font Awesome icon names, most defining first: `[pepper-hot, garlic, bowl-hot]`. Shown on the dotted rule in the header. New names go in `lib/icon-names.js` first. This one is ours, not Cooklang's                                                                            |
 
 Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `duration`, `images`). The build asks for the names above so every page reads the same key. Any other key stops the build.
 
@@ -125,6 +126,10 @@ The build names the file and says what's wrong. What each message means:
 | `missing title` / `missing description`               | Add the key. If both appear, the front matter's YAML is probably broken                                                             |
 | `missing course`                                      | Add `course:` with one of the six courses in the table above                                                                        |
 | `course "..." must be one of ...`                     | Pick one of the six the message lists: `brunch` becomes `breakfast`                                                                 |
+| `missing icons`                                       | Add three names from `lib/icon-names.js`                                                                                            |
+| `icons must list exactly three names`                 | List three names                                                                                                                    |
+| `icon "..." isn't in lib/icon-names.js`               | Check the spelling, or add the name to `lib/icon-names.js` after checking it renders                                                |
+| `icon "..." is listed twice`                          | Pick a different third icon                                                                                                         |
 | `difficulty "..." must be easy, or left off`          | Write `difficulty: easy`, or delete the line                                                                                        |
 | `tag "..." isn't a season here`                       | Use the season the message gives: `autumn` becomes `fall`, `summer` becomes `early-summer`, `midsummer` or `late-summer`            |
 | `unknown front matter key "..."`                      | Fix the typo, or move it to a key from the table above                                                                              |

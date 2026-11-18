@@ -141,6 +141,8 @@ a:focus-visible {
   max-inline-size: 75rem;
   margin-inline: auto;
   padding: var(--wa-space-xl) var(--page-gutter) var(--wa-space-2xl);
+  --rule-gap: 1.625rem;
+  --icon-size: var(--wa-font-size-l);
 }
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the Geist fallback. */
@@ -186,7 +188,6 @@ a:focus-visible {
 }
 
 /* A divider band along the top edge of its element. */
-.facts::before,
 .attribution::before {
   content: "";
   position: absolute;
@@ -198,10 +199,98 @@ a:focus-visible {
 
 .facts {
   --min-column-size: 7.5rem;
-  position: relative;
-  padding-block-start: calc(var(--band) + var(--wa-space-m));
   font-size: var(--list-size);
   line-height: var(--wa-line-height-condensed);
+}
+
+/* The icons sit on the dotted band above the facts, with paper behind them so the dots stop short.
+   Below 64rem the band is drawn here, as wide as the intro. At 64rem+ the band is .recipe::after; its mask puts it on a layer above the icons, hence the z-index. */
+.recipe-intro {
+  container-type: inline-size;
+}
+
+.recipe-icons {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 0.5em;
+  align-self: center;
+  margin-block: calc(var(--rule-gap) - var(--wa-space-l));
+  padding-inline: 0.75em;
+  font-size: var(--icon-size);
+  color: var(--ink);
+}
+
+.recipe-icons::before,
+.recipe-icons::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+}
+
+.recipe-icons::before {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 100cqi;
+  block-size: var(--band);
+  translate: -50% -50%;
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+.recipe-icons::after {
+  inset: 0;
+  background: var(--paper);
+}
+
+/* Cook hides the description, so the icons follow the title, whose gap is the header's smaller one. */
+[data-mode="cook"] .recipe-icons {
+  margin-block-start: calc(var(--rule-gap) - var(--wa-space-m));
+}
+
+/* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set. */
+.recipe-icons wa-icon {
+  --secondary-color: var(--ink);
+  --secondary-opacity: 0.22;
+}
+
+/* Hover-only, so icons tapped on a phone don't stay red. */
+@media (hover: hover) {
+  .recipe-icons:hover wa-icon {
+    --secondary-color: var(--accent);
+    --secondary-opacity: 0.55;
+  }
+}
+
+/* The curve overshoots and settles, which reads as a little bounce. */
+@media (prefers-reduced-motion: no-preference) {
+  .recipe-icons wa-icon {
+    transition:
+      scale 420ms cubic-bezier(0.34, 1.8, 0.64, 1),
+      rotate 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+
+  .recipe-icons wa-icon:nth-child(2) {
+    transition-delay: 45ms;
+  }
+
+  .recipe-icons wa-icon:nth-child(3) {
+    transition-delay: 90ms;
+  }
+
+  @media (hover: hover) {
+    .recipe-icons:hover wa-icon {
+      scale: 1.2;
+    }
+
+    .recipe-icons:hover wa-icon:nth-child(odd) {
+      rotate: -8deg;
+    }
+
+    .recipe-icons:hover wa-icon:nth-child(even) {
+      rotate: 8deg;
+    }
+  }
 }
 
 .fraction {
@@ -1054,6 +1143,13 @@ wa-checkbox:not(:state(checked)) .box-checked {
     line-height: 1.35;
   }
 
+  /* The band, facts and switch drop by the same amount, so the icons centred on the band clear the line above by --rule-gap,
+     and the facts start --rule-gap below the icons. */
+  .recipe {
+    --band-drop: calc(var(--rule-gap) - var(--wa-space-l) - var(--band) / 2 + var(--icon-size) / 2);
+    --under-band: calc(var(--rule-gap) + var(--band) / 2 + var(--icon-size) / 2);
+  }
+
   /* One row under the description, shared with the switch. */
   .facts {
     grid-column: 1 / 3;
@@ -1062,21 +1158,31 @@ wa-checkbox:not(:state(checked)) .box-checked {
     grid-auto-flow: column;
     grid-auto-columns: max-content;
     column-gap: var(--wa-space-2xl);
+    margin-block-start: var(--band-drop);
+    padding-block-start: var(--under-band);
   }
 
-  /* The band runs the full width here, over the facts and the switch. The facts' own band would stop short of the switch. */
-  .facts::before {
-    content: none;
-  }
-
+  /* The band runs the full width here, over the facts and the switch, so the icons sit on it instead of drawing their own. */
   .recipe::after {
     content: "";
     grid-column: 1 / -1;
     grid-row: 3;
     align-self: start;
+    margin-block-start: var(--band-drop);
     block-size: var(--band);
     background: var(--divider-ink);
     mask: var(--divider);
+  }
+
+  .recipe-icons {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: center;
+    align-self: start;
+  }
+
+  .recipe-icons::before {
+    content: none;
   }
 
   /* At the end of the facts row, directly above the columns it switches. The top padding matches the facts' so the two line up under the band. */
@@ -1084,13 +1190,18 @@ wa-checkbox:not(:state(checked)) .box-checked {
     grid-column: 3;
     grid-row: 3;
     align-self: end;
-    padding: calc(var(--band) + var(--wa-space-m)) 0 0;
+    margin-block-start: var(--band-drop);
+    padding: var(--under-band) 0 0;
   }
 
   /* Cook hides the description, so the facts row moves up into its row; otherwise the steps fill row 2 and push the facts below them. */
-  [data-mode="cook"] :is(.facts, .mode-rest),
+  [data-mode="cook"] :is(.facts, .mode-rest, .recipe-icons),
   [data-mode="cook"] .recipe::after {
     grid-row: 2;
+  }
+
+  [data-mode="cook"] .recipe-icons {
+    margin-block-start: calc(var(--rule-gap) - var(--wa-space-l));
   }
 }
 

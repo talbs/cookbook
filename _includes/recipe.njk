@@ -96,6 +96,11 @@
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
       {%- if servings or yield or course or timeMinutes != null or prepMinutes != null or cookMinutes != null %}
+      <div class="recipe-icons" aria-hidden="true">
+        {%- for name in icons %}
+        <wa-icon name="{{ name }}" family="duotone" variant="regular"></wa-icon>
+        {%- endfor %}
+      </div>
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
         <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>

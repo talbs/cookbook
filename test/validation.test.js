@@ -32,6 +32,11 @@ const malformedRecipes = [
   ['bad-course.cook', /course "brunch" must be one of main, side, dessert, breakfast, drink, condiment/],
   ['bad-difficulty.cook', /difficulty "medium" must be easy, or left off/],
   ['wrong-season-word.cook', /tag "summer" isn't a season here: write early-summer, midsummer or late-summer/],
+  ['too-few-icons.cook', /icons must list exactly three names/],
+  ['icons-text.cook', /icons must list exactly three names/],
+  ['unknown-icon.cook', /icon "galric" isn't in lib\/icon-names\.js/],
+  ['repeated-icon.cook', /icon "garlic" is listed twice/],
+  ['missing-icons.cook', /missing icons/],
 ];
 
 test('a malformed recipe fails to load and names its file', () => {
