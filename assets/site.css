@@ -140,7 +140,7 @@ a:focus-visible {
   box-sizing: border-box;
   max-inline-size: 75rem;
   margin-inline: auto;
-  padding: var(--wa-space-xl) var(--page-gutter) var(--wa-space-2xl);
+  padding: var(--wa-space-3xl) var(--page-gutter) var(--wa-space-4xl);
   --rule-gap: 1.625rem;
   --icon-size: var(--wa-font-size-l);
 }
@@ -1094,7 +1094,7 @@ wa-checkbox:not(:state(checked)) .box-checked {
 /* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
 @media (min-width: 64rem) {
   .recipe {
-    padding: var(--wa-space-3xl) var(--page-gutter) var(--wa-space-3xl);
+    padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
   }
 
   :root {
