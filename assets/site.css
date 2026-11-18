@@ -141,8 +141,7 @@ a:focus-visible {
   max-inline-size: 75rem;
   margin-inline: auto;
   padding: var(--wa-space-3xl) var(--page-gutter) var(--wa-space-4xl);
-  --rule-gap: 1.625rem;
-  --icon-size: var(--wa-font-size-m);
+  --rule-gap: 2.25rem;
 }
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the Geist fallback. */
@@ -203,33 +202,45 @@ a:focus-visible {
   line-height: var(--wa-line-height-condensed);
 }
 
-/* At the end of the footer's dotted band, with paper behind them so the dots stop short. */
-.recipe-icons {
-  position: absolute;
-  inset-block-start: calc(var(--band) / 2);
-  inset-inline-end: 0;
-  translate: 0 -50%;
+/* The header's divider: two runs of dots with the recipe's icons between them, like a printer's ornament.
+   Each run is its own box, so the mask fits whole dots into it and none is cut at the gap.
+   The margins bring the dots' centre to --rule-gap from the text above and below, past the stack's own gap. */
+.header-rule {
   display: flex;
-  gap: 0.5em;
-  padding-inline-start: 0.75em;
-  font-size: var(--icon-size);
-  color: var(--ink);
-  background: var(--paper);
+  align-items: center;
+  block-size: var(--band);
+  margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--wa-space-l));
 }
 
-/* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set. */
+.rule-run {
+  flex: 1;
+  block-size: var(--band);
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+/* 12px between icons and 18px to the dots: two and three of the divider's 6px dot pitch. */
+.recipe-icons {
+  display: flex;
+  gap: 12px;
+  margin-inline: 18px;
+  font-size: 1.125rem;
+}
+
+/* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
+   At rest only the line shows, in the divider's colour. */
 .recipe-icons wa-icon {
   --primary-color: var(--divider-ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0;
 }
 
-/* Hover-only, so icons tapped on a phone don't stay red. */
+/* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
+   because a solid shape reads darker than a row of dots at the same value. */
 @media (hover: hover) {
   .recipe-icons:hover wa-icon {
     --primary-color: var(--ink);
-    --secondary-color: var(--accent);
-    --secondary-opacity: 0.55;
+    --secondary-opacity: 0.16;
   }
 }
 
@@ -533,6 +544,12 @@ wa-checkbox:not(:state(checked)) .box-checked {
   initial-value: transparent;
 }
 
+@property --primary-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: currentColor;
+}
+
 @property --secondary-opacity {
   syntax: "<number>";
   inherits: true;
@@ -556,10 +573,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   z-index: 1;
 }
 
-/* The name keeps its line up to 62% of the row, and the note wraps in what's left, so an amount never parts from its name.
-   The name gives way when the note's longest unbreakable run needs the room, so a note never runs off the row. */
+/* The name keeps its line up to 62% of the row, and the note wraps in what's left, so an amount never parts from its name. */
 .ingredient > :first-child {
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   max-inline-size: 62%;
 }
 
@@ -961,9 +977,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .attribution {
   display: grid;
   gap: var(--wa-space-m);
-  margin-block-start: var(--wa-space-2xl);
+  margin-block-start: calc(var(--wa-space-2xl) + 0.625rem);
   position: relative;
-  padding-block-start: calc(var(--band) + var(--wa-space-m));
+  padding-block-start: calc(var(--band) + var(--wa-space-m) + 0.625rem);
 }
 
 /* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
@@ -997,34 +1013,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* Cook hides the planning column, so its "Before you start" notes get their own section ahead of the method. */
 [data-mode="overview"] .before-start {
   display: none;
-}
-
-/* Cook mode is for doing: the description and footer icons stay in Overview. The facts stay, since servings and times matter mid-cook. */
-[data-mode="cook"] :is(.description, .recipe-icons) {
-  display: none;
-}
-
-/* Below 64rem the band rides on the facts, its dots --rule-gap from the text above and from the facts.
-   Cook hides the description, so the gap above is the header's, not the intro's. At 64rem+ .recipe::after draws the band. */
-@media (width < 64rem) {
-  .facts {
-    position: relative;
-    margin-block-start: calc(var(--rule-gap) - var(--wa-space-l) - var(--band) / 2);
-    padding-block-start: calc(var(--rule-gap) + var(--band) / 2);
-  }
-
-  .facts::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    block-size: var(--band);
-    background: var(--divider-ink);
-    mask: var(--divider);
-  }
-
-  [data-mode="cook"] .facts {
-    margin-block-start: calc(var(--rule-gap) - var(--wa-space-m) - var(--band) / 2);
-  }
 }
 
 /* Cook's step text is 22px, so section names step up to stay above it. */
@@ -1251,49 +1239,27 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     line-height: 1.35;
   }
 
-  /* The band, facts and switch drop by the same amount, so the dots sit --rule-gap from the line above and from the facts. */
-  .recipe {
-    --band-drop: calc(var(--rule-gap) - var(--wa-space-l) - var(--band) / 2);
-    --under-band: calc(var(--rule-gap) + var(--band) / 2);
+  .header-rule {
+    grid-column: 1 / -1;
+    grid-row: 3;
   }
 
   /* One row under the description, shared with the switch. */
   .facts {
     grid-column: 1 / 3;
-    grid-row: 3;
+    grid-row: 4;
     grid-template-columns: none;
     grid-auto-flow: column;
     grid-auto-columns: max-content;
     column-gap: var(--wa-space-2xl);
-    margin-block-start: var(--band-drop);
-    padding-block-start: var(--under-band);
   }
 
-  /* The band runs the full width here, over the facts and the switch. */
-  .recipe::after {
-    content: "";
-    grid-column: 1 / -1;
-    grid-row: 3;
-    align-self: start;
-    margin-block-start: var(--band-drop);
-    block-size: var(--band);
-    background: var(--divider-ink);
-    mask: var(--divider);
-  }
-
-  /* At the end of the facts row, directly above the columns it switches. The top padding matches the facts' so the two line up under the band. */
+  /* At the end of the facts row, directly above the columns it switches. */
   .mode-rest {
     grid-column: 3;
-    grid-row: 3;
+    grid-row: 4;
     align-self: end;
-    margin-block-start: var(--band-drop);
-    padding: var(--under-band) 0 0;
-  }
-
-  /* Cook hides the description, so the facts row moves up into its row; otherwise the steps fill row 2 and push the facts below them. */
-  [data-mode="cook"] :is(.facts, .mode-rest),
-  [data-mode="cook"] .recipe::after {
-    grid-row: 2;
+    padding: 0;
   }
 }
 
@@ -1322,7 +1288,7 @@ wa-page[view="desktop"] {
   .attribution {
     grid-template-columns: subgrid;
     column-gap: var(--column-gap);
-    margin-block-start: var(--wa-space-l);
+    margin-block-start: calc(var(--wa-space-l) + 0.625rem);
   }
 
   .credit {

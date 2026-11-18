@@ -64,7 +64,7 @@
           {%- if ingredient.amount %}<span class="amount wa-font-weight-bold">{{ ingredient.amount | typeset | safe }}</span> {% endif -%}
           <span class="name">{{ ingredientName(ingredient, recipes) | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span>
         </span></span>
-        {%- if note | trim | length %} <span class="note wa-text-end"><span class="strike">{{ note | trim | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span></span>{% endif -%}
+        {%- if note | trim | length %} <span class="note wa-text-end"><span class="strike">{{ note | trim | keepHyphenatedWordsWhole | safe }}</span></span>{% endif -%}
       </span></wa-checkbox></li>
 {%- endmacro %}
 
@@ -95,6 +95,17 @@
     <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | safe }}</h1>
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
+      <div class="header-rule" aria-hidden="true">
+        <span class="rule-run"></span>
+        {%- if icons.length %}
+        <div class="recipe-icons">
+          {%- for name in icons %}
+          <wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>
+          {%- endfor %}
+        </div>
+        <span class="rule-run"></span>
+        {%- endif %}
+      </div>
       {%- if servings or yield or course or totalMinutes != null %}
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
@@ -252,7 +263,7 @@
   {%- endif %}
 
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
-  {%- if hasSource or author or usedIn.length or tags.length or icons.length %}
+  {%- if hasSource or author or usedIn.length or tags.length %}
   <footer class="attribution wa-caption-s">
     {%- if hasSource or author %}
     <dl class="credit">
@@ -274,13 +285,6 @@
       <div><dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd></div>
       {%- endif %}
     </dl>
-    {%- endif %}
-    {%- if icons.length %}
-    <div class="recipe-icons" aria-hidden="true">
-      {%- for name in icons %}
-      <wa-icon name="{{ name }}" family="duotone" variant="regular"></wa-icon>
-      {%- endfor %}
-    </div>
     {%- endif %}
   </footer>
   {%- endif %}
