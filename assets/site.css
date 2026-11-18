@@ -186,30 +186,29 @@ a:focus-visible {
   line-height: 1.45;
 }
 
-/* A divider band along the top edge of its element. */
-.attribution::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  block-size: var(--band);
-  background: var(--divider-ink);
-  mask: var(--divider);
-}
-
 .facts {
   --min-column-size: 7.5rem;
   font-size: var(--list-size);
   line-height: var(--wa-line-height-condensed);
 }
 
-/* The header's divider: two runs of dots with the recipe's icons between them, like a printer's ornament.
-   Each run is its own box, so the mask fits whole dots into it and none is cut at the gap.
-   The margins bring the dots' centre to --rule-gap from the text above and below, past the stack's own gap. */
-.header-rule {
+/* The dotted dividers. The footer's has the recipe's icons in its middle, like a printer's ornament:
+   two runs of dots, each its own box, so the mask fits whole dots into it and none is cut at the gap. */
+.header-rule,
+.footer-rule {
   display: flex;
   align-items: center;
   block-size: var(--band);
+}
+
+/* The margins bring the dots' centre to --rule-gap from the text above and below, past the stack's own gap. */
+.header-rule {
   margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--wa-space-l));
+}
+
+.footer-rule {
+  grid-column: 1 / -1;
+  margin-block-end: 0.625rem;
 }
 
 .rule-run {
@@ -624,7 +623,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* Each step up the column's spacing is clearly bigger than the last: 8px rows, 24px ingredient groups, then sections
    at this margin plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
-/* A section's name over its ingredients, in the Timing block's label style. */
 .needs-list > .timing-section {
   margin: var(--wa-space-m) 0 0;
 }
@@ -701,7 +699,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   position: relative;
 }
 
-/* A timing row has the ingredient row's shape: the figure and name at the left, the step at the right in the note's style. */
 .timing-row {
   display: flex;
   justify-content: space-between;
@@ -997,8 +994,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   display: grid;
   gap: var(--wa-space-m);
   margin-block-start: calc(var(--wa-space-2xl) + 0.625rem);
-  position: relative;
-  padding-block-start: calc(var(--band) + var(--wa-space-m) + 0.625rem);
 }
 
 /* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
@@ -1189,7 +1184,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-/* Without motion the mark simply shows, then is gone. */
 @media (prefers-reduced-motion: reduce) {
   .step:target .step-text::before,
   .footnote:target::before {
