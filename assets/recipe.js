@@ -87,6 +87,9 @@ for (const button of modeButtons) {
   });
 }
 
+// iOS Safari only applies :active while a touch listener exists, and the checkboxes and switch squish on :active.
+document.addEventListener('touchstart', () => {}, { passive: true });
+
 for (const checkbox of checkboxes) {
   checkbox.addEventListener('change', () => {
     checkbox.classList.add('is-touched');

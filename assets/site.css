@@ -547,6 +547,24 @@ wa-checkbox:not(:state(checked)) .box-checked {
   display: none;
 }
 
+/* Registered so the tick's red can fade back to ink; unregistered custom properties jump. wa-icon still sets both on :host. */
+@property --secondary-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --secondary-opacity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.4;
+}
+
+/* A colour fade moves nothing, so it stays under reduced motion. */
+wa-checkbox.is-touched:state(checked) .box-checked {
+  animation: tick-flash 900ms ease-out;
+}
+
 /* The name keeps its line up to 60% of the row, and the note wraps in what's left, so an amount never parts from its name. */
 .ingredient > :first-child {
   flex: 0 0 auto;
@@ -998,8 +1016,17 @@ wa-checkbox:not(:state(checked)) .box-checked {
     scroll-behavior: smooth;
   }
 
+  /* The icons' curve would fling the hatch past the border; this one overshoots about 3px, inside the switch's padding. */
   .mode-switch::before {
-    transition: translate var(--wa-transition-normal) var(--wa-transition-easing);
+    transition: translate 420ms cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+
+  .mode-switch {
+    transition: scale 120ms ease-out;
+  }
+
+  .mode-switch:active {
+    scale: 0.97;
   }
 
   .mode-bar {
@@ -1052,9 +1079,22 @@ wa-checkbox:not(:state(checked)) .box-checked {
   }
 
   /* Only after a tap, so ticks restored on page load don't all pop at once. */
-  wa-checkbox.is-touched:state(checked) .box-checked,
+  .checklist :is(.box-unchecked, .box-checked) {
+    transition: scale 120ms ease-out;
+  }
+
+  .checklist wa-checkbox:active :is(.box-unchecked, .box-checked) {
+    scale: 0.8;
+  }
+
+  wa-checkbox.is-touched:state(checked) .box-checked {
+    animation:
+      spring-from-press 420ms cubic-bezier(0.34, 1.8, 0.64, 1),
+      tick-flash 900ms ease-out;
+  }
+
   wa-checkbox.is-touched:not(:state(checked)) .box-unchecked {
-    animation: icon-in var(--wa-transition-normal) var(--wa-transition-easing);
+    animation: spring-from-press 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
   }
 
   /* A step or note reached from a timing row or a note marker flashes once, so the eye lands on it. */
@@ -1077,10 +1117,17 @@ wa-checkbox:not(:state(checked)) .box-checked {
   }
 }
 
-@keyframes icon-in {
+@keyframes spring-from-press {
   from {
-    opacity: 0;
-    scale: 0.6;
+    scale: 0.8;
+  }
+}
+
+@keyframes tick-flash {
+  0%,
+  30% {
+    --secondary-color: var(--accent);
+    --secondary-opacity: 0.55;
   }
 }
 
