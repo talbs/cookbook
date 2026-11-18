@@ -1,0 +1,1181 @@
+@font-face {
+  font-family: "Free Lunch";
+  src: url("/assets/fonts/FreeLunch-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Near-neutral greys with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool greys and white.
+   The theme-color metas in recipe.njk repeat both papers. */
+:root {
+  --wa-color-neutral-95: #f2f1f0;
+  --wa-color-neutral-90: #e6e5e3;
+  --wa-color-neutral-80: #cbcac7;
+  --wa-color-neutral-70: #b0afac;
+  --wa-color-neutral-60: #979592;
+  --wa-color-neutral-50: #777673;
+  --wa-color-neutral-40: #5b5956;
+  --wa-color-neutral-30: #474643;
+  --wa-color-neutral-20: #343331;
+  --wa-color-neutral-10: #1f1e1c;
+  --wa-color-neutral-05: #131211;
+  /* WA's border-loud (neutral-60 light, neutral-40 dark) misses a control edge's 3:1 on these papers; neutral-50 clears it on both. */
+  --wa-color-neutral-border-loud: var(--wa-color-neutral-50);
+  --wa-color-surface-default: #fefefc;
+  --accent: #c8361c;
+  /* The accent two steps down in lightness, same hue, for timers named in the steps. */
+  --timer-ink: #9e1800;
+}
+
+/* site.css is unlayered, so the light surface above would beat WA's layered dark one; dark sets its own, a step above neutral-05. */
+.wa-dark {
+  --wa-color-surface-default: #1c1a19;
+  --wa-color-text-normal: #e8e7e5;
+  --accent: #ff9079;
+  --timer-ink: #e17460;
+}
+
+:root {
+  --wa-font-family-body: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --wa-font-family-heading: "Free Lunch", "Geist", sans-serif;
+  --wa-font-family-longform: "Ancizar Serif", ui-serif, serif;
+  --wa-color-text-link: var(--wa-color-text-normal);
+  --wa-color-focus: var(--wa-color-text-normal);
+  --wa-color-brand-fill-loud: var(--wa-color-text-normal);
+  --wa-color-brand-on-loud: var(--wa-color-surface-default);
+  --ink: var(--wa-color-text-normal);
+  --paper: var(--wa-color-surface-default);
+  /* Fine 45-degree hatch from the recipe-table texture library, drawn in the ink at 22%; the dividers share this ink. */
+  --mark: color-mix(in oklab, var(--ink) 22%, transparent);
+  --hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
+  --band: 0.5rem;
+  /* Leader dots from the same library, used as a mask so they take the ink colour in either theme. */
+  --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center / 6px 6px round;
+  --divider-ink: var(--mark);
+  --control-edge: var(--wa-color-neutral-border-loud);
+  /* neutral-40 here, neutral-60 in dark: neutral-50 falls short of 4.5:1 for text on either paper. */
+  --note-ink: var(--wa-color-text-quiet);
+  --list-size: var(--wa-font-size-m);
+  --note-size: var(--wa-font-size-s);
+  /* Ancizar's small x-height reads a size down next to Geist, so steps run at 20px. */
+  --step-size: var(--wa-font-size-l);
+  --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
+  --page-gutter: 1.25rem;
+  --section-space: var(--wa-space-l);
+  --bar-control-height: 2rem;
+  /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
+  --bar-switch-height: calc(var(--bar-control-height) + 8px);
+  --shortcut-size: 2.5rem;
+  /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
+     Jump targets and the sticky step ingredients both clear it from this one value. */
+  --bar-height: calc(2 * var(--wa-space-m) + var(--shortcut-size) + var(--wa-space-s) + var(--bar-switch-height) + 1px);
+  scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-m));
+}
+
+/* Text links match Tiny Tells: a solid 1px underline in the text colour, set 0.2em below, instead of WA's dotted 70% one. */
+a {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: color-mix(in oklab, currentColor 34%, transparent);
+  text-decoration-thickness: 1px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.35em;
+}
+
+/* The line turns the accent and thickens, with a 2px floor so the change still shows on small text; the words stay ink. */
+a:hover {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: max(2px, 0.12em);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a {
+    transition:
+      text-decoration-color var(--wa-transition-normal) var(--wa-transition-easing),
+      text-decoration-thickness var(--wa-transition-normal) var(--wa-transition-easing);
+  }
+}
+
+/* Selection inverts to ink and paper, the same pair the tooltips use, instead of the browser's blue. */
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:root {
+  scrollbar-color: color-mix(in oklab, var(--ink) 35%, transparent) transparent;
+  /* Phones flash a grey box on tap; links and buttons here already show their own pressed state. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ink on paper in the list face, like the rest of the page; labels are a word or two, so they never wrap. */
+wa-tooltip {
+  --max-width: none;
+  --wa-tooltip-background-color: var(--ink);
+  --wa-tooltip-content-color: var(--paper);
+  --wa-tooltip-border-radius: var(--wa-border-radius-s);
+  --wa-tooltip-font-size: var(--wa-font-size-xs);
+  font-family: var(--wa-font-family-body);
+}
+
+wa-tooltip::part(body) {
+  white-space: nowrap;
+}
+
+a:focus-visible {
+  border-radius: var(--wa-form-control-border-radius);
+}
+
+/* wa-page pads its main slot; the recipe sets its own gutters so the sticky bar can line up with them. */
+.recipe-page > main {
+  padding: 0;
+}
+
+.recipe {
+  box-sizing: border-box;
+  max-inline-size: 75rem;
+  margin-inline: auto;
+  padding: var(--wa-space-xl) var(--page-gutter) var(--wa-space-2xl);
+}
+
+/* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the Geist fallback. */
+.recipe-head h1 {
+  font-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
+  font-weight: 800;
+  font-synthesis: none;
+  line-height: 0.92;
+  text-transform: uppercase;
+  text-box: trim-both cap alphabetic;
+}
+
+/* Titles past about 28 characters step down a size at every width, so they don't run to four or five lines. */
+.recipe-head h1.is-long {
+  font-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
+}
+
+/* Past 50 characters a third step down keeps the title to about three lines. */
+.recipe-head h1.is-longer {
+  font-size: clamp(2.25rem, 1.25rem + 3vw, 3.25rem);
+}
+
+/* Below the desktop grid a hyphenated compound in display type can be as wide as the column, so it may break at its hyphen there. */
+@media (width < 64rem) {
+  .recipe-head h1 .wa-text-nowrap {
+    white-space: normal;
+  }
+}
+
+.description,
+.step-text,
+.recipe-note {
+  font-family: var(--wa-font-family-longform);
+  font-size: var(--step-size);
+  line-height: 1.5;
+  max-inline-size: 36em;
+}
+
+/* One step above the instructions, so the intro leads without outweighing them. */
+.description {
+  font-size: 1.375rem;
+  line-height: 1.45;
+}
+
+/* A divider band along the top edge of its element. */
+.facts::before,
+.attribution::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  block-size: var(--band);
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+.facts {
+  --min-column-size: 7.5rem;
+  position: relative;
+  padding-block-start: calc(var(--band) + var(--wa-space-m));
+  font-size: var(--list-size);
+  line-height: var(--wa-line-height-condensed);
+}
+
+.fraction {
+  font-variant-numeric: diagonal-fractions;
+}
+
+/* The resting switch: under the facts on phones, at the end of the facts row on wide screens.
+   36px buttons plus the switch's padding and border make it 44px, a full touch target. */
+.mode-rest {
+  --wa-form-control-height: 2.25rem;
+  padding-block: var(--wa-space-m);
+}
+
+/* wa-page's header slot is sticky, but this bar sits outside the flow, so the slot is zero tall and the page starts with the title.
+   Once the resting switch scrolls away, the bar slides down from above the viewport. */
+.mode-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: normal;
+  gap: var(--wa-space-s);
+  padding: var(--wa-space-m) var(--page-gutter);
+  border-block-end: 1px solid var(--wa-color-surface-border);
+  background: var(--paper);
+  /* A shorter switch than the one resting in the page, so it has room inside the bar. */
+  --wa-form-control-height: var(--bar-control-height);
+  translate: 0 -100%;
+  visibility: hidden;
+}
+
+.mode-bar.is-pinned {
+  translate: 0 0;
+  visibility: visible;
+}
+
+.mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border: 1px solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+  /* Inner radius is the outer one minus the 3px padding and 1px border, so the corners stay concentric. */
+  --wa-form-control-border-radius: calc(var(--wa-border-radius-m) - 4px);
+}
+
+.pinned-title {
+  min-inline-size: 0;
+  margin: 0;
+  font-family: var(--wa-font-family-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-synthesis: none;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
+.shortcuts {
+  margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
+}
+
+.shortcut {
+  display: grid;
+  place-items: center;
+  inline-size: var(--shortcut-size);
+  block-size: var(--shortcut-size);
+  color: var(--note-ink);
+  text-decoration: none;
+}
+
+.shortcut:hover {
+  color: var(--accent);
+}
+
+[data-mode="cook"] .shortcut-ingredients {
+  display: none;
+}
+
+.mode-switch button {
+  position: relative;
+  grid-row: 1;
+  color: var(--ink);
+}
+
+.mode-switch [data-mode="overview"] {
+  grid-column: 1;
+}
+
+.mode-switch [data-mode="cook"] {
+  grid-column: 2;
+}
+
+.mode-switch button[aria-pressed="true"] {
+  font-weight: var(--wa-font-weight-bold);
+}
+
+/* A grey hover fill read as a second selected state next to the hatch, so hover only colours the label. */
+.mode-switch button[aria-pressed="false"] {
+  color: var(--note-ink);
+}
+
+.mode-switch button:hover {
+  background-color: transparent;
+}
+
+.mode-switch button[aria-pressed="false"]:hover {
+  color: var(--accent);
+}
+
+/* One hatched block behind both buttons, so the pressed state can slide from one to the other. */
+.mode-switch::before {
+  content: "";
+  grid-row: 1;
+  grid-column: 1;
+  border-radius: var(--wa-form-control-border-radius);
+  background: var(--hatch);
+}
+
+.mode-switch:has([data-mode="cook"][aria-pressed="true"])::before {
+  translate: 100% 0;
+}
+
+.section-head {
+  font-family: var(--wa-font-family-body);
+  font-size: var(--wa-font-size-xl);
+  font-weight: var(--wa-font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-block-end: var(--wa-space-xs);
+}
+
+.method > .phase {
+  margin-block-start: var(--wa-space-xl);
+}
+
+.method > h2 + .phase {
+  margin-block-start: 0;
+}
+
+/* A footnote between two steps splits the list in two; this keeps the usual step gap across the split. */
+.method {
+  --step-gap: var(--wa-space-l);
+}
+
+.method > .steps + .steps {
+  margin-block-start: calc(var(--step-gap) - var(--wa-space-m));
+}
+
+/* On one column (tablets) the lists would stretch edge to edge; past this the leaders get too long to follow. */
+.needs {
+  max-inline-size: 34rem;
+}
+
+/* From tablet width the sticky bar is one row, as tall as its taller item. */
+@media (min-width: 48rem) {
+  :root {
+    --bar-height: calc(2 * var(--wa-space-m) + max(var(--shortcut-size), var(--bar-switch-height)) + 1px);
+    scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-l));
+  }
+}
+
+/* Tablets have room for two columns before the page splits into its desktop grid:
+   ingredients on the left, equipment, notes and timing on the right, instead of one capped column with empty space beside it. */
+@media (48rem <= width < 64rem) {
+  .needs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    column-gap: var(--column-gap);
+    max-inline-size: none;
+  }
+
+  .needs > .section-head {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .needs-list {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .needs-more {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .needs-more > :first-child {
+    margin-block-start: 0;
+  }
+}
+
+.checklist,
+.equipment {
+  font-size: var(--list-size);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.checklist wa-checkbox {
+  --wa-form-control-toggle-size: 1.25rem;
+  display: flex;
+  color: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* WA's box goes invisible but keeps its place, its hidden input and its focus ring; the duotone icon draws over it. */
+.checklist wa-checkbox::part(control) {
+  margin-block-start: 0.125rem;
+  margin-inline-end: var(--wa-space-s);
+  border: 0;
+  background: none;
+}
+
+.checklist wa-checkbox::part(checked-icon) {
+  display: none;
+}
+
+.checklist wa-checkbox::part(label) {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.box-unchecked,
+.box-checked {
+  position: absolute;
+  inset-block-start: 0.125rem;
+  inset-inline-start: 0;
+  font-size: var(--wa-form-control-toggle-size);
+  color: var(--ink);
+}
+
+.box-checked {
+  --secondary-color: var(--note-ink);
+  --secondary-opacity: 0.2;
+}
+
+/* Hover-only, so a box tapped on a phone doesn't stay red after the tick. */
+@media (hover: hover) {
+  .checklist wa-checkbox:hover :is(.box-unchecked, .box-checked) {
+    --secondary-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+wa-checkbox:state(checked) .box-unchecked,
+wa-checkbox:not(:state(checked)) .box-checked {
+  display: none;
+}
+
+/* The name keeps its line up to 60% of the row, and the note wraps in what's left, so an amount never parts from its name. */
+.ingredient > :first-child {
+  flex: 0 0 auto;
+  max-inline-size: 60%;
+}
+
+.ingredient:not(:has(.note)) > :first-child {
+  max-inline-size: none;
+}
+
+.ingredient .note {
+  order: 2;
+  flex: 0 1 auto;
+  min-inline-size: min-content;
+  font-size: 0.875em;
+  color: var(--note-ink);
+}
+
+/* A drawn line, not text-decoration, so it can sweep across the words and back. Clone repeats it on every wrapped line. */
+.strike {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 58% / 0% 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.checklist wa-checkbox:state(checked) .ingredient {
+  color: var(--wa-color-text-quiet);
+}
+
+.checklist wa-checkbox:state(checked) .strike {
+  background-size: 100% 1px;
+}
+
+.checklist wa-checkbox:state(checked) .ingredient .note {
+  color: inherit;
+}
+
+/* Each step up the column's spacing is clearly bigger than the last: 8px rows, 24px ingredient groups, then sections
+   at this margin plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
+.needs-more > section {
+  margin-block-start: var(--section-space);
+}
+
+.lead-notes {
+  font-size: var(--list-size);
+  line-height: 1.5;
+}
+
+.lead-notes p {
+  margin: 0;
+}
+
+.lead-notes p + p {
+  margin-block-start: var(--wa-space-xs);
+}
+
+.equipment ul {
+  --min-column-size: 9em;
+  column-gap: var(--wa-space-m);
+  margin: 0;
+}
+
+.timing {
+  font-size: var(--list-size);
+  line-height: 1.5;
+}
+
+.needs-subhead {
+  margin: 0 0 var(--wa-space-xs);
+  font: inherit;
+  font-weight: var(--wa-font-weight-bold);
+}
+
+.timing-total {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section labels and subtotals are supporting detail, so they match the ingredient notes. */
+.timing-section {
+  margin: var(--wa-space-s) 0 var(--wa-space-3xs);
+  font-size: 0.875em;
+  color: var(--note-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.timing-rows {
+  margin: 0;
+}
+
+/* The leader is the row's last box; its order puts it between the label and the value. */
+.timing-rows li::after,
+.ingredient:has(.note)::after {
+  content: "";
+  order: 1;
+  flex: 1;
+  min-inline-size: var(--wa-space-m);
+  block-size: 6px;
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+.ingredient.is-wrapped::after {
+  display: none;
+}
+
+.timing-name {
+  text-decoration: none;
+}
+
+.timing-name:hover {
+  text-decoration-line: underline;
+}
+
+.timing-length {
+  order: 2;
+  font-variant-numeric: tabular-nums;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: baseline;
+}
+
+.step > p {
+  margin: 0;
+}
+
+/* Ingredients and timers in steps borrow the face of their lists (Ingredients, Timing) so they read as the same items. */
+.step-ingredient,
+.step-timer {
+  font-family: var(--wa-font-family-body);
+}
+
+.step-ingredient {
+  font-size: 0.9em;
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+/* A touch under the ingredients, so its lowercase lines up with the serif's around it. */
+.step-timer {
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  color: var(--timer-ink);
+}
+
+.step-number {
+  margin-inline-end: 0.3em;
+}
+
+.step-text {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.step-note {
+  --spacing: 0;
+  grid-column: 1;
+  grid-row: 2;
+  margin-block-start: var(--wa-space-s);
+}
+
+/* The toggle hugs its label (the chevron right after the text), so the focus ring wraps the words, not the whole row. */
+.step-note::part(header) {
+  justify-content: flex-start;
+  gap: var(--wa-space-xs);
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  padding-block: var(--wa-space-3xs);
+  border-radius: var(--wa-border-radius-s);
+  font-family: var(--wa-font-family-body);
+  font-size: var(--note-size);
+  color: var(--note-ink);
+}
+
+.step-note:hover::part(header) {
+  color: var(--accent);
+}
+
+.step-note::part(header):focus-visible {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+.step-note .note-hide,
+.step-note[open] .note-preview {
+  display: none;
+}
+
+.step-note[open] .note-hide {
+  display: inline;
+}
+
+.step-note::part(icon) {
+  font-size: 0.75em;
+}
+
+.step-note::part(content) {
+  padding-block-start: var(--wa-space-xs);
+}
+
+.note-icon {
+  margin-inline-end: 0.5em;
+  vertical-align: -0.1em;
+}
+
+/* Same face, size and ink as a folded note's row, just without the toggle. */
+.note-static {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-family: var(--wa-font-family-body);
+  font-size: var(--note-size);
+  line-height: 1.5;
+  color: var(--note-ink);
+}
+
+.note-static .note-icon {
+  flex: none;
+  margin: 0;
+  translate: 0 0.1em;
+}
+
+.note-static p {
+  margin: 0;
+}
+
+/* The open note hangs under the summary text, past the icon, so the icon stays the row's only marker. */
+.step-note .recipe-note {
+  padding-inline-start: calc(var(--note-size) * 1.5);
+}
+
+.method > .step-note {
+  margin-block-end: var(--wa-space-m);
+}
+
+.step-needs {
+  grid-column: 1;
+  grid-row: 3;
+  margin-block-start: var(--wa-space-m);
+  margin-inline-start: 0;
+}
+
+/* Asides sit a size down from the steps. */
+.recipe-note {
+  position: relative;
+  font-size: 1.125rem;
+}
+
+/* Footnotes keep an inset column of the leader dots under their bold title. */
+.footnote-body {
+  padding-inline-start: var(--wa-space-l);
+}
+
+.footnote-body::before {
+  content: "";
+  position: absolute;
+  inset: 0.25em auto 0.25em 0;
+  inline-size: 6px;
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+/* WA's native styles give paragraphs a 24px bottom margin; inside a note, lines sit 8px apart. */
+.recipe-note > * {
+  margin-block: 0;
+}
+
+.recipe-note > * + * {
+  margin-block-start: var(--wa-space-xs);
+}
+
+.footnote-ref {
+  font-family: var(--wa-font-family-body);
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+.footnote-ref a {
+  margin-inline-start: 0.15em;
+  text-decoration: none;
+}
+
+.footnotes {
+  margin-block-start: var(--wa-space-xl);
+  font-size: var(--list-size);
+  line-height: 1.5;
+}
+
+.footnotes .section-head {
+  margin-block-end: var(--wa-space-s);
+}
+
+/* WA's plain details in the step column: a bold label like Equipment, a quiet chevron at the row's end. */
+.footnote {
+  --spacing: 0;
+  max-inline-size: 36em;
+}
+
+.footnote::part(header) {
+  padding-block: var(--wa-space-s);
+  font-weight: var(--wa-font-weight-bold);
+}
+
+.footnote::part(content) {
+  padding-block-end: var(--wa-space-s);
+}
+
+/* Light hairlines only between notes, so a single note stands alone. */
+.footnotes > ol > li + li {
+  border-block-start: 1px solid var(--wa-color-neutral-border-quiet);
+}
+
+.footnote::part(icon) {
+  font-size: 0.75em;
+  color: var(--wa-color-text-quiet);
+  transition: color var(--wa-transition-fast);
+}
+
+/* A toggle, not a link: the chevron turns the accent on hover instead of the label taking an underline. */
+.footnote:hover::part(icon) {
+  color: var(--accent);
+}
+
+.footnote-number {
+  margin-inline-end: 0.35em;
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+/* The note body is a regular aside (.recipe-note) under a bold label like Equipment, with run-in letters so its lists never read as recipe steps. */
+.footnote-body ol {
+  display: grid;
+  gap: var(--wa-space-xs);
+  padding: 0;
+  list-style: none;
+  counter-reset: note-step;
+}
+
+.footnote-body li {
+  margin: 0;
+  counter-increment: note-step;
+}
+
+.footnote-body li > p {
+  display: inline;
+  margin: 0;
+}
+
+.footnote-body li::before {
+  content: counter(note-step, lower-alpha) ".";
+  margin-inline-end: 0.3em;
+  font-weight: var(--wa-font-weight-bold);
+}
+
+.attribution {
+  display: grid;
+  gap: var(--wa-space-m);
+  margin-block-start: var(--wa-space-2xl);
+  position: relative;
+  padding-block-start: calc(var(--band) + var(--wa-space-m));
+}
+
+/* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
+.attribution dl {
+  margin: 0;
+}
+
+:is(.facts, .attribution) dt {
+  margin-block-end: var(--wa-space-xs);
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--ink);
+}
+
+.facts dt {
+  font-size: var(--wa-font-size-s);
+}
+
+.attribution dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+[data-mode="overview"] .step-needs {
+  display: none;
+}
+
+[data-mode="cook"] .needs {
+  display: none;
+}
+
+/* Cook hides the planning column, so its "Before you start" notes get their own section ahead of the method. */
+[data-mode="overview"] .before-start {
+  display: none;
+}
+
+/* Cook mode is for doing: the description stays in Overview. The facts stay, since servings and times matter mid-cook. */
+[data-mode="cook"] .description {
+  display: none;
+}
+
+/* Cook's step text is 22px, so section names step up to stay above it. */
+[data-mode="cook"] :is(.method, .before-start) .section-head {
+  font-size: 1.625rem;
+}
+
+[data-mode="cook"] .step-text {
+  font-size: 1.375rem;
+}
+
+[data-mode="cook"] .recipe-note {
+  font-size: 1.25rem;
+}
+
+[data-mode="cook"] .method {
+  --step-gap: var(--wa-space-2xl);
+}
+
+[data-mode="cook"] .steps {
+  gap: var(--step-gap);
+}
+
+[data-mode="cook"] .step-needs {
+  gap: var(--wa-space-2xs);
+  font-size: 1.0625rem;
+}
+
+/* Pads each row to a 44px tap target for a cook with wet hands; a mouse doesn't need it. */
+@media (pointer: coarse) {
+  [data-mode="cook"] .step-needs {
+    gap: 0;
+  }
+
+  [data-mode="cook"] .step-needs wa-checkbox {
+    padding-block: 0.625rem;
+  }
+}
+
+[data-mode="cook"] .step-needs wa-checkbox::part(control) {
+  margin-block-start: 0.1875rem;
+}
+
+[data-mode="cook"] .step-needs :is(.box-unchecked, .box-checked) {
+  inset-block-start: 0.1875rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+
+  .mode-switch::before {
+    transition: translate var(--wa-transition-normal) var(--wa-transition-easing);
+  }
+
+  .mode-bar {
+    transition:
+      translate var(--wa-transition-slow) var(--wa-transition-easing),
+      visibility var(--wa-transition-slow);
+  }
+
+  .mode-switch button {
+    transition: color var(--wa-transition-fast) var(--wa-transition-easing);
+  }
+
+  /* The bar stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
+  .mode-bar {
+    view-transition-name: mode-bar;
+  }
+
+  ::view-transition-old(mode-bar) {
+    display: none;
+  }
+
+  ::view-transition-new(mode-bar) {
+    animation: none;
+  }
+
+  /* The header changes height between modes, so the body already travels up or down; it rises a little as it fades so all the motion stays on that one axis. */
+  .recipe-body {
+    view-transition-name: recipe-body;
+  }
+
+  ::view-transition-group(recipe-body) {
+    animation-duration: var(--wa-transition-slow);
+  }
+
+  ::view-transition-old(recipe-body) {
+    animation: mode-out var(--wa-transition-normal) ease-in both;
+  }
+
+  ::view-transition-new(recipe-body) {
+    animation: mode-in var(--wa-transition-slow) cubic-bezier(0.2, 0.8, 0.2, 1) var(--wa-transition-fast) both;
+  }
+
+
+  .checklist .ingredient {
+    transition: color var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  .checklist .strike {
+    transition: background-size var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  /* Only after a tap, so ticks restored on page load don't all pop at once. */
+  wa-checkbox.is-touched:state(checked) .box-checked,
+  wa-checkbox.is-touched:not(:state(checked)) .box-unchecked {
+    animation: icon-in var(--wa-transition-normal) var(--wa-transition-easing);
+  }
+
+  /* A step or note reached from a timing row or a note marker flashes once, so the eye lands on it. */
+  .step:target .step-text,
+  .footnote:target {
+    animation: arrival-flash 1.2s var(--wa-transition-easing);
+  }
+}
+
+@keyframes mode-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes mode-in {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+
+@keyframes icon-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+@keyframes arrival-flash {
+  from {
+    background-color: color-mix(in oklab, var(--ink) 8%, transparent);
+    box-shadow: 0 0 0 var(--wa-space-xs) color-mix(in oklab, var(--ink) 8%, transparent);
+  }
+}
+
+/* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
+@media (min-width: 64rem) {
+  .recipe {
+    padding: var(--wa-space-3xl) var(--page-gutter) var(--wa-space-3xl);
+  }
+
+  :root {
+    --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
+    --section-space: var(--wa-space-xl);
+  }
+
+  /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
+  .recipe {
+    display: grid;
+    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(0, 1fr) 15rem;
+    gap: var(--wa-space-l) var(--column-gap);
+    align-items: start;
+  }
+
+  .recipe > * {
+    grid-column: 1 / -1;
+  }
+
+  /* Lets the title, description, facts and switch sit on the page grid as one row of cells. */
+  .recipe-head,
+  .recipe-intro {
+    display: contents;
+  }
+
+  .recipe-head h1 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* The title has the full row here, so titles up to 50 characters keep the top size in two lines and only the longest step down. */
+  .recipe-head h1.is-long {
+    font-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
+  }
+
+  .recipe-head h1.is-longer {
+    font-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
+  }
+
+  /* Capped near 65 characters a line. */
+  .description {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-inline-size: 30em;
+    font-size: var(--wa-font-size-2xl);
+    line-height: 1.35;
+  }
+
+  /* One row under the description, shared with the switch. */
+  .facts {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    column-gap: var(--wa-space-2xl);
+  }
+
+  /* The band runs the full width here, over the facts and the switch. The facts' own band would stop short of the switch. */
+  .facts::before {
+    content: none;
+  }
+
+  .recipe::after {
+    content: "";
+    grid-column: 1 / -1;
+    grid-row: 3;
+    align-self: start;
+    block-size: var(--band);
+    background: var(--divider-ink);
+    mask: var(--divider);
+  }
+
+  /* At the end of the facts row, directly above the columns it switches. The top padding matches the facts' so the two line up under the band. */
+  .mode-rest {
+    grid-column: 3;
+    grid-row: 3;
+    align-self: end;
+    padding: calc(var(--band) + var(--wa-space-m)) 0 0;
+  }
+
+  /* Cook hides the description, so the facts row moves up into its row; otherwise the steps fill row 2 and push the facts below them. */
+  [data-mode="cook"] :is(.facts, .mode-rest),
+  [data-mode="cook"] .recipe::after {
+    grid-row: 2;
+  }
+}
+
+/* wa-page marks itself desktop past its 48rem mobile-breakpoint; the bar goes to one row on the page grid there,
+   the title at the ingredients' edge and the switch in the 15rem column the resting switch uses. */
+wa-page[view="desktop"] {
+  /* The icons cluster beside the switch, a step apart, instead of a whole column gap away. */
+  & .mode-bar {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    align-items: center;
+    column-gap: var(--wa-space-xl);
+    padding-block: var(--wa-space-m);
+    padding-inline: max(var(--page-gutter), calc((100% - 75rem) / 2 + var(--page-gutter)));
+  }
+
+  & .shortcuts {
+    margin-inline-end: 0;
+  }
+}
+
+@media (min-width: 64rem) {
+  .recipe-body {
+    margin-block-start: var(--wa-space-l);
+  }
+
+  .attribution {
+    grid-template-columns: subgrid;
+    column-gap: var(--column-gap);
+    margin-block-start: var(--wa-space-l);
+  }
+
+  .credit {
+    grid-column: 1;
+  }
+
+  .connections {
+    grid-column: 2 / -1;
+  }
+
+  .footnotes {
+    grid-column: 2 / -1;
+  }
+
+  [data-mode="overview"] .recipe-body {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: var(--column-gap);
+    align-items: start;
+  }
+
+  /* Same column math as the overview grid, so labels and step text sit where they do in Overview. */
+  [data-mode="cook"] .before-start {
+    margin-inline-start: calc(var(--needs-column) + var(--column-gap));
+  }
+
+  [data-mode="cook"] :is(.method, .before-start) {
+    --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
+  }
+
+  /* The ingredient list spans both rows; the 1fr row takes its extra height, so the note sits right under the text. */
+  [data-mode="cook"] .step {
+    grid-template-columns: var(--needs-column) var(--column-gap) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  [data-mode="cook"] .step-text {
+    grid-column: 3;
+  }
+
+  /* On a long step the list rides down beside the text, just under the sticky bar, until the step ends.
+     It hugs its own height so it has room to travel inside the step. */
+  [data-mode="cook"] .step-needs {
+    position: sticky;
+    inset-block-start: calc(var(--bar-height) + var(--wa-space-m));
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+    margin-block-start: 0;
+  }
+
+  [data-mode="cook"] .step-note {
+    grid-column: 3;
+  }
+
+  [data-mode="cook"] .method > :not(.steps) {
+    margin-inline-start: calc(var(--needs-column) + var(--column-gap));
+  }
+}

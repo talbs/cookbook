@@ -68,6 +68,7 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | `diet`        | no       | `vegetarian`, or a list. Not shown on the page yet                                                                                                                                                                                                                                   |
 | `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Not shown on the page yet                                                                                                                             |
 | `locale`      | no       | `en_GB`. Not used yet                                                                                                                                                                                                                                                                |
+| `why`         | no       | Why the method works, as a list of sentences. Shows under "Why it works" in Overview only                                                                                                                                                                                            |
 
 Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `duration`, `images`). The build asks for the names above so every page reads the same key. Any other key stops the build.
 
@@ -83,6 +84,7 @@ Cooklang also accepts other names for some keys (`serves`, `category`, `introduc
 - A second unit or a count goes in the note: `@egg yolks{110%g}(4 oz, about 7)`.
 - `@./other-recipe{}` uses another recipe as an ingredient. Write the other recipe's file name. The page shows its title as a link, and the other recipe's page says where it's used. `@?./other-recipe{}` marks it optional.
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
+- A note before the first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
 - Type `1/2`, not `½`.
 - Temperatures go in the step text as `350°F (175°C)`.
 

@@ -16,8 +16,10 @@
     {%- block head %}{% endblock %}
   </head>
   <body>
+    {%- block page %}
     <main>
       {%- block content %}{{ content | safe }}{% endblock %}
     </main>
+    {%- endblock %}
   </body>
 </html>
