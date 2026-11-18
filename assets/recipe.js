@@ -48,7 +48,6 @@ function switchMode(mode) {
   const update = () => {
     showMode(mode);
     saveState();
-    markWrappedIngredients();
   };
   if (!document.startViewTransition || prefersReducedMotion.matches) {
     update();
@@ -105,27 +104,3 @@ function openNoteFromHash() {
 
 openNoteFromHash();
 window.addEventListener('hashchange', openNoteFromHash);
-
-// Leader dots only read as a menu line on one line; a wrapped row drops them.
-const notedIngredients = [...recipe.querySelectorAll('.ingredient:has(.note)')];
-
-// Each mode hides one of the two lists, so this reruns on every switch; hidden rows measure zero and are skipped.
-// All heights are read before any class is written, so the page lays out once, not once per row.
-function markWrappedIngredients() {
-  for (const row of notedIngredients) row.classList.remove('is-wrapped');
-  const wrappedRows = notedIngredients.filter(row => {
-    const height = row.getBoundingClientRect().height;
-    return height > 0 && height > parseFloat(getComputedStyle(row).lineHeight) * 1.5;
-  });
-  for (const row of wrappedRows) row.classList.add('is-wrapped');
-}
-
-let lastWidth = 0;
-function markWrappedIngredientsOnResize() {
-  if (window.innerWidth === lastWidth) return;
-  lastWidth = window.innerWidth;
-  requestAnimationFrame(markWrappedIngredients);
-}
-
-document.fonts.ready.then(markWrappedIngredientsOnResize);
-window.addEventListener('resize', markWrappedIngredientsOnResize);

@@ -59,12 +59,12 @@
 {%- endmacro %}
 
 {% macro checklistLine(ingredient, checkId, recipes, note) %}
-      <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-xs">
+      <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline">
         <span class="wa-text-pretty"><span class="strike">
           {%- if ingredient.amount %}<span class="amount wa-font-weight-bold">{{ ingredient.amount | typeset | safe }}</span> {% endif -%}
           <span class="name">{{ ingredientName(ingredient, recipes) | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span>
         </span></span>
-        {%- if note | trim | length %} <span class="note wa-text-end wa-text-pretty"><span class="strike">{{ note | trim | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span></span>{% endif -%}
+        {%- if note | trim | length %} <span class="note wa-text-end"><span class="strike">{{ note | trim | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span></span>{% endif -%}
       </span></wa-checkbox></li>
 {%- endmacro %}
 
@@ -121,11 +121,15 @@
   <div class="recipe-body wa-stack wa-gap-3xl">
     <section class="needs wa-stack wa-gap-m" aria-labelledby="ingredients-heading">
       <h2 class="section-head" id="ingredients-heading">Ingredients</h2>
-      <div class="needs-list wa-stack wa-gap-l">
-        {%- for stepId, chunk in recipe.ingredients | groupby("firstUseStepId") %}
+      <div class="needs-list wa-stack wa-gap-xs">
+        {%- for sectionIndex, chunk in recipe.ingredients | groupby("firstUseSectionIndex") %}
+        {%- set sectionName = recipe.sections[sectionIndex].name %}
+        {%- if sectionName %}
+        <p class="timing-section">{{ sectionName }}</p>
+        {%- endif %}
         <ul class="checklist wa-list-plain wa-stack wa-gap-xs" role="list">
           {%- for ingredient in chunk %}
-          {{ checklistLine(ingredient, "need-" + stepId + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
+          {{ checklistLine(ingredient, "need-" + sectionIndex + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
           {%- endfor %}
         </ul>
         {%- endfor %}
@@ -161,7 +165,7 @@
           {%- endif %}
           <ol class="timing-rows wa-list-plain" role="list">
             {%- for row in group.rows %}
-            <li class="wa-cluster wa-flex-nowrap wa-align-items-baseline wa-gap-xs"><a class="timing-name" href="#{{ row.stepId }}"><span class="wa-visually-hidden">Step {{ row.stepNumber }}, </span>{{ row.name }}</a><span class="timing-length wa-text-nowrap">{{ row.label | typeset | safe }}</span></li>
+            <li><a class="timing-row" href="#{{ row.stepId }}"><span class="timing-what"><span class="timing-length wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span><span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
             {%- endfor %}
           </ol>
           {%- endfor %}
@@ -216,7 +220,7 @@
           {%- if step.ingredients.length %}
           <ul class="checklist step-needs wa-list-plain wa-stack wa-gap-xs" role="list">
             {%- for ingredient in step.ingredients %}
-            {{ checklistLine(ingredient, step.id + "-" + loop.index, collections.recipes, ingredient.repeatSource.label if ingredient.repeatSource else "") }}
+            {{ checklistLine(ingredient, step.id + "-" + loop.index, collections.recipes, ingredient.repeatSource.label if ingredient.repeatSource else ingredientNote(ingredient)) }}
             {%- endfor %}
           </ul>
           {%- endif %}

@@ -500,6 +500,11 @@ a:focus-visible {
   color: var(--ink);
 }
 
+/* An empty box sits back from the text beside it; --control-edge still clears a control's 3:1. */
+.box-unchecked {
+  color: var(--control-edge);
+}
+
 .box-checked {
   --secondary-color: var(--note-ink);
   --secondary-opacity: 0.2;
@@ -536,29 +541,54 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   animation: tick-flash 900ms ease-out;
 }
 
-/* The name keeps its line up to 60% of the row, and the note wraps in what's left, so an amount never parts from its name. */
+/* The dots run across the row's first line, behind the text (see the leader rule below), so the name and note sit above them. */
+.ingredient {
+  position: relative;
+  gap: var(--wa-space-l);
+}
+
+.ingredient > :first-child,
+.ingredient .note {
+  position: relative;
+  z-index: 1;
+}
+
+/* The name keeps its line up to 62% of the row, and the note wraps in what's left, so an amount never parts from its name.
+   The name gives way when the note's longest unbreakable run needs the room, so a note never runs off the row. */
 .ingredient > :first-child {
-  flex: 0 0 auto;
-  max-inline-size: 60%;
+  flex: 0 1 auto;
+  max-inline-size: 62%;
 }
 
 .ingredient:not(:has(.note)) > :first-child {
   max-inline-size: none;
 }
 
+/* The note wraps top-down, not balanced, so its first line is its longest and meets the dots.
+   The negative margin takes back the padding its words carry on the right. */
 .ingredient .note {
-  order: 2;
   flex: 0 1 auto;
   min-inline-size: min-content;
+  margin-inline-end: -0.4em;
   font-size: 0.875em;
   color: var(--note-ink);
+  text-wrap: wrap;
 }
 
-/* A drawn line, not text-decoration, so it can sweep across the words and back. Clone repeats it on every wrapped line. */
+/* A drawn line, not text-decoration, so it can sweep across the words and back. Clone repeats it on every wrapped line.
+   The paper colour hugs the words line by line and hides the leader dots behind them, so dots show only between name and note. */
 .strike {
-  background: linear-gradient(currentColor, currentColor) no-repeat 0 58% / 0% 1px;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 58% / 0% 1px var(--paper);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+}
+
+.ingredient > :first-child .strike {
+  padding-inline-end: 0.4em;
+}
+
+.ingredient .note .strike {
+  padding-inline: 0.5em 0.4em;
 }
 
 .checklist wa-checkbox:state(checked) .ingredient {
@@ -575,6 +605,15 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* Each step up the column's spacing is clearly bigger than the last: 8px rows, 24px ingredient groups, then sections
    at this margin plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
+/* A section's name over its ingredients, in the Timing block's label style. */
+.needs-list > .timing-section {
+  margin: var(--wa-space-m) 0 0;
+}
+
+.needs-list > .timing-section:first-child {
+  margin-block-start: 0;
+}
+
 .needs-more > section {
   margin-block-start: var(--section-space);
 }
@@ -622,35 +661,60 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .timing-rows {
+  display: grid;
+  gap: var(--wa-space-xs);
   margin: 0;
 }
 
-/* The leader is the row's last box; its order puts it between the label and the value. */
+/* The leader is one strip of dots across the row's first line. The text on either side covers it with paper,
+   so the dots show only in the gap, and a row keeps them however its name or note wraps. */
 .timing-rows li::after,
 .ingredient:has(.note)::after {
   content: "";
-  order: 1;
-  flex: 1;
-  min-inline-size: var(--wa-space-m);
+  position: absolute;
+  inset: 0.72em 0 auto;
   block-size: 6px;
   background: var(--divider-ink);
   mask: var(--divider);
 }
 
-.ingredient.is-wrapped::after {
-  display: none;
+.timing-rows li {
+  position: relative;
 }
 
-.timing-name {
+/* A timing row has the ingredient row's shape: the figure and name at the left, the step at the right in the note's style. */
+.timing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--wa-space-l);
   text-decoration: none;
 }
 
-.timing-name:hover {
+.timing-what,
+.timing-step {
+  position: relative;
+  z-index: 1;
+  background: var(--paper);
+}
+
+.timing-what {
+  padding-inline-end: 0.4em;
+}
+
+.timing-step {
+  padding-inline-start: 0.5em;
+  font-size: 0.875em;
+  color: var(--note-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.timing-row:hover .timing-name {
   text-decoration-line: underline;
 }
 
 .timing-length {
-  order: 2;
+  font-weight: var(--wa-font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
 
