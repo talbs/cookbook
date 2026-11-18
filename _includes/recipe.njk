@@ -95,7 +95,7 @@
     <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | safe }}</h1>
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
-      {%- if servings or yield or course or timeMinutes != null or prepMinutes != null or cookMinutes != null %}
+      {%- if servings or yield or course or totalMinutes != null %}
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
         <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
@@ -103,14 +103,8 @@
         {%- if yield %}
         <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
         {%- endif %}
-        {%- if prepMinutes != null %}
-        <div><dt>Prep</dt><dd><time datetime="{{ prepMinutes | isoDuration }}">{{ prepMinutes | duration }}</time></dd></div>
-        {%- endif %}
-        {%- if cookMinutes != null %}
-        <div><dt>Cook</dt><dd><time datetime="{{ cookMinutes | isoDuration }}">{{ cookMinutes | duration }}</time></dd></div>
-        {%- endif %}
-        {%- if timeMinutes != null %}
-        <div><dt>Time</dt><dd><time datetime="{{ timeMinutes | isoDuration }}">{{ timeMinutes | duration }}</time></dd></div>
+        {%- if totalMinutes != null %}
+        <div><dt>Time</dt><dd><time datetime="{{ totalMinutes | isoDuration }}">{{ totalMinutes | duration }}</time></dd></div>
         {%- endif %}
         {%- if course %}
         <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
