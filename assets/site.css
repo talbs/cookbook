@@ -1101,7 +1101,20 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     animation: none;
   }
 
-  /* The header changes height between modes, so the body already travels up or down; it rises a little as it fades so all the motion stays on that one axis. */
+  /* The resting switch stays live too, so its hatch slides the same way when it is the one being used. */
+  .mode-rest {
+    view-transition-name: mode-rest;
+  }
+
+  ::view-transition-old(mode-rest) {
+    display: none;
+  }
+
+  ::view-transition-new(mode-rest) {
+    animation: none;
+  }
+
+  /* The new body rises a little as it fades in, on the hatch's own curve and length, so the two settle together. */
   .recipe-body {
     view-transition-name: recipe-body;
   }
@@ -1111,13 +1124,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   ::view-transition-old(recipe-body) {
-    animation: mode-out var(--wa-transition-normal) ease-in both;
+    animation: mode-out 120ms ease-in both;
   }
 
   ::view-transition-new(recipe-body) {
-    animation: mode-in var(--wa-transition-slow) cubic-bezier(0.2, 0.8, 0.2, 1) var(--wa-transition-fast) both;
+    animation:
+      mode-fade-in 200ms ease-out 60ms both,
+      mode-settle 420ms cubic-bezier(0.34, 1.4, 0.64, 1) 60ms both;
   }
-
 
   .checklist .ingredient {
     transition: color var(--wa-transition-slow) var(--wa-transition-easing);
@@ -1159,9 +1173,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-@keyframes mode-in {
+@keyframes mode-fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes mode-settle {
+  from {
     translate: 0 0.75rem;
   }
 }
