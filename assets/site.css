@@ -54,8 +54,26 @@ body {
   --mark: color-mix(in oklab, var(--ink) 22%, transparent);
   --hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
   --band: 0.5rem;
+  /* One dot every 6px. The leaders, the dividers and the spacing around the footer's icons all count in this. */
+  --dot-pitch: 6px;
   /* Leader dots from the same library, used as a mask so they take the ink colour in either theme. */
-  --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center / 6px 6px round;
+  --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center / var(--dot-pitch) var(--dot-pitch) round;
+  /* The paper each word carries past its own edge, so the leader's dots stop short of the text. */
+  --leader-clearance: 0.4em;
+  /* How much of a row an ingredient's amount and name may take before the note gets the rest. */
+  --name-share: 62%;
+  --detail-size: 0.875em;
+  --section-head-size: 1.75rem;
+  --ornament-size: 1.125rem;
+  /* The page's springy moves share one length; the curves differ only in how far they overshoot. */
+  --settle: 420ms;
+  --press: 120ms;
+  --ease-spring: cubic-bezier(0.34, 1.8, 0.64, 1);
+  --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-slide: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --ease-swift: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --arrival-strength: 0.55;
+  --arrival-hold: 1.1s;
   --divider-ink: var(--mark);
   --control-edge: var(--wa-color-neutral-border-loud);
   /* neutral-40 here, neutral-60 in dark: neutral-50 falls short of 4.5:1 for text on either paper. */
@@ -194,21 +212,19 @@ a:focus-visible {
 
 /* The dotted dividers. The footer's has the recipe's icons in its middle, like a printer's ornament:
    two runs of dots, each its own box, so the mask fits whole dots into it and none is cut at the gap. */
+/* The margins bring the dots' centre to --rule-gap from the text above and below, past the gap its parent already adds. */
 .header-rule,
 .footer-rule {
-  display: flex;
-  align-items: center;
   block-size: var(--band);
+  margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--parent-gap));
 }
 
-/* The margins bring the dots' centre to --rule-gap from the text above and below, past the stack's own gap. */
 .header-rule {
-  margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--wa-space-l));
+  --parent-gap: var(--wa-space-l);
 }
 
 .footer-rule {
-  grid-column: 1 / -1;
-  margin-block-end: 0.625rem;
+  --parent-gap: var(--wa-space-m);
 }
 
 .rule-run {
@@ -218,12 +234,10 @@ a:focus-visible {
   mask: var(--divider);
 }
 
-/* 12px between icons and 18px to the dots: two and three of the divider's 6px dot pitch. */
+/* The dots stop three dots short of the set on each side. */
 .recipe-icons {
-  display: flex;
-  gap: 12px;
-  margin-inline: 18px;
-  font-size: 1.125rem;
+  margin-inline: calc(3 * var(--dot-pitch));
+  font-size: var(--ornament-size);
 }
 
 /* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
@@ -252,8 +266,8 @@ a:focus-visible {
     transition:
       --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
       --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing),
-      scale 420ms cubic-bezier(0.34, 1.8, 0.64, 1),
-      rotate 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
+      scale var(--settle) var(--ease-spring),
+      rotate var(--settle) var(--ease-spring);
   }
 
   .recipe-icons wa-icon:nth-child(2) {
@@ -404,7 +418,7 @@ a:focus-visible {
 /* Free Lunch ships one weight, as on the title; weight 800 is for the Geist fallback. */
 .section-head {
   font-family: var(--wa-font-family-heading);
-  font-size: 1.75rem;
+  font-size: var(--section-head-size);
   font-weight: 800;
   font-synthesis: none;
   line-height: 1;
@@ -566,21 +580,23 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* The dots run across the row's first line, behind the text (see the leader rule below), so the name and note sit above them. */
-.ingredient {
+.ingredient,
+.timing-rows li {
   position: relative;
-  gap: var(--wa-space-l);
 }
 
 .ingredient > :first-child,
-.ingredient .note {
+.ingredient .note,
+.timing-label,
+.timing-step {
   position: relative;
   z-index: 1;
 }
 
-/* The name keeps its line up to 62% of the row, and the note wraps in what's left, so an amount never parts from its name. */
+/* The name keeps its line up to its share of the row, and the note wraps in what's left, so an amount never parts from its name. */
 .ingredient > :first-child {
   flex: 0 0 auto;
-  max-inline-size: 62%;
+  max-inline-size: var(--name-share);
 }
 
 .ingredient:not(:has(.note)) > :first-child {
@@ -592,10 +608,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .ingredient .note {
   flex: 0 1 auto;
   min-inline-size: min-content;
-  margin-inline-end: -0.4em;
-  font-size: 0.875em;
-  color: var(--note-ink);
+  margin-inline-end: calc(-1 * var(--leader-clearance));
   text-wrap: wrap;
+}
+
+.ingredient .note,
+.timing-step {
+  font-size: var(--detail-size);
+  color: var(--note-ink);
 }
 
 /* A drawn line, not text-decoration, so it can sweep across the words and back. Clone repeats it on every wrapped line.
@@ -610,11 +630,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .ingredient > :first-child .strike {
-  padding-inline-end: 0.4em;
+  padding-inline-end: var(--leader-clearance);
 }
 
 .ingredient .note .strike {
-  padding-inline: 0.5em 0.4em;
+  padding-inline: var(--leader-clearance);
 }
 
 .checklist wa-checkbox:state(checked) .ingredient {
@@ -680,14 +700,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* Section labels and subtotals are supporting detail, so they match the ingredient notes. */
 .timing-section {
   margin: var(--wa-space-s) 0 var(--wa-space-3xs);
-  font-size: 0.875em;
+  font-size: var(--detail-size);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .timing-rows {
-  display: grid;
-  gap: var(--wa-space-xs);
   margin: 0;
 }
 
@@ -698,38 +716,26 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   content: "";
   position: absolute;
   inset: 0.72em 0 auto;
-  block-size: 6px;
+  block-size: var(--dot-pitch);
   background: var(--divider-ink);
   mask: var(--divider);
 }
 
-.timing-rows li {
-  position: relative;
-}
-
 .timing-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--wa-space-l);
   text-decoration: none;
 }
 
 .timing-label,
 .timing-step {
-  position: relative;
-  z-index: 1;
   background: var(--paper);
 }
 
 .timing-label {
-  padding-inline-end: 0.4em;
+  padding-inline-end: var(--leader-clearance);
 }
 
 .timing-step {
-  padding-inline-start: 0.5em;
-  font-size: 0.875em;
-  color: var(--note-ink);
+  padding-inline-start: var(--leader-clearance);
   font-variant-numeric: tabular-nums;
 }
 
@@ -738,7 +744,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .timing-length {
-  font-weight: var(--wa-font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -901,7 +906,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   content: "";
   position: absolute;
   inset: 0.25em auto 0.25em 0;
-  inline-size: 6px;
+  inline-size: var(--dot-pitch);
   background: var(--divider-ink);
   mask: var(--divider);
 }
@@ -1001,7 +1006,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .attribution {
   display: grid;
   gap: var(--wa-space-m);
-  margin-block-start: calc(var(--wa-space-2xl) + 0.625rem);
+  margin-block-start: var(--wa-space-2xl);
 }
 
 /* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
@@ -1038,8 +1043,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* Cook's step text is 22px, so section names step up to stay above it. */
-[data-mode="cook"] :is(.method, .before-start) .section-head {
-  font-size: 2rem;
+[data-mode="cook"] :is(.method, .before-start) {
+  --section-head-size: 2rem;
 }
 
 [data-mode="cook"] .step-text {
@@ -1089,11 +1094,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* The icons' curve would fling the hatch past the border; this one overshoots about 3px, inside the switch's padding. */
   .mode-switch::before {
-    transition: translate 420ms cubic-bezier(0.34, 1.3, 0.64, 1);
+    transition: translate var(--settle) var(--ease-slide);
   }
 
   .mode-switch {
-    transition: scale 120ms ease-out;
+    transition: scale var(--press) ease-out;
   }
 
   .mode-switch:active {
@@ -1146,13 +1151,13 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   ::view-transition-old(recipe-body) {
-    animation: mode-out 120ms ease-in both;
+    animation: mode-out var(--press) ease-in both;
   }
 
   ::view-transition-new(recipe-body) {
     animation:
       mode-fade-in 200ms ease-out 60ms both,
-      mode-settle 420ms cubic-bezier(0.34, 1.4, 0.64, 1) 60ms both;
+      mode-settle var(--settle) var(--ease-settle) 60ms both;
   }
 
   .checklist .ingredient {
@@ -1165,7 +1170,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* Only after a tap, so ticks restored on page load don't all pop at once. */
   .checklist :is(.box-unchecked, .box-checked) {
-    transition: scale 120ms ease-out;
+    transition: scale var(--press) ease-out;
   }
 
   .checklist wa-checkbox:active :is(.box-unchecked, .box-checked) {
@@ -1174,12 +1179,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   wa-checkbox.is-touched:state(checked) .box-checked {
     animation:
-      spring-from-press 420ms cubic-bezier(0.34, 1.8, 0.64, 1),
+      spring-from-press var(--settle) var(--ease-spring),
       tick-flash 900ms ease-out;
   }
 
   wa-checkbox.is-touched:not(:state(checked)) .box-unchecked {
-    animation: spring-from-press 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
+    animation: spring-from-press var(--settle) var(--ease-spring);
   }
 
   /* The hatch sweeps across like a highlighter stroke, holds, then leaves on the page's own fade.
@@ -1187,15 +1192,15 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .step:target .step-text::before,
   .footnote:target::before {
     animation:
-      arrival-sweep 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
-      arrival-leave calc(2 * var(--wa-transition-slow)) var(--wa-transition-easing) 1.1s forwards;
+      arrival-sweep var(--settle) var(--ease-swift) both,
+      arrival-leave calc(2 * var(--wa-transition-slow)) var(--wa-transition-easing) var(--arrival-hold) forwards;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .step:target .step-text::before,
   .footnote:target::before {
-    animation: arrival-hold 1.7s step-end both;
+    animation: arrival-hold calc(var(--arrival-hold) + 2 * var(--wa-transition-slow)) step-end both;
   }
 }
 
@@ -1233,12 +1238,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 @keyframes arrival-sweep {
   from {
-    opacity: 0.55;
+    opacity: var(--arrival-strength);
     clip-path: inset(0 100% 0 0 round var(--wa-border-radius-m));
   }
 
   to {
-    opacity: 0.55;
+    opacity: var(--arrival-strength);
     clip-path: inset(0 0 0 0 round var(--wa-border-radius-m));
   }
 }
@@ -1251,7 +1256,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 @keyframes arrival-hold {
   from {
-    opacity: 0.55;
+    opacity: var(--arrival-strength);
   }
 
   to {
@@ -1360,7 +1365,7 @@ wa-page[view="desktop"] {
   .attribution {
     grid-template-columns: subgrid;
     column-gap: var(--column-gap);
-    margin-block-start: calc(var(--wa-space-l) + 0.625rem);
+    margin-block-start: var(--wa-space-l);
   }
 
   .credit {

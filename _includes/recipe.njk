@@ -59,7 +59,7 @@
 {%- endmacro %}
 
 {% macro checklistLine(ingredient, checkId, recipes, note) %}
-      <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline">
+      <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l">
         <span class="wa-text-pretty"><span class="strike">
           {%- if ingredient.amount %}<span class="amount wa-font-weight-bold">{{ ingredient.amount | typeset | safe }}</span> {% endif -%}
           <span class="name">{{ ingredientName(ingredient, recipes) | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span>
@@ -95,7 +95,7 @@
     <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | safe }}</h1>
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
-      <div class="header-rule" aria-hidden="true"><span class="rule-run"></span></div>
+      <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
       {%- if servings or yield or course or totalMinutes != null %}
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
@@ -164,9 +164,9 @@
           {%- if recipe.timing.isGrouped and group.name %}
           <p class="timing-section wa-split wa-align-items-baseline wa-gap-s"><span>{{ group.name }}</span>{% if group.rows.length > 1 %}<span>{{ group.totalLabel }}</span>{% endif %}</p>
           {%- endif %}
-          <ol class="timing-rows wa-list-plain" role="list">
+          <ol class="timing-rows wa-list-plain wa-stack wa-gap-xs" role="list">
             {%- for row in group.rows %}
-            <li><a class="timing-row" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
+            <li><a class="timing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-font-weight-bold wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
             {%- endfor %}
           </ol>
           {%- endfor %}
@@ -255,10 +255,10 @@
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
   {%- if hasSource or author or usedIn.length or tags.length or icons.length %}
   <footer class="attribution wa-caption-s">
-    <div class="footer-rule" aria-hidden="true">
+    <div class="footer-rule wa-span-grid wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true">
       <span class="rule-run"></span>
       {%- if icons.length %}
-      <div class="recipe-icons">
+      <div class="recipe-icons wa-cluster wa-flex-nowrap wa-gap-s">
         {%- for name in icons %}
         <wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>
         {%- endfor %}
