@@ -386,12 +386,15 @@ a:focus-visible {
   translate: 100% 0;
 }
 
+/* Free Lunch ships one weight, as on the title; weight 800 is for the Geist fallback. */
 .section-head {
-  font-family: var(--wa-font-family-body);
-  font-size: var(--wa-font-size-xl);
-  font-weight: var(--wa-font-weight-bold);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-family: var(--wa-font-family-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-synthesis: none;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
   margin-block-end: var(--wa-space-xs);
 }
 
@@ -1026,7 +1029,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* Cook's step text is 22px, so section names step up to stay above it. */
 [data-mode="cook"] :is(.method, .before-start) .section-head {
-  font-size: 1.625rem;
+  font-size: 2rem;
 }
 
 [data-mode="cook"] .step-text {
