@@ -232,6 +232,9 @@ a:focus-visible {
   --primary-color: var(--divider-ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0;
+  transition:
+    --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
+    --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 /* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
@@ -247,6 +250,8 @@ a:focus-visible {
 @media (prefers-reduced-motion: no-preference) {
   .recipe-icons wa-icon {
     transition:
+      --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
+      --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing),
       scale 420ms cubic-bezier(0.34, 1.8, 0.64, 1),
       rotate 420ms cubic-bezier(0.34, 1.8, 0.64, 1);
   }
@@ -594,9 +599,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* A drawn line, not text-decoration, so it can sweep across the words and back. Clone repeats it on every wrapped line.
-   The paper colour hugs the words line by line and hides the leader dots behind them, so dots show only between name and note. */
+   The paper colour hugs the words line by line and hides the leader dots behind them, so dots show only between name and note.
+   The line is held to the content box, so it stops at the words and not at the padding the paper needs. */
 .strike {
-  background: linear-gradient(currentColor, currentColor) no-repeat 0 58% / 0% 1px var(--paper);
+  background:
+    linear-gradient(currentColor, currentColor) content-box no-repeat 0 58% / 0% 1px,
+    var(--paper);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -621,8 +629,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   color: inherit;
 }
 
-/* Each step up the column's spacing is clearly bigger than the last: 8px rows, 24px ingredient groups, then sections
-   at this margin plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
 .needs-list > .timing-section {
   margin: var(--wa-space-m) 0 0;
 }
@@ -631,6 +637,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-start: 0;
 }
 
+/* Each step up the column's spacing is clearly bigger than the last: 8px rows, then sections at this margin
+   plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
 .needs-more > section {
   margin-block-start: var(--section-space);
 }
@@ -707,14 +715,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-decoration: none;
 }
 
-.timing-what,
+.timing-label,
 .timing-step {
   position: relative;
   z-index: 1;
   background: var(--paper);
 }
 
-.timing-what {
+.timing-label {
   padding-inline-end: 0.4em;
 }
 
@@ -1128,7 +1136,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     animation: none;
   }
 
-  /* The new body rises a little as it fades in, on the hatch's own curve and length, so the two settle together. */
+  /* The new body rises a little as it fades in, for as long as the hatch slides and on a curve of the same family, so the two settle together. */
   .recipe-body {
     view-transition-name: recipe-body;
   }
