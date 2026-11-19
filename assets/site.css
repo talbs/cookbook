@@ -817,7 +817,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-start: var(--wa-space-s);
 }
 
-/* The toggle hugs its label (the chevron right after the text), so the focus ring wraps the words, not the whole row. */
+/* The toggle hugs its icon and label, so the focus ring wraps the words, not the whole row. */
 .step-note::part(header) {
   justify-content: start;
   gap: var(--wa-space-xs);
