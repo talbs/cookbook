@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { splitNoteTitle } from '../lib/notes.js';
-import { findWait, formatTimeSummary, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
+import { findBands, formatTimeSummary, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
 
 test('a note shown beside a total drops the parts that are amounts', () => {
   const rows = [
@@ -41,18 +41,32 @@ test("a note's title and body together carry the whole note, with nothing said t
   }
 });
 
-test('a step is followed by a wait only for a timer the cook walks away from', () => {
-  const rest = { name: 'rest', minutes: 30, label: '30 min' };
-  const bake = { name: 'bake', minutes: 45, label: '45 min' };
-  const brown = { name: 'brown', minutes: 8, label: '8 min' };
+test('a step gets a band for each timer worth counting down', () => {
+  const row = (name, lowMinutes, highMinutes, label) => ({ name, lowMinutes, highMinutes, label });
   const rows = [
-    [[rest], '30 min'],
-    [[brown], null],
-    [[brown, rest, bake], '45 min'],
-    [[], null],
+    [[row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
+    [[row('roast', 30, 40, '30–40 min')], [['roast', true, 30, 40]]],
+    [[row('simmer', 10, 10, '10 min')], [['simmer', true, 10, 10]]],
+    [[row('rest', 0.5, 0.5, '30 sec')], [['rest', false, 0.5, 0.5]]],
+    [[row('whisk', 0.5, 0.5, '30 sec')], []],
+    [[row('chill', 480, 960, '8–16 hr')], [['chill', true, 480, 960]]],
+    [
+      [row('cook', 5, 6, '5–6 min'), row('cook', 1, 1, '1 min')],
+      [
+        ['cook', true, 5, 6],
+        ['cook', true, 1, 1],
+      ],
+    ],
+    [[row('rest', 0.5, 0.5, '30 sec'), row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
+    [[row('', 5, 5, '5 min')], [['timer', true, 5, 5]]],
+    [[], []],
   ];
-  for (const [timers, shown] of rows) {
-    assert.equal(findWait(timers), shown, `timers: ${timers.map(timer => timer.name).join(', ')}`);
+  for (const [timers, expected] of rows) {
+    const bands = findBands(timers, 's0-1');
+    const shown = bands.map(band => [band.name, band.isCountable, band.lowMinutes, band.highMinutes]);
+    const message = `timers: ${timers.map(timer => timer.name).join(', ')}`;
+    assert.deepEqual(shown, expected, message);
+    assert.equal(new Set(bands.map(band => band.id)).size, bands.length, message);
   }
 });
 

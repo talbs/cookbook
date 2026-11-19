@@ -1,3 +1,5 @@
+import { startTimers } from './timers.js';
+
 const page = document.querySelector('.recipe-page');
 const recipe = page.querySelector('.recipe');
 const modeBar = page.querySelector('.mode-bar');
@@ -18,7 +20,7 @@ function readSavedState() {
 function saveState() {
   const checked = checkboxes.filter(checkbox => checkbox.checked).map(checkbox => checkbox.dataset.check);
   try {
-    sessionStorage.setItem(storageKey, JSON.stringify({ mode: page.dataset.mode, checked }));
+    sessionStorage.setItem(storageKey, JSON.stringify({ mode: page.dataset.mode, checked, timers: timers.readStarts() }));
   } catch {}
 }
 
@@ -63,6 +65,7 @@ function restoreChecks(checkedIds) {
 }
 
 const savedState = readSavedState();
+const timers = startTimers({ root: recipe, savedStarts: savedState.timers ?? {}, onChange: saveState });
 const linkedMode = new URLSearchParams(location.search).get('mode');
 if (isMode(linkedMode)) showMode(linkedMode);
 else if (isMode(savedState.mode)) showMode(savedState.mode);
