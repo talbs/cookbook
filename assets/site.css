@@ -242,6 +242,17 @@ a:focus-visible {
   font-size: var(--ornament-size);
 }
 
+/* Once the page has columns, the set ends the line at the right edge, so it shares an edge with the columns. */
+@media (min-width: 48rem) {
+  .recipe-icons {
+    margin-inline-end: 0;
+  }
+
+  .recipe-icons + .rule-run {
+    display: none;
+  }
+}
+
 /* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
    At rest only the line shows, in the divider's colour. */
 .recipe-icons wa-icon {
