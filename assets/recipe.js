@@ -95,12 +95,3 @@ for (const checkbox of checkboxes) {
     saveState();
   });
 }
-
-// Footnotes start collapsed, so following a step's note marker opens the note it points to.
-function openNoteFromHash() {
-  const target = location.hash ? document.getElementById(location.hash.slice(1)) : null;
-  if (target?.matches('wa-details.footnote')) target.open = true;
-}
-
-openNoteFromHash();
-window.addEventListener('hashchange', openNoteFromHash);

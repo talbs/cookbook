@@ -49,11 +49,13 @@
 
 {% macro noteDetails(note) %}
           {%- if note.isShort %}
-          <div class="step-note note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon>{{ note.html | safe }}</div>
+          <div class="step-note note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
           {%- else %}
-          <wa-details class="step-note" appearance="plain">
-            <span slot="summary" class="wa-text-truncate"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><span class="note-preview">{{ note.preview | safe }}</span><span class="note-hide">Hide note</span></span>
-            <div class="recipe-note">{{ note.html | safe }}</div>
+          <wa-details class="step-note" appearance="plain" icon-placement="start">
+            <wa-icon slot="expand-icon" class="note-icon" name="note-sticky" variant="regular"></wa-icon>
+            <wa-icon slot="collapse-icon" class="note-icon" name="note-sticky" variant="solid"></wa-icon>
+            <span slot="summary" class="note-title wa-text-truncate">{{ note.titleHtml | safe }}</span>
+            <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </wa-details>
           {%- endif %}
 {%- endmacro %}
@@ -213,7 +215,6 @@
                 <span class="step-{{ part.type }}">{{ part.value | typeset | safe }}</span>
               {%- endif -%}
             {%- endfor -%}
-            {%- for number in step.footnotes %}<sup class="footnote-ref wa-font-weight-bold"><a id="ref-{{ number }}" href="#note-{{ number }}"><span class="wa-visually-hidden">Note </span>{{ number }}</a></sup>{% endfor -%}
           </p>
           {%- for note in step.notes %}
           {{ noteDetails(note) }}
@@ -228,7 +229,7 @@
         </li>
         {%- endfor %}
       </ol>
-      {%- elif not block.isTechnique %}
+      {%- else %}
       {{ noteDetails(block) }}
       {%- endif %}
       {%- endfor %}
@@ -236,21 +237,6 @@
     </section>
   </div>
 
-  {%- if recipe.footnotes.length %}
-  <section class="footnotes" aria-labelledby="notes-heading">
-    <h2 class="section-head" id="notes-heading">Notes</h2>
-    <ol class="wa-list-plain" role="list">
-      {%- for note in recipe.footnotes %}
-      <li>
-        <wa-details class="footnote" id="note-{{ note.number }}" appearance="plain"{% if recipe.footnotes.length > 1 %} name="recipe-notes"{% endif %}>
-          <span slot="summary"><sup class="footnote-number wa-font-weight-bold">{{ note.number }}</sup>{{ note.title }}</span>
-          <div class="footnote-body recipe-note">{{ note.html | safe }}</div>
-        </wa-details>
-      </li>
-      {%- endfor %}
-    </ol>
-  </section>
-  {%- endif %}
 
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
   {%- if hasSource or author or usedIn.length or tags.length or icons.length %}

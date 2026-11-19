@@ -87,11 +87,10 @@ body {
   --control-edge: var(--wa-color-neutral-border-loud);
   /* neutral-40 here, neutral-60 in dark: neutral-50 falls short of 4.5:1 for text on either paper. */
   --note-ink: var(--wa-color-text-quiet);
-  /* The type scale. Sans: 14 small, 16 body, 20 large, 24 heads. Serif: 18 asides, 20 steps, then the description.
+  /* The type scale. Sans: 14 small, 16 body, 24 heads. Serif: 18 asides, 20 steps, then the description.
      Line height is 1.5, or 1.2 on heads and labels. Weights are 400, 700 and 800 for heads. */
   --note-size: var(--wa-font-size-s);
   --list-size: var(--wa-font-size-m);
-  --large-size: var(--wa-font-size-l);
   --aside-size: 1.125rem;
   /* Ancizar's small x-height reads a size down next to the sans, so steps run at 20px. */
   --step-size: var(--wa-font-size-l);
@@ -466,7 +465,7 @@ a:focus-visible {
   margin-block-start: 0;
 }
 
-/* A footnote between two steps splits the list in two; this keeps the usual step gap across the split. */
+/* A note between two steps splits the list in two; this keeps the usual step gap across the split. */
 .method {
   --step-gap: var(--wa-space-l);
 }
@@ -820,7 +819,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* The toggle hugs its label (the chevron right after the text), so the focus ring wraps the words, not the whole row. */
 .step-note::part(header) {
-  justify-content: flex-start;
+  justify-content: start;
   gap: var(--wa-space-xs);
   inline-size: fit-content;
   max-inline-size: 100%;
@@ -832,6 +831,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   color: var(--note-ink);
 }
 
+/* An open note keeps its first sentence as its title, in full and in the page's ink. */
+.step-note[open]::part(header) {
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--ink);
+}
+
+.step-note[open] .note-title {
+  white-space: normal;
+}
+
 .step-note:hover::part(header) {
   color: var(--accent);
 }
@@ -841,21 +850,19 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   outline-offset: var(--wa-focus-ring-offset);
 }
 
-.step-note .note-hide,
-.step-note[open] .note-preview {
-  display: none;
-}
-
-.step-note[open] .note-hide {
-  display: inline;
-}
-
+/* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, filled when open.
+   WA turns its chevron a quarter turn on open and greys it; a note icon should do neither. */
 .step-note::part(icon) {
-  font-size: 0.75em;
+  rotate: none;
+  color: inherit;
+}
+
+.step-note > .note-icon {
+  margin: 0;
 }
 
 .step-note::part(content) {
-  padding-block-start: var(--wa-space-xs);
+  padding-block-start: var(--wa-space-s);
 }
 
 .note-icon {
@@ -886,7 +893,19 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* The open note hangs under the summary text, past the icon, so the icon stays the row's only marker. */
 .step-note .recipe-note {
-  padding-inline-start: calc(var(--note-size) * 1.5);
+  /* The icon's box is 1.25em of the title's size, and the title's words start half an em past it. */
+  --note-icon-box: calc(var(--list-size) * 1.25);
+  padding-inline-start: calc(var(--note-icon-box) + var(--list-size) * 0.5);
+}
+
+/* A column of the page's dots runs down from the note's icon, so the open body reads as hanging off its title. */
+.step-note .recipe-note::before {
+  content: '';
+  position: absolute;
+  inset: 0.25em auto 0.25em calc((var(--note-icon-box) - var(--dot-pitch)) / 2);
+  inline-size: var(--dot-pitch);
+  background: var(--divider-ink);
+  mask: var(--divider);
 }
 
 .method > .step-note {
@@ -900,16 +919,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-inline-start: 0;
 }
 
-/* A step or note reached from a timing row or a note marker is marked once, so the eye lands on it.
+/* A step reached from a timing row is marked once, so the eye lands on it.
    The mark is the switch's hatch, behind the text and a little beyond it. It rests invisible; the animations show it. */
-.step:target .step-text,
-.footnote:target {
+.step:target .step-text {
   position: relative;
   isolation: isolate;
 }
 
-.step:target .step-text::before,
-.footnote:target::before {
+.step:target .step-text::before {
   content: '';
   position: absolute;
   inset: calc(-1 * var(--wa-space-s)) calc(-1 * var(--wa-space-m));
@@ -925,20 +942,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   font-size: var(--aside-size);
 }
 
-/* Footnotes keep an inset column of the leader dots under their bold title. */
-.footnote-body {
-  padding-inline-start: var(--wa-space-l);
-}
-
-.footnote-body::before {
-  content: '';
-  position: absolute;
-  inset: 0.25em auto 0.25em 0;
-  inline-size: var(--dot-pitch);
-  background: var(--divider-ink);
-  mask: var(--divider);
-}
-
 /* WA's native styles give paragraphs a 24px bottom margin; inside a note, lines sit 8px apart. */
 .recipe-note > * {
   margin-block: 0;
@@ -948,66 +951,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-start: var(--wa-space-xs);
 }
 
-.footnote-ref {
-  font-family: var(--wa-font-family-body);
-  font-size: 0.7em;
-  line-height: 0;
-}
-
-.footnote-ref a {
-  margin-inline-start: 0.15em;
-  text-decoration: none;
-}
-
-.footnotes {
-  margin-block-start: var(--wa-space-xl);
-  font-size: var(--list-size);
-  line-height: 1.5;
-}
-
-.footnotes .section-head {
-  margin-block-end: var(--wa-space-s);
-}
-
-/* WA's plain details in the step column: a bold label like Equipment, a quiet chevron at the row's end. */
-.footnote {
-  --spacing: 0;
-  max-inline-size: 36em;
-}
-
-.footnote::part(header) {
-  padding-block: var(--wa-space-s);
-  font-weight: var(--wa-font-weight-bold);
-}
-
-.footnote::part(content) {
-  padding-block-end: var(--wa-space-s);
-}
-
-/* Light hairlines only between notes, so a single note stands alone. */
-.footnotes > ol > li + li {
-  border-block-start: 1px solid var(--wa-color-neutral-border-quiet);
-}
-
-.footnote::part(icon) {
-  font-size: 0.75em;
-  color: var(--wa-color-text-quiet);
-  transition: color var(--wa-transition-fast);
-}
-
-/* A toggle, not a link: the chevron turns the accent on hover instead of the label taking an underline. */
-.footnote:hover::part(icon) {
-  color: var(--accent);
-}
-
-.footnote-number {
-  margin-inline-end: 0.35em;
-  font-size: 0.7em;
-  line-height: 0;
-}
-
-/* The note body is a regular aside (.recipe-note) under a bold label like Equipment, with run-in letters so its lists never read as recipe steps. */
-.footnote-body ol {
+/* A list inside a note takes run-in letters, so it never reads as recipe steps. */
+.recipe-note ol {
   display: grid;
   gap: var(--wa-space-xs);
   padding: 0;
@@ -1015,17 +960,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   counter-reset: note-step;
 }
 
-.footnote-body li {
+.recipe-note li {
   margin: 0;
   counter-increment: note-step;
 }
 
-.footnote-body li > p {
+.recipe-note li > p {
   display: inline;
   margin: 0;
 }
 
-.footnote-body li::before {
+.recipe-note li::before {
   content: counter(note-step, lower-alpha) '.';
   margin-inline-end: 0.3em;
   font-weight: var(--wa-font-weight-bold);
@@ -1077,7 +1022,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   --section-head-size: 1.75rem;
 }
 
-/* Cook is read from arm's length: steps, asides and ingredient rows each move up a size. */
+/* Cook is read from arm's length: steps and asides each move up a size. Ingredient rows stay as in Overview. */
 .recipe-page[data-mode='cook'] {
   --step-size: 1.375rem;
   --aside-size: var(--wa-font-size-l);
@@ -1093,11 +1038,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 [data-mode='cook'] .step-needs {
   gap: var(--wa-space-s);
-  font-size: var(--large-size);
-}
-
-[data-mode='cook'] .step-needs .note {
-  font-size: var(--list-size);
 }
 
 /* With no Before You Start above it, the whole page is the preparation, so its name is for screen readers only. */
@@ -1237,8 +1177,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* The hatch sweeps across like a highlighter stroke, holds, then leaves on the page's own fade.
      Two animations, so the fade has its own curve and is not the tail of the sweep. */
-  .step:target .step-text::before,
-  .footnote:target::before {
+  .step:target .step-text::before {
     animation:
       arrival-sweep var(--settle) var(--ease-swift) both,
       arrival-leave calc(2 * var(--wa-transition-slow))
@@ -1247,8 +1186,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step:target .step-text::before,
-  .footnote:target::before {
+  .step:target .step-text::before {
     animation: arrival-hold
       calc(var(--arrival-hold) + 2 * var(--wa-transition-slow)) step-end both;
   }
@@ -1432,10 +1370,6 @@ wa-page[view='desktop'] {
     grid-column: 2 / -1;
   }
 
-  .footnotes {
-    grid-column: 2 / -1;
-  }
-
   [data-mode='overview'] .recipe-body {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
@@ -1445,16 +1379,13 @@ wa-page[view='desktop'] {
 
   /* In Cook the steps keep the page's left edge, under the title, and each step's ingredients sit to its right
      like a margin note. The column is the width Overview gives its ingredients. */
-  [data-mode='cook'] :is(.method, .before-start, .footnotes) {
+  [data-mode='cook'] :is(.method, .before-start) {
+    --column-gap: clamp(var(--wa-space-4xl), 9vw, 7.5rem);
     --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
   }
 
-  [data-mode='cook'] :is(.before-start, .footnotes, .method > :not(.steps)) {
+  [data-mode='cook'] :is(.before-start, .method > :not(.steps)) {
     margin-inline-end: calc(var(--needs-column) + var(--column-gap));
-  }
-
-  [data-mode='cook'] .footnotes {
-    grid-column: 1 / -1;
   }
 
   /* The ingredient list spans both rows; the 1fr row takes its extra height, so the note sits right under the text. */
