@@ -1059,8 +1059,23 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 [data-mode="cook"] .step-needs {
-  gap: var(--wa-space-2xs);
-  font-size: 1.0625rem;
+  gap: var(--wa-space-s);
+  font-size: 1.25rem;
+}
+
+/* With no Before You Start above it, the whole page is the preparation, so its name is for screen readers only. */
+.recipe-page[data-mode="cook"]:not(:has(.before-start)) #preparation-heading {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
+[data-mode="cook"] .attribution :is(.credit, .connections) {
+  display: none;
 }
 
 /* Pads each row to a 44px tap target for a cook with wet hands; a mouse doesn't need it. */
@@ -1382,23 +1397,24 @@ wa-page[view="desktop"] {
     align-items: start;
   }
 
-  /* Same column math as the overview grid, so labels and step text sit where they do in Overview. */
-  [data-mode="cook"] .before-start {
-    margin-inline-start: calc(var(--needs-column) + var(--column-gap));
+  /* In Cook the steps keep the page's left edge, under the title, and each step's ingredients sit to its right
+     like a margin note. The column is the width Overview gives its ingredients. */
+  [data-mode="cook"] :is(.method, .before-start, .footnotes) {
+    --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
   }
 
-  [data-mode="cook"] :is(.method, .before-start) {
-    --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
+  [data-mode="cook"] :is(.before-start, .footnotes, .method > :not(.steps)) {
+    margin-inline-end: calc(var(--needs-column) + var(--column-gap));
+  }
+
+  [data-mode="cook"] .footnotes {
+    grid-column: 1 / -1;
   }
 
   /* The ingredient list spans both rows; the 1fr row takes its extra height, so the note sits right under the text. */
   [data-mode="cook"] .step {
-    grid-template-columns: var(--needs-column) var(--column-gap) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) var(--column-gap) var(--needs-column);
     grid-template-rows: auto 1fr;
-  }
-
-  [data-mode="cook"] .step-text {
-    grid-column: 3;
   }
 
   /* On a long step the list rides down beside the text, just under the sticky bar, until the step ends.
@@ -1406,17 +1422,9 @@ wa-page[view="desktop"] {
   [data-mode="cook"] .step-needs {
     position: sticky;
     inset-block-start: calc(var(--bar-height) + var(--wa-space-m));
-    grid-column: 1;
+    grid-column: 3;
     grid-row: 1 / span 2;
     align-self: start;
     margin-block-start: 0;
-  }
-
-  [data-mode="cook"] .step-note {
-    grid-column: 3;
-  }
-
-  [data-mode="cook"] .method > :not(.steps) {
-    margin-inline-start: calc(var(--needs-column) + var(--column-gap));
   }
 }
