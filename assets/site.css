@@ -234,13 +234,19 @@ a:focus-visible {
 
 /* The padding makes each link a 40px tap target without moving the words. */
 .site-nav a,
-.course-links a {
+.course-links a,
+.site-name {
   padding-block: var(--wa-space-xs);
 }
 
-.site-nav a[aria-current] {
+.site-nav a[aria-current],
+.site-name {
   font-weight: var(--wa-font-weight-bold);
   text-decoration-line: none;
+}
+
+.site-name:hover {
+  text-decoration-line: underline;
 }
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
@@ -556,7 +562,8 @@ a:focus-visible {
 }
 
 /* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
-.shortcuts {
+.shortcuts,
+.site-bar .shortcut {
   margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
 }
 
@@ -1248,7 +1255,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .recipe-card:focus-visible,
 .listing-row:focus-visible,
-.site-nav a:focus-visible {
+.site-nav a:focus-visible,
+.site-name:focus-visible {
   outline-offset: var(--wa-space-xs);
 }
 
