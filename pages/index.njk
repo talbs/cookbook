@@ -1,8 +1,98 @@
 ---
-layout: base.njk
 permalink: /
+eleventyComputed:
+  lede: "{{ collections.recipes.length }} recipes, personally approved. Culled from books, shows, and the Internet, then changed until we liked them better. (The notes say what we changed.)"
 ---
-<h1>{{ site.title }}</h1>
-<p><a href="/tags/">Browse by tag</a></p>
-{% set recipeList = collections.recipes %}
-{% include "recipe-list.njk" %}
+{% extends "listing.njk" %}
+{% from "recipe-list.njk" import recipeCards, recipeRows %}
+{% set courses = collections.recipes | groupByCourse %}
+
+{% block head %}
+    <script>
+      // A phone starts on the list, which is a fifth the length of the cards there; a saved choice always wins.
+      // assets/listing.js saves the choice under this same key.
+      let listingView = matchMedia('(width < 48rem)').matches ? 'list' : 'cards';
+      try {
+        listingView = localStorage.getItem('listing-view') ?? listingView;
+      } catch {
+        // Private windows can refuse storage; the page then keeps the default for its width.
+      }
+      if (listingView === 'list') document.documentElement.dataset.view = 'list';
+    </script>
+{% endblock %}
+
+{% block toolbar %}
+    <div class="listing-controls can-stick wa-cluster wa-gap-m">
+      <div class="search-field" hidden>
+        <wa-input class="recipe-search wa-visually-hidden-label" type="search" label="Search recipes" placeholder="Name, ingredient or tag" with-clear>
+          <wa-icon slot="start" name="magnifying-glass" variant="regular"></wa-icon>
+        </wa-input>
+      </div>
+      <wa-select class="time-select wa-visually-hidden-label" label="Time" value="any" hidden>
+        <wa-icon slot="start" name="clock" variant="regular"></wa-icon>
+        <wa-option value="any">Any time</wa-option>
+        <wa-option value="30">Up to 30 min</wa-option>
+        <wa-option value="60">Up to 1 hour</wa-option>
+      </wa-select>
+      <a class="to-top shortcut wa-border-radius-s" id="listing-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to top"></wa-icon></a>
+      <wa-tooltip for="listing-top" placement="bottom">Back to top</wa-tooltip>
+      <div class="view-rest" hidden>
+        <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
+          <wa-radio appearance="button" value="cards">Cards</wa-radio>
+          <wa-radio appearance="button" value="list">List</wa-radio>
+        </wa-radio-group>
+      </div>
+    </div>
+    <p class="match-count wa-visually-hidden" role="status"></p>
+    <p class="untimed-note" hidden></p>
+    <wa-scroller without-scrollbar>
+      <nav class="course-links wa-cluster wa-flex-nowrap wa-gap-m" aria-label="Courses">
+        {%- for group in courses %}
+        <a class="wa-text-nowrap" href="#{{ group.course }}-heading" data-course="{{ group.course }}">{{ group.heading }} <span class="course-count">{{ group.recipes.length }}</span></a>
+        {%- endfor %}
+      </nav>
+    </wa-scroller>
+{% endblock %}
+
+{% block results %}
+{%- for group in courses %}
+<section class="course wa-stack wa-gap-m" data-course="{{ group.course }}" aria-labelledby="{{ group.course }}-heading">
+  <h2 class="section-head" id="{{ group.course }}-heading">{{ group.heading }}</h2>
+  {{ recipeCards(group.recipes, "h3") }}
+  {{ recipeRows(group.recipes, true) }}
+</section>
+{%- endfor %}
+<div class="search-empty wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
+  <wa-random-content class="empty-jokes" animation="fade-up">
+    {%- for joke in searchJokes %}
+    <div class="wa-stack wa-gap-l wa-align-items-center">
+      <div class="empty-ornament wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0" aria-hidden="true">
+        <span class="rule-run"></span>
+        <span class="empty-icons wa-cluster wa-flex-nowrap wa-gap-s">{% for name in joke.icons %}<wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>{% endfor %}</span>
+        <span class="rule-run"></span>
+      </div>
+      <div class="wa-stack wa-gap-xs wa-align-items-center">
+        <p class="empty-joke">{{ joke.headline }}</p>
+        <p class="empty-detail">{{ joke.aside }}</p>
+        <p class="wa-visually-hidden">Nothing in the cookbook matches <q class="empty-term"></q>.</p>
+      </div>
+    </div>
+    {%- endfor %}
+  </wa-random-content>
+  <div class="empty-ways-out wa-cluster wa-align-items-center wa-gap-l">
+    <wa-button class="empty-clear" appearance="outlined">Clear the search</wa-button>
+    <span class="wa-cluster wa-align-items-center wa-gap-s">or try
+      <wa-random-content class="empty-tags" items="3">
+        {%- for tag in collections | tagNames %}
+        <button type="button" class="link-button" data-search="{{ tag }}">{{ tag }}</button>
+        {%- endfor %}
+      </wa-random-content>
+    </span>
+    <a class="empty-random" href="/">Surprise me</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/assets/listing.js"></script>
+{% endblock %}

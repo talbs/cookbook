@@ -41,6 +41,13 @@ test('every recipe file becomes a page at /recipes/<file name>/', () => {
   assert.equal(listRecipePages().length, recipeNames.length);
 });
 
+test('the home page links to every recipe page', () => {
+  const homePage = builtPages.find(page => page.url === '/');
+  for (const page of listRecipePages()) {
+    assert.ok(homePage.content.includes(`href="${page.url}"`), `the home page has no link to ${page.url}`);
+  }
+});
+
 test("every recipe page's JSON-LD parses and carries its ingredients and steps", () => {
   for (const page of listRecipePages()) {
     const jsonLd = readJsonLd(page);
