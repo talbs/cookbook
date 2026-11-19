@@ -1,6 +1,5 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
-import { formatDuration } from './lib/quantity.js';
-import { abbreviateTimeUnits, loadRecipe } from './lib/recipe.js';
+import { loadRecipe } from './lib/recipe.js';
 import { keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
 import { RESERVED_TAGS } from './lib/validate-recipe.js';
 
@@ -48,7 +47,6 @@ export default function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter('isoDuration', minutes => minutesToIsoDuration(minutes));
-  eleventyConfig.addFilter('duration', minutes => abbreviateTimeUnits(formatDuration(minutes)));
   eleventyConfig.addFilter('courseLabel', labelCourse);
   eleventyConfig.addFilter('typeset', text => typesetText(text));
   eleventyConfig.addFilter('keepLastWordsTogether', html => keepLastWordsTogether(html));

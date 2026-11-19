@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findWait, formatTimeSummary, splitNoteTitle, trimNoteForTotal } from '../lib/recipe.js';
+import { findWait, formatTimeSummary, splitNoteTitle, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
 
 test('a note shown beside a total drops the parts that are amounts', () => {
   const rows = [
@@ -52,5 +52,18 @@ test('a step is followed by a wait only for a timer the cook walks away from', (
   ];
   for (const [timers, shown] of rows) {
     assert.equal(findWait(timers), shown, `timers: ${timers.map(timer => timer.name).join(', ')}`);
+  }
+});
+
+test("a recipe's stated time never promises less than its timers add up to", () => {
+  const rows = [
+    [600, { min: 570, max: 1050 }, { min: 600, max: 1080 }],
+    [90, { min: 38, max: 44 }, { min: 90, max: 90 }],
+    [145, { min: 1541, max: 1543 }, { min: 145, max: 145 }],
+    [15, undefined, { min: 15, max: 15 }],
+    [null, { min: 5, max: 10 }, null],
+  ];
+  for (const [stated, timerTotal, shown] of rows) {
+    assert.deepEqual(widenTimeForTimers(stated, timerTotal), shown, `stated: ${stated}`);
   }
 });

@@ -107,7 +107,7 @@
         <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
         {%- endif %}
         {%- if totalMinutes != null %}
-        <div><dt>Time</dt><dd><time datetime="{{ totalMinutes | isoDuration }}">{{ totalMinutes | duration }}</time></dd></div>
+        <div><dt>Time</dt><dd><time datetime="{{ totalMinutes | isoDuration }}">{{ timeLabel }}</time></dd></div>
         {%- endif %}
         {%- if course %}
         <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
