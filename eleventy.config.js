@@ -1,9 +1,14 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
-import { formatDuration } from './lib/quantity.js';
 import { loadRecipe } from './lib/recipe.js';
+import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
 import { RESERVED_TAGS } from './lib/validate-recipe.js';
 
+const COURSE_LABELS = { main: 'Main course', side: 'Side dish' };
 const RECIPE_PATH_PATTERN = /^\.\/recipes\/[^/]+\.cook$/;
+
+function labelCourse(course) {
+  return COURSE_LABELS[course] ?? course.charAt(0).toUpperCase() + course.slice(1);
+}
 
 function sortByTitle(items) {
   return [...items].sort((first, second) => first.data.title.localeCompare(second.data.title));
@@ -27,6 +32,7 @@ export default function (eleventyConfig) {
   eleventyConfig.setTemplateFormats(['njk', '11ty.js', 'cook']);
   eleventyConfig.ignores.add('.claude/**');
   eleventyConfig.ignores.add('test/**');
+  eleventyConfig.addPassthroughCopy('assets');
 
   eleventyConfig.addExtension('cook', {
     // Cooklang reads the front matter; letting 11ty read it too gave two YAML readers that disagreed on dates.
@@ -41,7 +47,11 @@ export default function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter('isoDuration', minutes => minutesToIsoDuration(minutes));
-  eleventyConfig.addFilter('duration', minutes => formatDuration(minutes));
+  eleventyConfig.addFilter('courseLabel', labelCourse);
+  eleventyConfig.addFilter('typeset', text => typesetText(text));
+  eleventyConfig.addFilter('keepLastWordsTogether', html => keepLastWordsTogether(html));
+  eleventyConfig.addFilter('keepHyphenatedWordsWhole', html => keepHyphenatedWordsWhole(html));
+  eleventyConfig.addFilter('showPlainLetters', html => showPlainLetters(html));
   eleventyConfig.addFilter('sortByTitle', sortByTitle);
   eleventyConfig.addFilter('tagNames', listTagNames);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);

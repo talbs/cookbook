@@ -1,93 +1,292 @@
 {% extends "base.njk" %}
 
 {% block head %}
+    <script>
+      const darkScheme = matchMedia('(prefers-color-scheme: dark)');
+      function matchColorScheme() {
+        document.documentElement.classList.toggle('wa-dark', darkScheme.matches);
+      }
+      matchColorScheme();
+      darkScheme.addEventListener('change', matchColorScheme);
+    </script>
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/native.css">
+    <script type="module" src="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.loader.js" data-fa-kit-code="d7ec6ed89a"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400..800&family=Ancizar+Serif:wght@400..700&display=swap">
+    <link rel="stylesheet" href="/assets/site.css">
+    <meta name="theme-color" content="#fefefc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1c1a19" media="(prefers-color-scheme: dark)">
     <script type="application/ld+json">{{ jsonLd | safe }}</script>
 {% endblock %}
 
-{% macro ingredientLine(ingredient, recipes) %}
-  {%- if ingredient.amount %}{{ ingredient.amount }} {% endif -%}
+{% macro modeSwitch() %}
+    <wa-radio-group class="mode-switch wa-visually-hidden-label" label="View" orientation="horizontal" value="overview">
+      <wa-radio appearance="button" value="overview">Overview</wa-radio>
+      <wa-radio appearance="button" value="cook">Cook</wa-radio>
+    </wa-radio-group>
+{%- endmacro %}
+
+{% macro ingredientName(ingredient, recipes) %}
   {%- if ingredient.linkedRecipeName -%}
     <a href="{{ (recipes | recipeNamed(ingredient.linkedRecipeName)).url }}">{{ ingredient.name }}</a>
   {%- else -%}
     {{ ingredient.name }}
   {%- endif -%}
-  {%- if ingredient.detail %} {{ ingredient.detail }}{% endif -%}
 {% endmacro %}
 
+{% macro ingredientNote(ingredient) %}
+  {%- if ingredient.isOptional and ingredient.note -%}
+    optional, {{ ingredient.note | typeset | safe }}
+  {%- elif ingredient.isOptional -%}
+    optional
+  {%- elif ingredient.note -%}
+    {{ ingredient.note | typeset | safe }}
+  {%- endif -%}
+{% endmacro %}
+
+{% macro noteDetails(note) %}
+          {%- if note.isShort %}
+          <div class="step-note note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
+          {%- else %}
+          <wa-details class="step-note" appearance="plain" icon-placement="start">
+            <wa-icon slot="expand-icon" class="note-icon" name="note-sticky" variant="regular"></wa-icon>
+            <wa-icon slot="collapse-icon" class="note-icon" name="note-sticky" variant="solid"></wa-icon>
+            <span slot="summary" class="note-title wa-text-truncate">{{ note.titleHtml | safe }}</span>
+            <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
+          </wa-details>
+          {%- endif %}
+{%- endmacro %}
+
+{% macro checklistLine(ingredient, checkId, recipes, note) %}
+      <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l">
+        <span class="wa-text-pretty"><span class="row-words">
+          {%- if ingredient.amount %}<span class="amount wa-font-weight-bold">{{ ingredient.amount | typeset | safe }}</span> {% endif -%}
+          <span class="name">{{ ingredientName(ingredient, recipes) | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span>
+        </span></span>
+        {%- if note | trim | length %} <span class="note wa-text-end"><span class="row-words">{{ note | trim | keepHyphenatedWordsWhole | safe }}</span></span>{% endif -%}
+      </span></wa-checkbox></li>
+{%- endmacro %}
+
+{% block page %}
+<wa-page class="recipe-page" data-mode="overview" mobile-breakpoint="48rem" disable-navigation-toggle>
+  <div class="mode-bar" slot="header">
+    <div class="wa-split wa-flex-nowrap wa-align-items-center wa-gap-s">
+      <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
+      <nav class="shortcuts wa-cluster wa-flex-nowrap wa-gap-xs" aria-label="Jump to">
+        <a class="shortcut shortcut-ingredients wa-border-radius-s" id="shortcut-ingredients" href="#ingredients-heading"><wa-icon name="basket-shopping" variant="regular" label="Ingredients"></wa-icon></a>
+        <wa-tooltip for="shortcut-ingredients" placement="bottom">Ingredients</wa-tooltip>
+        <a class="shortcut wa-border-radius-s" id="shortcut-steps" href="#preparation-heading"><wa-icon name="pot-food" variant="regular" label="Steps"></wa-icon></a>
+        <wa-tooltip for="shortcut-steps" placement="bottom">Steps</wa-tooltip>
+        <a class="shortcut wa-border-radius-s" id="shortcut-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to top"></wa-icon></a>
+        <wa-tooltip for="shortcut-top" placement="bottom">Back to top</wa-tooltip>
+      </nav>
+    </div>
+    {{ modeSwitch() }}
+  </div>
+  {{ super() }}
+</wa-page>
+{% endblock %}
+
 {% block content %}
-<article>
-  <h1>{{ title }}</h1>
-  <p>{{ description }}</p>
-
+<article id="top" class="recipe wa-stack wa-gap-l" data-recipe="{{ page.fileSlug }}">
   {%- set hasSource = source and source.name %}
-  {%- set hasTags = tags and tags.length %}
-  {%- if servings or yield or timeMinutes != null or author or hasSource or course or cuisine or hasTags %}
-  {%- set separator = joiner(" · ") %}
-  <p>
-    {%- if servings %}{{ separator() }}Serves {{ servings }}{% endif %}
-    {%- if yield %}{{ separator() }}Makes {{ yield }}{% endif %}
-    {%- if prepMinutes != null %}{{ separator() }}Prep <time datetime="{{ prepMinutes | isoDuration }}">{{ prepMinutes | duration }}</time>{% endif %}
-    {%- if cookMinutes != null %}{{ separator() }}Cook <time datetime="{{ cookMinutes | isoDuration }}">{{ cookMinutes | duration }}</time>{% endif %}
-    {%- if timeMinutes != null %}{{ separator() }}<time datetime="{{ timeMinutes | isoDuration }}">{{ timeMinutes | duration }}</time>{% endif %}
-    {%- if author %}{{ separator() }}Recipe by {{ author }}{% endif %}
-    {%- if hasSource %}{{ separator() }}{{ "Adapted from" if adapted else "Source:" }} {% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% endif %}
-    {%- if course %}{{ separator() }}{{ course }}{% endif %}
-    {%- if cuisine %}{{ separator() }}{{ cuisine }}{% endif %}
-    {%- if hasTags %}{{ separator() }}{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}{% endif -%}
-  </p>
-  {%- endif %}
+  <header class="recipe-head wa-stack wa-gap-m">
+    <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | showPlainLetters | safe }}</h1>
+    <div class="recipe-intro wa-stack wa-gap-l">
+      <p class="description wa-text-balance">{{ description }}</p>
+      <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
+      {%- if servings or yield or course or difficulty or totalMinutes != null %}
+      <dl class="facts wa-grid wa-gap-m">
+        {%- if servings %}
+        <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
+        {%- endif %}
+        {%- if yield %}
+        <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
+        {%- endif %}
+        {%- if totalMinutes != null %}
+        <div><dt>Time</dt><dd><time datetime="{{ totalMinutes | isoDuration }}">{{ timeLabel }}</time></dd></div>
+        {%- endif %}
+        {%- if difficulty %}
+        <div><dt>Difficulty</dt><dd>{{ difficulty | capitalize }}</dd></div>
+        {%- endif %}
+        {%- if course %}
+        <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
+        {%- endif %}
+      </dl>
+      {%- endif %}
+    </div>
+  </header>
 
-  {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
-  {%- if usedIn.length %}
-  <p>Used in: {% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
-  {%- endif %}
+  <div class="mode-rest" hidden>
+    {{ modeSwitch() }}
+  </div>
 
-  <h2>Ingredients</h2>
-  <ul>
-    {%- for ingredient in recipe.ingredients %}
-    <li>{{ ingredientLine(ingredient, collections.recipes) }}</li>
-    {%- endfor %}
-  </ul>
-
-  {%- if recipe.cookware.length %}
-  <h2>Equipment</h2>
-  <ul>
-    {%- for item in recipe.cookware %}
-    <li>{{ item }}</li>
-    {%- endfor %}
-  </ul>
-  {%- endif %}
-
-  {%- for section in recipe.sections %}
-  <section>
-    {%- if section.name %}
-    <h2>{{ section.name }}</h2>
-    {%- else %}
-    <h2>Directions</h2>
-    {%- endif %}
-    {%- for block in section.blocks %}
-    {%- if block.type == "steps" %}
-    <ol start="{{ block.steps[0].number }}">
-      {%- for step in block.steps %}
-      <li>
-        <p>{{ step.text }}</p>
-        {%- if step.ingredients.length %}
-        <ul>
-          {%- for ingredient in step.ingredients %}
-          <li>{{ ingredientLine(ingredient, collections.recipes) }}</li>
+  <div class="recipe-body wa-stack wa-gap-3xl">
+    <section class="needs wa-stack wa-gap-m" aria-labelledby="ingredients-heading">
+      <h2 class="section-head" id="ingredients-heading">Ingredients</h2>
+      <div class="needs-list wa-stack wa-gap-s">
+        {%- for sectionIndex, chunk in recipe.ingredients | groupby("firstUseSectionIndex") %}
+        {%- set sectionName = recipe.sections[sectionIndex].name %}
+        {%- if sectionName %}
+        <p class="timing-section">{{ sectionName }}</p>
+        {%- endif %}
+        <ul class="checklist wa-list-plain wa-stack wa-gap-s" role="list">
+          {%- for ingredient in chunk %}
+          {{ checklistLine(ingredient, "need-" + sectionIndex + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
           {%- endfor %}
         </ul>
+        {%- endfor %}
+      </div>
+      <div class="needs-more">
+        {%- if recipe.cookware.length %}
+        <section class="equipment" aria-labelledby="equipment-heading">
+          <h3 class="needs-subhead" id="equipment-heading">Equipment</h3>
+          <ul class="wa-list-plain wa-grid wa-gap-xs" role="list">
+            {%- for item in recipe.cookware %}
+            <li>{{ item.name }}</li>
+            {%- endfor %}
+          </ul>
+        </section>
         {%- endif %}
-      </li>
-      {%- endfor %}
-    </ol>
-    {%- else %}
-    <aside>
-      {{ block.html | safe }}
-    </aside>
+        {%- if recipe.leadNotes.length %}
+        <section class="lead-notes" aria-labelledby="lead-notes-heading">
+          <h3 class="needs-subhead" id="lead-notes-heading">Before You Start</h3>
+          {%- for note in recipe.leadNotes %}
+          {{ note | safe }}
+          {%- endfor %}
+        </section>
+        {%- endif %}
+        {%- if recipe.timing %}
+        <section class="timing" aria-labelledby="timing-heading">
+          <div class="wa-split wa-align-items-baseline wa-gap-s">
+            <h3 class="needs-subhead" id="timing-heading">Timing</h3>
+            <span class="timing-total">{{ recipe.timing.totalLabel }}</span>
+          </div>
+          {%- for group in recipe.timing.sections %}
+          {%- if recipe.timing.isGrouped and group.name %}
+          <p class="timing-section wa-split wa-align-items-baseline wa-gap-s"><span>{{ group.name }}</span>{% if group.rows.length > 1 %}<span>{{ group.totalLabel }}</span>{% endif %}</p>
+          {%- endif %}
+          <ol class="timing-rows wa-list-plain wa-stack wa-gap-s" role="list">
+            {%- for row in group.rows %}
+            <li><a class="timing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-font-weight-bold wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
+            {%- endfor %}
+          </ol>
+          {%- endfor %}
+        </section>
+        {%- endif %}
+        {%- if whyItWorks.length %}
+        <section class="lead-notes" aria-labelledby="why-heading">
+          <h3 class="needs-subhead" id="why-heading">Why It Works</h3>
+          {%- for reason in whyItWorks %}
+          <p>{{ reason | safe }}</p>
+          {%- endfor %}
+        </section>
+        {%- endif %}
+      </div>
+    </section>
+
+    {%- if recipe.leadNotes.length %}
+    <section class="before-start wa-stack wa-gap-m" aria-labelledby="before-start-heading">
+      <h2 class="section-head" id="before-start-heading">Before You Start</h2>
+      <div class="recipe-note">
+        {%- for note in recipe.leadNotes %}
+        {{ note | safe }}
+        {%- endfor %}
+      </div>
+    </section>
     {%- endif %}
-    {%- endfor %}
-  </section>
-  {%- endfor %}
+    <section class="method wa-stack wa-gap-m" aria-labelledby="preparation-heading">
+      <h2 class="section-head{% if recipe.sections[0].name %} wa-visually-hidden{% endif %}" id="preparation-heading">Preparation</h2>
+      {%- for section in recipe.sections %}
+      {%- if section.name %}
+      <h3 class="phase section-head">{{ section.name }}</h3>
+      {%- endif %}
+      {%- for block in section.blocks %}
+      {%- if block.type == "steps" %}
+      <ol class="steps wa-list-plain wa-stack wa-gap-l" role="list" start="{{ block.steps[0].number }}">
+        {%- for step in block.steps %}
+        <li class="step" id="{{ step.id }}">
+          <p class="step-text">
+            <span class="step-number wa-font-weight-bold"><span class="wa-visually-hidden">Step </span>{{ step.number }}.</span>
+            {%- for part in step.parts -%}
+              {%- if part.type == "text" -%}
+                {{ part.value | typeset | safe }}
+              {%- else -%}
+                <span class="step-{{ part.type }}">{{ part.value | typeset | safe }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </p>
+          {%- for note in step.notes %}
+          {{ noteDetails(note) }}
+          {%- endfor %}
+          {%- if step.ingredients.length %}
+          <ul class="checklist step-needs wa-list-plain wa-stack wa-gap-xs" role="list">
+            {%- for ingredient in step.ingredients %}
+            {{ checklistLine(ingredient, step.id + "-" + loop.index, collections.recipes, ingredient.repeatSource.label if ingredient.repeatSource else ingredientNote(ingredient)) }}
+            {%- endfor %}
+          </ul>
+          {%- endif %}
+        </li>
+        {%- if step.wait %}
+        <li class="wait-mark wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-s" aria-hidden="true">
+          <span class="wait-run"></span>
+          <span class="wa-cluster wa-flex-nowrap wa-gap-2xs wa-text-nowrap"><wa-icon name="hourglass-half" variant="regular"></wa-icon>{{ step.wait | typeset | safe }}</span>
+        </li>
+        {%- endif %}
+        {%- endfor %}
+      </ol>
+      {%- else %}
+      {{ noteDetails(block) }}
+      {%- endif %}
+      {%- endfor %}
+      {%- endfor %}
+    </section>
+  </div>
+
+
+  {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
+  {%- if hasSource or author or usedIn.length or tags.length or cuisine or icons.length %}
+  <footer class="attribution wa-caption-s">
+    <div class="footer-rule wa-span-grid wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true">
+      <span class="rule-run"></span>
+      {%- if icons.length %}
+      <div class="recipe-icons wa-cluster wa-flex-nowrap wa-gap-s">
+        {%- for name in icons %}
+        <wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>
+        {%- endfor %}
+      </div>
+      <span class="rule-run"></span>
+      {%- endif %}
+    </div>
+    {%- if hasSource or author %}
+    <dl class="credit">
+      <div>
+        <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
+        <dd>
+          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
+          {%- else %}{{ author }}{% endif -%}
+        </dd>
+      </div>
+    </dl>
+    {%- endif %}
+    {%- if tags.length or usedIn.length or cuisine %}
+    <dl class="connections wa-cluster wa-align-items-start wa-gap-2xl">
+      {%- if cuisine %}
+      <div><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
+      {%- endif %}
+      {%- if tags.length %}
+      <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% endfor %}</dd></div>
+      {%- endif %}
+      {%- if usedIn.length %}
+      <div><dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd></div>
+      {%- endif %}
+    </dl>
+    {%- endif %}
+  </footer>
+  {%- endif %}
 </article>
+<script type="module" src="/assets/recipe.js"></script>
 {% endblock %}
