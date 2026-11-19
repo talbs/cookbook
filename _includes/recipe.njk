@@ -80,7 +80,11 @@
 {% block header %}
   <div class="mode-bar" slot="header">
     <div class="wa-split wa-flex-nowrap wa-align-items-center wa-gap-s">
-      <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
+      <span class="pinned-lead wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-2xs">
+        <a class="shortcut wa-border-radius-s" id="shortcut-home" href="/"><wa-icon name="arrow-left" variant="regular" label="All recipes"></wa-icon></a>
+        <wa-tooltip for="shortcut-home" placement="bottom">All recipes</wa-tooltip>
+        <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
+      </span>
       <nav class="shortcuts wa-cluster wa-flex-nowrap wa-gap-xs" aria-label="Shortcuts">
         <a class="shortcut shortcut-ingredients wa-border-radius-s" id="shortcut-ingredients" href="#ingredients-heading"><wa-icon name="basket-shopping" variant="regular" label="Ingredients"></wa-icon></a>
         <wa-tooltip for="shortcut-ingredients" placement="bottom">Ingredients</wa-tooltip>

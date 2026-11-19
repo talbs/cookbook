@@ -567,8 +567,14 @@ a:focus-visible {
   margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
 }
 
+.pinned-lead {
+  min-inline-size: 0;
+  margin-inline-start: calc((1rem - var(--shortcut-size)) / 2);
+}
+
 .shortcut {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
   inline-size: var(--shortcut-size);
   block-size: var(--shortcut-size);
