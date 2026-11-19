@@ -940,6 +940,76 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   background: var(--hatch);
 }
 
+/* A band with a control is a wa-progress-bar, so the hatch moves to its track and the fill draws over it. */
+wa-progress-bar.wait-run {
+  --track-height: var(--wa-space-s);
+  --track-color: transparent;
+  --indicator-color: var(--timer-ink);
+  background: none;
+}
+
+wa-progress-bar.wait-run::part(progress-bar) {
+  border-radius: var(--wa-border-radius-s);
+  background: var(--hatch);
+}
+
+.timer-control {
+  all: unset;
+  display: inline-grid;
+  place-items: center end;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin-block: -0.5rem;
+  margin-inline-start: -1rem;
+  cursor: pointer;
+}
+
+.timer-control[hidden] {
+  display: none;
+}
+
+.timer-control:focus-visible .timer-square {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+.timer-square {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 1px solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+  font-size: 0.75rem;
+  color: var(--note-ink);
+}
+
+.timer-readout {
+  justify-content: flex-end;
+}
+
+.timer-words:empty {
+  display: none;
+}
+
+.timer-band:not([data-phase='idle']) .timer-readout {
+  color: var(--timer-ink);
+}
+
+/* WA eases every change on the indicator; the fill moves only as the motion rules below say, and jumps under reduced motion. */
+wa-progress-bar.wait-run::part(indicator) {
+  transition: none;
+}
+
+.timer-readout {
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+.timer-square.is-flashing {
+  animation: control-flash 900ms ease-out;
+}
+
 .step-needs {
   grid-column: 1;
   grid-row: 3;
@@ -1184,11 +1254,13 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   /* Only after a tap, so ticks restored on page load don't all pop at once. */
-  .checklist :is(.box-unchecked, .box-checked) {
+  .checklist :is(.box-unchecked, .box-checked),
+  .timer-square {
     transition: scale var(--press) ease-out;
   }
 
-  .checklist wa-checkbox:active :is(.box-unchecked, .box-checked) {
+  .checklist wa-checkbox:active :is(.box-unchecked, .box-checked),
+  .timer-control:active .timer-square {
     scale: 0.8;
   }
 
@@ -1198,8 +1270,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
       tick-flash 900ms ease-out;
   }
 
-  wa-checkbox.is-touched:not(:state(checked)) .box-unchecked {
+  wa-checkbox.is-touched:not(:state(checked)) .box-unchecked,
+  .timer-square.is-springing {
     animation: spring-from-press var(--settle) var(--ease-spring);
+  }
+
+  .timer-band:is([data-phase='running'], [data-phase='check']) wa-progress-bar.wait-run::part(indicator) {
+    transition: width 1s linear;
+  }
+
+  .timer-band[data-phase='idle'] wa-progress-bar.wait-run::part(indicator) {
+    transition: width var(--settle) var(--ease-swift);
   }
 
   /* The hatch sweeps across like a highlighter stroke, holds, then leaves on the page's own fade.
@@ -1248,6 +1329,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   30% {
     --secondary-color: var(--accent);
     --secondary-opacity: 0.55;
+  }
+}
+
+@keyframes control-flash {
+  0%,
+  30% {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 }
 
@@ -1411,7 +1500,7 @@ wa-page[view='desktop'] {
     --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
   }
 
-  [data-mode='cook'] :is(.before-start, .method > :not(.steps)) {
+  [data-mode='cook'] :is(.before-start, .method > :not(.steps), .wait-mark) {
     margin-inline-end: calc(var(--needs-column) + var(--column-gap));
   }
 

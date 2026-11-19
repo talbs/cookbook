@@ -230,12 +230,20 @@
           </ul>
           {%- endif %}
         </li>
-        {%- if step.wait %}
+        {%- for band in step.bands %}
+        {%- if band.isCountable %}
+        <li class="wait-mark timer-band wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-s" data-timer="{{ band.id }}" data-name="{{ band.name }}" data-low-minutes="{{ band.lowMinutes }}" data-high-minutes="{{ band.highMinutes }}">
+          <wa-progress-bar class="wait-run" value="0" label="{{ band.name | capitalize }} timer"></wa-progress-bar>
+          <span class="timer-readout wa-cluster wa-flex-nowrap wa-gap-2xs wa-text-nowrap"><wa-icon class="timer-hourglass" name="hourglass-half" variant="regular"></wa-icon><span class="timer-words"></span><span class="timer-time">{{ band.label | typeset | safe }}</span></span>
+          <button class="timer-control" type="button" aria-label="Start {{ band.name }} timer" hidden><span class="timer-square"><wa-icon name="play" variant="regular"></wa-icon></span></button>
+        </li>
+        {%- else %}
         <li class="wait-mark wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-s" aria-hidden="true">
           <span class="wait-run"></span>
-          <span class="wa-cluster wa-flex-nowrap wa-gap-2xs wa-text-nowrap"><wa-icon name="hourglass-half" variant="regular"></wa-icon>{{ step.wait | typeset | safe }}</span>
+          <span class="wa-cluster wa-flex-nowrap wa-gap-2xs wa-text-nowrap"><wa-icon name="hourglass-half" variant="regular"></wa-icon>{{ band.label | typeset | safe }}</span>
         </li>
         {%- endif %}
+        {%- endfor %}
         {%- endfor %}
       </ol>
       {%- else %}
@@ -287,6 +295,7 @@
     {%- endif %}
   </footer>
   {%- endif %}
+  <p class="timer-status wa-visually-hidden" role="status"></p>
 </article>
 <script type="module" src="/assets/recipe.js"></script>
 {% endblock %}
