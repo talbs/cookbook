@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "Free Lunch";
-  src: url("/assets/fonts/FreeLunch-Regular.woff2") format("woff2");
+  font-family: 'Free Lunch';
+  src: url('/assets/fonts/FreeLunch-Regular.woff2') format('woff2');
   font-display: swap;
 }
 
@@ -41,11 +41,11 @@ body {
 }
 
 :root {
-  --wa-font-family-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --wa-font-family-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
   /* Hanken Grotesk at 600 reads close to its regular, so bold is 700. */
   --wa-font-weight-bold: 700;
-  --wa-font-family-heading: "Free Lunch", "Hanken Grotesk", sans-serif;
-  --wa-font-family-longform: "Ancizar Serif", ui-serif, serif;
+  --wa-font-family-heading: 'Free Lunch', 'Hanken Grotesk', sans-serif;
+  --wa-font-family-longform: 'Ancizar Serif', ui-serif, serif;
   --wa-color-text-link: var(--wa-color-text-normal);
   --wa-color-focus: var(--wa-color-text-normal);
   --wa-color-brand-fill-loud: var(--wa-color-text-normal);
@@ -54,17 +54,24 @@ body {
   --paper: var(--wa-color-surface-default);
   /* Fine 45-degree hatch from the recipe-table texture library, drawn in the ink at 22%; the dividers share this ink. */
   --mark: color-mix(in oklab, var(--ink) 22%, transparent);
-  --hatch: repeating-linear-gradient(-45deg, transparent 0, var(--mark) 0.5px, var(--mark) 1px, transparent 1.5px, transparent 5px);
+  --hatch: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    var(--mark) 0.5px,
+    var(--mark) 1px,
+    transparent 1.5px,
+    transparent 5px
+  );
   --band: 0.5rem;
   /* One dot every 6px. The leaders, the dividers and the spacing around the footer's icons all count in this. */
   --dot-pitch: 6px;
   /* Leader dots from the same library, used as a mask so they take the ink colour in either theme. */
-  --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center / var(--dot-pitch) var(--dot-pitch) round;
+  --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center /
+    var(--dot-pitch) var(--dot-pitch) round;
   /* The paper each word carries past its own edge, so the leader's dots stop short of the text. */
   --leader-clearance: 0.4em;
   /* How much of a row an ingredient's amount and name may take before the note gets the rest. */
   --name-share: 62%;
-  --detail-size: 0.875em;
   --section-head-size: 1.5rem;
   --ornament-size: 1.125rem;
   /* The page's springy moves share one length; the curves differ only in how far they overshoot. */
@@ -80,10 +87,16 @@ body {
   --control-edge: var(--wa-color-neutral-border-loud);
   /* neutral-40 here, neutral-60 in dark: neutral-50 falls short of 4.5:1 for text on either paper. */
   --note-ink: var(--wa-color-text-quiet);
-  --list-size: var(--wa-font-size-m);
+  /* The type scale. Sans: 14 small, 16 body, 20 large, 24 heads. Serif: 18 asides, 20 steps, then the description.
+     Line height is 1.5, or 1.2 on heads and labels. Weights are 400, 700 and 800 for heads. */
   --note-size: var(--wa-font-size-s);
+  --list-size: var(--wa-font-size-m);
+  --large-size: var(--wa-font-size-l);
+  --aside-size: 1.125rem;
   /* Ancizar's small x-height reads a size down next to the sans, so steps run at 20px. */
   --step-size: var(--wa-font-size-l);
+  /* Sans words set inside serif text. Ingredient names also take weight 500, or they stop reading as ingredients. */
+  --inline-sans-size: 0.875em;
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --page-gutter: 1.25rem;
   --section-space: var(--wa-space-l);
@@ -93,7 +106,10 @@ body {
   --shortcut-size: 2.5rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
-  --bar-height: calc(2 * var(--wa-space-m) + var(--shortcut-size) + var(--wa-space-s) + var(--bar-switch-height) + 1px);
+  --bar-height: calc(
+    2 * var(--wa-space-m) + var(--shortcut-size) + var(--wa-space-s) +
+      var(--bar-switch-height) + 1px
+  );
   scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-m));
 }
 
@@ -116,8 +132,10 @@ a:hover {
 @media (prefers-reduced-motion: no-preference) {
   a {
     transition:
-      text-decoration-color var(--wa-transition-normal) var(--wa-transition-easing),
-      text-decoration-thickness var(--wa-transition-normal) var(--wa-transition-easing);
+      text-decoration-color var(--wa-transition-normal)
+        var(--wa-transition-easing),
+      text-decoration-thickness var(--wa-transition-normal)
+        var(--wa-transition-easing);
   }
 }
 
@@ -278,7 +296,8 @@ a:focus-visible {
   .recipe-icons wa-icon {
     transition:
       --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
-      --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing),
+      --secondary-opacity var(--wa-transition-normal)
+        var(--wa-transition-easing),
       scale var(--settle) var(--ease-spring),
       rotate var(--settle) var(--ease-spring);
   }
@@ -380,7 +399,7 @@ a:focus-visible {
   color: var(--accent);
 }
 
-[data-mode="cook"] .shortcut-ingredients {
+[data-mode='cook'] .shortcut-ingredients {
   display: none;
 }
 
@@ -390,20 +409,20 @@ a:focus-visible {
   color: var(--ink);
 }
 
-.mode-switch [data-mode="overview"] {
+.mode-switch [data-mode='overview'] {
   grid-column: 1;
 }
 
-.mode-switch [data-mode="cook"] {
+.mode-switch [data-mode='cook'] {
   grid-column: 2;
 }
 
-.mode-switch button[aria-pressed="true"] {
+.mode-switch button[aria-pressed='true'] {
   font-weight: var(--wa-font-weight-bold);
 }
 
 /* A grey hover fill read as a second selected state next to the hatch, so hover only colours the label. */
-.mode-switch button[aria-pressed="false"] {
+.mode-switch button[aria-pressed='false'] {
   color: var(--note-ink);
 }
 
@@ -411,20 +430,20 @@ a:focus-visible {
   background-color: transparent;
 }
 
-.mode-switch button[aria-pressed="false"]:hover {
+.mode-switch button[aria-pressed='false']:hover {
   color: var(--accent);
 }
 
 /* One hatched block behind both buttons, so the pressed state can slide from one to the other. */
 .mode-switch::before {
-  content: "";
+  content: '';
   grid-row: 1;
   grid-column: 1;
   border-radius: var(--wa-form-control-border-radius);
   background: var(--hatch);
 }
 
-.mode-switch:has([data-mode="cook"][aria-pressed="true"])::before {
+.mode-switch:has([data-mode='cook'][aria-pressed='true'])::before {
   translate: 100% 0;
 }
 
@@ -464,7 +483,10 @@ a:focus-visible {
 /* From tablet width the sticky bar is one row, as tall as its taller item. */
 @media (min-width: 48rem) {
   :root {
-    --bar-height: calc(2 * var(--wa-space-m) + max(var(--shortcut-size), var(--bar-switch-height)) + 1px);
+    --bar-height: calc(
+      2 * var(--wa-space-m) +
+        max(var(--shortcut-size), var(--bar-switch-height)) + 1px
+    );
     scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-l));
   }
 }
@@ -505,13 +527,13 @@ a:focus-visible {
 .equipment {
   font-size: var(--list-size);
   line-height: 1.5;
-  letter-spacing: 0.01em;
 }
 
 .checklist wa-checkbox {
   --wa-form-control-toggle-size: 1.25rem;
   display: flex;
   color: inherit;
+  font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
   -webkit-user-select: text;
@@ -569,19 +591,19 @@ wa-checkbox:not(:state(checked)) .box-checked {
 
 /* Registered so the tick's red can fade back to ink; unregistered custom properties jump. wa-icon still sets both on :host. */
 @property --secondary-color {
-  syntax: "<color>";
+  syntax: '<color>';
   inherits: true;
   initial-value: transparent;
 }
 
 @property --primary-color {
-  syntax: "<color>";
+  syntax: '<color>';
   inherits: true;
   initial-value: currentColor;
 }
 
 @property --secondary-opacity {
-  syntax: "<number>";
+  syntax: '<number>';
   inherits: true;
   initial-value: 0.4;
 }
@@ -626,7 +648,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .ingredient .note,
 .timing-step {
-  font-size: var(--detail-size);
+  font-size: var(--note-size);
   color: var(--note-ink);
 }
 
@@ -635,7 +657,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
    The line is held to the content box, so it stops at the words and not at the padding the paper needs. */
 .strike {
   background:
-    linear-gradient(currentColor, currentColor) content-box no-repeat 0 58% / 0% 1px,
+    linear-gradient(currentColor, currentColor) content-box no-repeat 0 58% / 0%
+      1px,
     var(--paper);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
@@ -706,7 +729,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* Section labels and subtotals are supporting detail, so they match the ingredient notes. */
 .timing-section {
   margin: var(--wa-space-s) 0 var(--wa-space-3xs);
-  font-size: var(--detail-size);
+  font-size: var(--note-size);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
 }
@@ -719,7 +742,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
    so the dots show only in the gap, and a row keeps them however its name or note wraps. */
 .timing-rows li::after,
 .ingredient:has(.note)::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0.72em 0 auto;
   block-size: var(--dot-pitch);
@@ -767,16 +790,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .step-ingredient,
 .step-timer {
   font-family: var(--wa-font-family-body);
+  font-size: var(--inline-sans-size);
 }
 
 .step-ingredient {
-  font-size: 0.9em;
   font-weight: var(--wa-font-weight-semibold);
 }
 
-/* A touch under the ingredients, so its lowercase lines up with the serif's around it. */
 .step-timer {
-  font-size: 0.85em;
   font-variant-numeric: tabular-nums;
   color: var(--timer-ink);
 }
@@ -806,7 +827,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   padding-block: var(--wa-space-3xs);
   border-radius: var(--wa-border-radius-s);
   font-family: var(--wa-font-family-body);
-  font-size: var(--note-size);
+  font-size: var(--list-size);
+  line-height: 1.5;
   color: var(--note-ink);
 }
 
@@ -847,7 +869,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   align-items: baseline;
   gap: 0.5em;
   font-family: var(--wa-font-family-body);
-  font-size: var(--note-size);
+  font-size: var(--list-size);
   line-height: 1.5;
   color: var(--note-ink);
 }
@@ -888,7 +910,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .step:target .step-text::before,
 .footnote:target::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: calc(-1 * var(--wa-space-s)) calc(-1 * var(--wa-space-m));
   z-index: -1;
@@ -900,7 +922,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* Asides sit a size down from the steps. */
 .recipe-note {
   position: relative;
-  font-size: 1.125rem;
+  font-size: var(--aside-size);
 }
 
 /* Footnotes keep an inset column of the leader dots under their bold title. */
@@ -909,7 +931,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .footnote-body::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0.25em auto 0.25em 0;
   inline-size: var(--dot-pitch);
@@ -1004,7 +1026,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .footnote-body li::before {
-  content: counter(note-step, lower-alpha) ".";
+  content: counter(note-step, lower-alpha) '.';
   margin-inline-end: 0.3em;
   font-weight: var(--wa-font-weight-bold);
 }
@@ -1027,55 +1049,59 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .facts dt {
-  font-size: var(--wa-font-size-s);
+  font-size: var(--note-size);
 }
 
 .attribution dd {
   margin: 0;
+  font-size: var(--list-size);
+  line-height: 1.5;
   color: var(--ink);
 }
 
-[data-mode="overview"] .step-needs {
+[data-mode='overview'] .step-needs {
   display: none;
 }
 
-[data-mode="cook"] .needs {
+[data-mode='cook'] .needs {
   display: none;
 }
 
 /* Cook hides the planning column, so its "Before you start" notes get their own section ahead of the method. */
-[data-mode="overview"] .before-start {
+[data-mode='overview'] .before-start {
   display: none;
 }
 
 /* Cook's step text is 22px, so section names step up to stay above it. */
-[data-mode="cook"] :is(.method, .before-start) {
+[data-mode='cook'] :is(.method, .before-start) {
   --section-head-size: 1.75rem;
 }
 
-[data-mode="cook"] .step-text {
-  font-size: 1.375rem;
+/* Cook is read from arm's length: steps, asides and ingredient rows each move up a size. */
+.recipe-page[data-mode='cook'] {
+  --step-size: 1.375rem;
+  --aside-size: var(--wa-font-size-l);
 }
 
-[data-mode="cook"] .recipe-note {
-  font-size: 1.25rem;
-}
-
-[data-mode="cook"] .method {
+[data-mode='cook'] .method {
   --step-gap: var(--wa-space-2xl);
 }
 
-[data-mode="cook"] .steps {
+[data-mode='cook'] .steps {
   gap: var(--step-gap);
 }
 
-[data-mode="cook"] .step-needs {
+[data-mode='cook'] .step-needs {
   gap: var(--wa-space-s);
-  font-size: 1.25rem;
+  font-size: var(--large-size);
+}
+
+[data-mode='cook'] .step-needs .note {
+  font-size: var(--list-size);
 }
 
 /* With no Before You Start above it, the whole page is the preparation, so its name is for screen readers only. */
-.recipe-page[data-mode="cook"]:not(:has(.before-start)) #preparation-heading {
+.recipe-page[data-mode='cook']:not(:has(.before-start)) #preparation-heading {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -1085,26 +1111,26 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
-[data-mode="cook"] .attribution :is(.credit, .connections) {
+[data-mode='cook'] .attribution :is(.credit, .connections) {
   display: none;
 }
 
 /* Pads each row to a 44px tap target for a cook with wet hands; a mouse doesn't need it. */
 @media (pointer: coarse) {
-  [data-mode="cook"] .step-needs {
+  [data-mode='cook'] .step-needs {
     gap: 0;
   }
 
-  [data-mode="cook"] .step-needs wa-checkbox {
+  [data-mode='cook'] .step-needs wa-checkbox {
     padding-block: 0.625rem;
   }
 }
 
-[data-mode="cook"] .step-needs wa-checkbox::part(control) {
+[data-mode='cook'] .step-needs wa-checkbox::part(control) {
   margin-block-start: 0.1875rem;
 }
 
-[data-mode="cook"] .step-needs :is(.box-unchecked, .box-checked) {
+[data-mode='cook'] .step-needs :is(.box-unchecked, .box-checked) {
   inset-block-start: 0.1875rem;
 }
 
@@ -1186,7 +1212,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   .checklist .strike {
-    transition: background-size var(--wa-transition-slow) var(--wa-transition-easing);
+    transition: background-size var(--wa-transition-slow)
+      var(--wa-transition-easing);
   }
 
   /* Only after a tap, so ticks restored on page load don't all pop at once. */
@@ -1214,14 +1241,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .footnote:target::before {
     animation:
       arrival-sweep var(--settle) var(--ease-swift) both,
-      arrival-leave calc(2 * var(--wa-transition-slow)) var(--wa-transition-easing) var(--arrival-hold) forwards;
+      arrival-leave calc(2 * var(--wa-transition-slow))
+        var(--wa-transition-easing) var(--arrival-hold) forwards;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .step:target .step-text::before,
   .footnote:target::before {
-    animation: arrival-hold calc(var(--arrival-hold) + 2 * var(--wa-transition-slow)) step-end both;
+    animation: arrival-hold
+      calc(var(--arrival-hold) + 2 * var(--wa-transition-slow)) step-end both;
   }
 }
 
@@ -1299,7 +1328,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
   .recipe {
     display: grid;
-    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(0, 1fr) 15rem;
+    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(
+        0,
+        1fr
+      ) 15rem;
     gap: var(--wa-space-l) var(--column-gap);
     align-items: start;
   }
@@ -1363,14 +1395,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* wa-page marks itself desktop past its 48rem mobile-breakpoint; the bar goes to one row on the page grid there,
    the title at the ingredients' edge and the switch in the 15rem column the resting switch uses. */
-wa-page[view="desktop"] {
+wa-page[view='desktop'] {
   /* The icons cluster beside the switch, a step apart, instead of a whole column gap away. */
   & .mode-bar {
     grid-template-columns: minmax(0, 1fr) 15rem;
     align-items: center;
     column-gap: var(--wa-space-xl);
     padding-block: var(--wa-space-m);
-    padding-inline: max(var(--page-gutter), calc((100% - 75rem) / 2 + var(--page-gutter)));
+    padding-inline: max(
+      var(--page-gutter),
+      calc((100% - 75rem) / 2 + var(--page-gutter))
+    );
   }
 
   & .shortcuts {
@@ -1401,7 +1436,7 @@ wa-page[view="desktop"] {
     grid-column: 2 / -1;
   }
 
-  [data-mode="overview"] .recipe-body {
+  [data-mode='overview'] .recipe-body {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
     gap: var(--column-gap);
@@ -1410,27 +1445,27 @@ wa-page[view="desktop"] {
 
   /* In Cook the steps keep the page's left edge, under the title, and each step's ingredients sit to its right
      like a margin note. The column is the width Overview gives its ingredients. */
-  [data-mode="cook"] :is(.method, .before-start, .footnotes) {
+  [data-mode='cook'] :is(.method, .before-start, .footnotes) {
     --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
   }
 
-  [data-mode="cook"] :is(.before-start, .footnotes, .method > :not(.steps)) {
+  [data-mode='cook'] :is(.before-start, .footnotes, .method > :not(.steps)) {
     margin-inline-end: calc(var(--needs-column) + var(--column-gap));
   }
 
-  [data-mode="cook"] .footnotes {
+  [data-mode='cook'] .footnotes {
     grid-column: 1 / -1;
   }
 
   /* The ingredient list spans both rows; the 1fr row takes its extra height, so the note sits right under the text. */
-  [data-mode="cook"] .step {
+  [data-mode='cook'] .step {
     grid-template-columns: minmax(0, 1fr) var(--column-gap) var(--needs-column);
     grid-template-rows: auto 1fr;
   }
 
   /* On a long step the list rides down beside the text, just under the sticky bar, until the step ends.
      It hugs its own height so it has room to travel inside the step. */
-  [data-mode="cook"] .step-needs {
+  [data-mode='cook'] .step-needs {
     position: sticky;
     inset-block-start: calc(var(--bar-height) + var(--wa-space-m));
     grid-column: 3;
