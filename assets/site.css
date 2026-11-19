@@ -41,8 +41,10 @@ body {
 }
 
 :root {
-  --wa-font-family-body: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --wa-font-family-heading: "Free Lunch", "Geist", sans-serif;
+  --wa-font-family-body: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* Hanken Grotesk at 600 reads close to its regular, so bold is 700. */
+  --wa-font-weight-bold: 700;
+  --wa-font-family-heading: "Free Lunch", "Hanken Grotesk", sans-serif;
   --wa-font-family-longform: "Ancizar Serif", ui-serif, serif;
   --wa-color-text-link: var(--wa-color-text-normal);
   --wa-color-focus: var(--wa-color-text-normal);
@@ -63,7 +65,7 @@ body {
   /* How much of a row an ingredient's amount and name may take before the note gets the rest. */
   --name-share: 62%;
   --detail-size: 0.875em;
-  --section-head-size: 1.75rem;
+  --section-head-size: 1.5rem;
   --ornament-size: 1.125rem;
   /* The page's springy moves share one length; the curves differ only in how far they overshoot. */
   --settle: 420ms;
@@ -80,7 +82,7 @@ body {
   --note-ink: var(--wa-color-text-quiet);
   --list-size: var(--wa-font-size-m);
   --note-size: var(--wa-font-size-s);
-  /* Ancizar's small x-height reads a size down next to Geist, so steps run at 20px. */
+  /* Ancizar's small x-height reads a size down next to the sans, so steps run at 20px. */
   --step-size: var(--wa-font-size-l);
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --page-gutter: 1.25rem;
@@ -162,7 +164,7 @@ a:focus-visible {
   --rule-gap: 2.25rem;
 }
 
-/* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the Geist fallback. */
+/* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
 .recipe-head h1 {
   font-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-weight: 800;
@@ -415,16 +417,15 @@ a:focus-visible {
   translate: 100% 0;
 }
 
-/* Free Lunch ships one weight, as on the title; weight 800 is for the Geist fallback. */
-.section-head {
-  font-family: var(--wa-font-family-heading);
+/* Every head below the title shares one style, so a sidebar block reads level with Ingredients. */
+.section-head,
+.needs-subhead {
+  font-family: var(--wa-font-family-body);
   font-size: var(--section-head-size);
   font-weight: 800;
-  font-synthesis: none;
-  line-height: 1;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  margin-block-end: var(--wa-space-xs);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin-block: 0 var(--wa-space-s);
 }
 
 .method > .phase {
@@ -657,7 +658,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-start: 0;
 }
 
-/* Each step up the column's spacing is clearly bigger than the last: 8px rows, then sections at this margin
+/* Each step up the column's spacing is clearly bigger than the last: 12px rows, then sections at this margin
    plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
 .needs-more > section {
   margin-block-start: var(--section-space);
@@ -685,12 +686,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .timing {
   font-size: var(--list-size);
   line-height: 1.5;
-}
-
-.needs-subhead {
-  margin: 0 0 var(--wa-space-xs);
-  font: inherit;
-  font-weight: var(--wa-font-weight-bold);
 }
 
 .timing-total {
@@ -1044,7 +1039,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* Cook's step text is 22px, so section names step up to stay above it. */
 [data-mode="cook"] :is(.method, .before-start) {
-  --section-head-size: 2rem;
+  --section-head-size: 1.75rem;
 }
 
 [data-mode="cook"] .step-text {
