@@ -98,7 +98,7 @@
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
       <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
-      {%- if servings or yield or course or totalMinutes != null %}
+      {%- if servings or yield or course or difficulty or totalMinutes != null %}
       <dl class="facts wa-grid wa-gap-m">
         {%- if servings %}
         <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
@@ -108,6 +108,9 @@
         {%- endif %}
         {%- if totalMinutes != null %}
         <div><dt>Time</dt><dd><time datetime="{{ totalMinutes | isoDuration }}">{{ timeLabel }}</time></dd></div>
+        {%- endif %}
+        {%- if difficulty %}
+        <div><dt>Difficulty</dt><dd>{{ difficulty | capitalize }}</dd></div>
         {%- endif %}
         {%- if course %}
         <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
@@ -245,7 +248,7 @@
 
 
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
-  {%- if hasSource or author or usedIn.length or tags.length or icons.length %}
+  {%- if hasSource or author or usedIn.length or tags.length or cuisine or icons.length %}
   <footer class="attribution wa-caption-s">
     <div class="footer-rule wa-span-grid wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true">
       <span class="rule-run"></span>
@@ -269,8 +272,11 @@
       </div>
     </dl>
     {%- endif %}
-    {%- if tags.length or usedIn.length %}
+    {%- if tags.length or usedIn.length or cuisine %}
     <dl class="connections wa-cluster wa-align-items-start wa-gap-2xl">
+      {%- if cuisine %}
+      <div><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
+      {%- endif %}
       {%- if tags.length %}
       <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% endfor %}</dd></div>
       {%- endif %}
