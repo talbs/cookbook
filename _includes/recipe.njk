@@ -122,13 +122,13 @@
   <div class="recipe-body wa-stack wa-gap-3xl">
     <section class="needs wa-stack wa-gap-m" aria-labelledby="ingredients-heading">
       <h2 class="section-head" id="ingredients-heading">Ingredients</h2>
-      <div class="needs-list wa-stack wa-gap-xs">
+      <div class="needs-list wa-stack wa-gap-s">
         {%- for sectionIndex, chunk in recipe.ingredients | groupby("firstUseSectionIndex") %}
         {%- set sectionName = recipe.sections[sectionIndex].name %}
         {%- if sectionName %}
         <p class="timing-section">{{ sectionName }}</p>
         {%- endif %}
-        <ul class="checklist wa-list-plain wa-stack wa-gap-xs" role="list">
+        <ul class="checklist wa-list-plain wa-stack wa-gap-s" role="list">
           {%- for ingredient in chunk %}
           {{ checklistLine(ingredient, "need-" + sectionIndex + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
           {%- endfor %}
@@ -139,7 +139,7 @@
         {%- if recipe.cookware.length %}
         <section class="equipment" aria-labelledby="equipment-heading">
           <h3 class="needs-subhead" id="equipment-heading">Equipment</h3>
-          <ul class="wa-list-plain wa-grid wa-gap-0" role="list">
+          <ul class="wa-list-plain wa-grid wa-gap-xs" role="list">
             {%- for item in recipe.cookware %}
             <li>{{ item.name }}</li>
             {%- endfor %}
@@ -164,7 +164,7 @@
           {%- if recipe.timing.isGrouped and group.name %}
           <p class="timing-section wa-split wa-align-items-baseline wa-gap-s"><span>{{ group.name }}</span>{% if group.rows.length > 1 %}<span>{{ group.totalLabel }}</span>{% endif %}</p>
           {%- endif %}
-          <ol class="timing-rows wa-list-plain wa-stack wa-gap-xs" role="list">
+          <ol class="timing-rows wa-list-plain wa-stack wa-gap-s" role="list">
             {%- for row in group.rows %}
             <li><a class="timing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-font-weight-bold wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
             {%- endfor %}
