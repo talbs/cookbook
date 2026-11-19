@@ -1,0 +1,18 @@
+<footer slot="footer" class="site-footer wa-stack wa-gap-l">
+  <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
+  <div class="wa-split wa-align-items-baseline wa-gap-m">
+    <p class="made-by">Cooked up by <a href="https://github.com/talbs">@talbs</a> <span class="wa-text-nowrap">with
+      <wa-random-content class="made-with">
+        {%- for food in footerFoods %}
+        <a href="{{ food.href }}" id="made-with-{{ loop.index }}"><wa-icon name="{{ food.icon }}" family="duotone" variant="regular" label="{{ food.label }}"></wa-icon></a>
+        {%- endfor %}
+      </wa-random-content></span>
+      {%- for food in footerFoods %}
+      <wa-tooltip for="made-with-{{ loop.index }}">{{ food.tooltip }}</wa-tooltip>
+      {%- endfor %}
+    </p>
+    <nav class="site-nav wa-cluster wa-gap-l" aria-label="Footer">
+      <a href="{{ site.source }}">Source</a>
+    </nav>
+  </div>
+</footer>

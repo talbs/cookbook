@@ -209,7 +209,8 @@ a:focus-visible {
 .recipe,
 .listing,
 .recipe-nav,
-.site-header {
+.site-header,
+.site-footer {
   box-sizing: border-box;
   max-inline-size: 75rem;
   margin-inline: auto;
@@ -220,6 +221,22 @@ a:focus-visible {
 .recipe-nav,
 .site-header {
   padding-block: var(--wa-space-xl) 0;
+}
+
+.site-footer {
+  padding-block: 0 var(--wa-space-2xl);
+}
+
+.made-by {
+  margin: 0;
+  color: var(--note-ink);
+}
+
+/* The padding makes the icon a 32px tap target; the margin takes it back so the sentence doesn't move. */
+.made-with a {
+  margin: calc(-1 * var(--wa-space-xs));
+  padding: var(--wa-space-xs);
+  text-decoration-line: none;
 }
 
 .listing {
@@ -401,13 +418,22 @@ a:focus-visible {
 
 /* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
    At rest only the line shows, in the divider's colour. */
-.recipe-icons wa-icon {
+.recipe-icons wa-icon,
+.made-with wa-icon {
   --primary-color: var(--divider-ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0;
   transition:
     --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
     --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+/* The footer's icon sits beside text, not dots, so its line rests in ink. Half a step up from the text,
+   it drops by half the extra size, past wa-icon's own 2px, so its middle stays on the text's middle. */
+.made-with wa-icon {
+  --primary-color: var(--ink);
+  font-size: calc((var(--wa-font-size-m) + var(--wa-font-size-l)) / 2);
+  vertical-align: calc((var(--wa-font-size-m) - 1em) / 2 - var(--wa-space-3xs));
 }
 
 /* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
@@ -417,6 +443,12 @@ a:focus-visible {
   .recipe-card:hover .recipe-icons wa-icon {
     --primary-color: var(--ink);
     --secondary-opacity: 0.16;
+  }
+
+  .made-with a:hover wa-icon {
+    --primary-color: var(--accent);
+    --secondary-color: var(--accent);
+    --secondary-opacity: 0.2;
   }
 }
 
@@ -1109,6 +1141,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     flex-basis: 100%;
     max-inline-size: none;
   }
+
+  /* The floating back-to-top arrow would cover the footer's last link, so the footer ends above it. */
+  .listing-page:has(.to-top) .site-footer {
+    padding-block-end: calc(2.75rem + 2 * var(--wa-space-l));
+  }
 }
 
 @media (width < 30rem) {
@@ -1726,7 +1763,8 @@ wa-progress-bar.wait-run::part(indicator) {
   }
 
   /* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
-  [data-mode='cook'] .attribution :is(.credit, .connections) {
+  [data-mode='cook'] .attribution :is(.credit, .connections),
+  [data-mode='cook'] .site-footer {
     display: none;
   }
 
@@ -2244,6 +2282,8 @@ wa-page[view='desktop'] {
 
   .mode-bar,
   .recipe-nav,
+  .site-header,
+  .site-footer,
   .mode-rest,
   wa-tooltip,
   wa-details.step-note,
