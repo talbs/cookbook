@@ -184,7 +184,8 @@ a:focus-visible {
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
 .recipe-head h1 {
-  font-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
+  --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
+  font-size: var(--title-size);
   font-weight: 800;
   font-synthesis: none;
   line-height: 0.92;
@@ -194,12 +195,12 @@ a:focus-visible {
 
 /* Titles past about 28 characters step down a size at every width, so they don't run to four or five lines. */
 .recipe-head h1.is-long {
-  font-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
+  --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
 }
 
 /* Past 50 characters a third step down keeps the title to about three lines. */
 .recipe-head h1.is-longer {
-  font-size: clamp(2.25rem, 1.25rem + 3vw, 3.25rem);
+  --title-size: clamp(2.25rem, 1.25rem + 3vw, 3.25rem);
 }
 
 /* Below the desktop grid a hyphenated compound in display type can be as wide as the column, so it may break at its hyphen there. */
@@ -382,11 +383,23 @@ a:focus-visible {
   min-inline-size: 0;
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  font-size: 1.5rem;
+  --title-size: 1.5rem;
+  font-size: var(--title-size);
   font-weight: 800;
   font-synthesis: none;
   line-height: 1;
   text-transform: uppercase;
+}
+
+/* Free Lunch has no ñ, and the sans fallback's is half again as wide. So a title's ñ stays in the markup at no size,
+   for readers and copying, and the page shows the font's own n in its place. */
+.plain-letter {
+  font-size: 0;
+}
+
+.plain-letter::before {
+  content: attr(data-base);
+  font-size: var(--title-size);
 }
 
 /* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
@@ -1305,11 +1318,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* The title has the full row here, so titles up to 50 characters keep the top size in two lines and only the longest step down. */
   .recipe-head h1.is-long {
-    font-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
+    --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   }
 
   .recipe-head h1.is-longer {
-    font-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
+    --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
   }
 
   /* Capped near 65 characters a line. */

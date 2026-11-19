@@ -1,6 +1,6 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
 import { loadRecipe } from './lib/recipe.js';
-import { keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
+import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
 import { RESERVED_TAGS } from './lib/validate-recipe.js';
 
 const COURSE_LABELS = { main: 'Main course', side: 'Side dish' };
@@ -51,6 +51,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('typeset', text => typesetText(text));
   eleventyConfig.addFilter('keepLastWordsTogether', html => keepLastWordsTogether(html));
   eleventyConfig.addFilter('keepHyphenatedWordsWhole', html => keepHyphenatedWordsWhole(html));
+  eleventyConfig.addFilter('showPlainLetters', html => showPlainLetters(html));
   eleventyConfig.addFilter('sortByTitle', sortByTitle);
   eleventyConfig.addFilter('tagNames', listTagNames);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
