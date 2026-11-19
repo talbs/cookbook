@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findWait, formatTimeSummary, splitNoteTitle, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
+import { splitNoteTitle } from '../lib/notes.js';
+import { findWait, formatTimeSummary, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
 
 test('a note shown beside a total drops the parts that are amounts', () => {
   const rows = [
