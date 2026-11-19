@@ -360,14 +360,22 @@ a:focus-visible {
   visibility: visible;
 }
 
+/* The switch is a wa-radio-group of button radios. The group draws the frame; the radios lose their own fill and border. */
 .mode-switch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 3px;
+  --switch-inset: 3px;
+  position: relative;
+  isolation: isolate;
+  padding: var(--switch-inset);
   border: 1px solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
-  /* Inner radius is the outer one minus the 3px padding and 1px border, so the corners stay concentric. */
-  --wa-form-control-border-radius: calc(var(--wa-border-radius-m) - 4px);
+  /* Inner radius is the outer one minus the inset and the 1px border, so the corners stay concentric. */
+  --wa-form-control-border-radius: calc(var(--wa-border-radius-m) - var(--switch-inset) - 1px);
+}
+
+.mode-switch::part(form-control-input) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
 }
 
 .pinned-title {
@@ -403,47 +411,35 @@ a:focus-visible {
   display: none;
 }
 
-.mode-switch button {
-  position: relative;
-  grid-row: 1;
-  color: var(--ink);
-}
-
-.mode-switch [data-mode='overview'] {
-  grid-column: 1;
-}
-
-.mode-switch [data-mode='cook'] {
-  grid-column: 2;
-}
-
-.mode-switch button[aria-pressed='true'] {
-  font-weight: var(--wa-font-weight-bold);
-}
-
-/* A grey hover fill read as a second selected state next to the hatch, so hover only colours the label. */
-.mode-switch button[aria-pressed='false'] {
+/* A grey fill on the unchosen radio read as a second selected state next to the hatch, so only its label changes. */
+.mode-switch wa-radio {
+  justify-content: center;
+  border: 0;
+  background: transparent;
   color: var(--note-ink);
 }
 
-.mode-switch button:hover {
-  background-color: transparent;
+.mode-switch wa-radio:state(checked) {
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--ink);
 }
 
-.mode-switch button[aria-pressed='false']:hover {
+.mode-switch wa-radio:not(:state(checked)):hover {
   color: var(--accent);
 }
 
-/* One hatched block behind both buttons, so the pressed state can slide from one to the other. */
+/* One hatched block behind both radios, so the chosen state can slide from one to the other. */
 .mode-switch::before {
   content: '';
-  grid-row: 1;
-  grid-column: 1;
+  position: absolute;
+  z-index: -1;
+  inset: var(--switch-inset) auto var(--switch-inset) var(--switch-inset);
+  inline-size: calc(50% - var(--switch-inset));
   border-radius: var(--wa-form-control-border-radius);
   background: var(--hatch);
 }
 
-.mode-switch:has([data-mode='cook'][aria-pressed='true'])::before {
+[data-mode='cook'] .mode-switch::before {
   translate: 100% 0;
 }
 
@@ -1117,7 +1113,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
       visibility var(--wa-transition-slow);
   }
 
-  .mode-switch button {
+  .mode-switch wa-radio {
     transition: color var(--wa-transition-fast) var(--wa-transition-easing);
   }
 

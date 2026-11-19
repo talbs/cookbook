@@ -2,7 +2,7 @@ const page = document.querySelector('.recipe-page');
 const recipe = page.querySelector('.recipe');
 const modeBar = page.querySelector('.mode-bar');
 const modeRest = page.querySelector('.mode-rest');
-const modeButtons = [...page.querySelectorAll('.mode-switch button')];
+const modeSwitches = [...page.querySelectorAll('.mode-switch')];
 const checkboxes = [...recipe.querySelectorAll('wa-checkbox[data-check]')];
 const storageKey = `recipe:${recipe.dataset.recipe}`;
 
@@ -36,8 +36,8 @@ function writeModeToUrl(mode) {
 
 function showMode(mode) {
   page.dataset.mode = mode;
-  for (const button of modeButtons) {
-    button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
+  for (const modeSwitch of modeSwitches) {
+    modeSwitch.value = mode;
   }
   writeModeToUrl(mode);
 }
@@ -79,10 +79,10 @@ const restingSwitchWatcher = new IntersectionObserver(([entry]) => {
 }, { threshold: 1 });
 restingSwitchWatcher.observe(modeRest);
 
-for (const button of modeButtons) {
-  button.addEventListener('click', () => {
-    if (page.dataset.mode === button.dataset.mode) return;
-    switchMode(button.dataset.mode);
+for (const modeSwitch of modeSwitches) {
+  modeSwitch.addEventListener('change', () => {
+    if (page.dataset.mode === modeSwitch.value) return;
+    switchMode(modeSwitch.value);
   });
 }
 

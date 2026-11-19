@@ -23,10 +23,10 @@
 {% endblock %}
 
 {% macro modeSwitch() %}
-    <div class="mode-switch" role="group" aria-label="View">
-      <button class="wa-plain" type="button" data-mode="overview" aria-pressed="true">Overview</button>
-      <button class="wa-plain" type="button" data-mode="cook" aria-pressed="false">Cook</button>
-    </div>
+    <wa-radio-group class="mode-switch wa-visually-hidden-label" label="View" orientation="horizontal" value="overview">
+      <wa-radio appearance="button" value="overview">Overview</wa-radio>
+      <wa-radio appearance="button" value="cook">Cook</wa-radio>
+    </wa-radio-group>
 {%- endmacro %}
 
 {% macro ingredientName(ingredient, recipes) %}
