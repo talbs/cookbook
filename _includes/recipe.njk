@@ -227,6 +227,12 @@
           </ul>
           {%- endif %}
         </li>
+        {%- if step.wait %}
+        <li class="wait-mark wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-s" aria-hidden="true">
+          <span class="wait-run"></span>
+          <span class="wait-time wa-cluster wa-flex-nowrap wa-gap-2xs wa-text-nowrap"><wa-icon name="hourglass-half" variant="regular"></wa-icon>{{ step.wait | typeset | safe }}</span>
+        </li>
+        {%- endif %}
         {%- endfor %}
       </ol>
       {%- else %}

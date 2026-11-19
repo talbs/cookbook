@@ -912,6 +912,25 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-end: var(--wa-space-m);
 }
 
+/* After a step the cook walks away from, Cook draws a pause across the page: the switch's hatch, then how long. */
+.wait-mark {
+  font-size: var(--note-size);
+  line-height: 1.2;
+  color: var(--note-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-mode='overview'] .wait-mark {
+  display: none;
+}
+
+.wait-run {
+  flex: 1;
+  block-size: var(--wa-space-s);
+  border-radius: var(--wa-border-radius-s);
+  background: var(--hatch);
+}
+
 .step-needs {
   grid-column: 1;
   grid-row: 3;

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatTimeSummary, splitNoteTitle, trimNoteForTotal } from '../lib/recipe.js';
+import { findWait, formatTimeSummary, splitNoteTitle, trimNoteForTotal } from '../lib/recipe.js';
 
 test('a note shown beside a total drops the parts that are amounts', () => {
   const rows = [
@@ -37,5 +37,20 @@ test("a note's title and body together carry the whole note, with nothing said t
   ];
   for (const [note, title, rest] of rows) {
     assert.deepEqual(splitNoteTitle(note), { title, rest }, `note: ${note}`);
+  }
+});
+
+test('a step is followed by a wait only for a timer the cook walks away from', () => {
+  const rest = { name: 'rest', minutes: 30, label: '30 min' };
+  const bake = { name: 'bake', minutes: 45, label: '45 min' };
+  const brown = { name: 'brown', minutes: 8, label: '8 min' };
+  const rows = [
+    [[rest], '30 min'],
+    [[brown], null],
+    [[brown, rest, bake], '45 min'],
+    [[], null],
+  ];
+  for (const [timers, shown] of rows) {
+    assert.equal(findWait(timers), shown, `timers: ${timers.map(timer => timer.name).join(', ')}`);
   }
 });
