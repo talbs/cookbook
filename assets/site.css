@@ -11,7 +11,7 @@ body {
 }
 
 /* Near-neutral greys with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool greys and white.
-   The theme-color metas in recipe.njk repeat both papers. */
+   The theme-color metas in base.njk repeat both papers. */
 :root {
   --wa-color-neutral-95: #f2f1f0;
   --wa-color-neutral-90: #e6e5e3;
@@ -114,7 +114,10 @@ body {
 }
 
 /* Text links match Tiny Tells: a solid 1px underline in the text colour, set 0.2em below, instead of WA's dotted 70% one. */
-a {
+a,
+.listing-name,
+.card-title,
+.link-button {
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-color: color-mix(in oklab, currentColor 34%, transparent);
@@ -124,13 +127,18 @@ a {
 }
 
 /* The line turns the accent and thickens, with a 2px floor so the change still shows on small text; the words stay ink. */
-a:hover {
+a:hover,
+.link-button:hover,
+.listing-row:hover .listing-name {
   text-decoration-color: var(--accent);
   text-decoration-thickness: max(2px, 0.12em);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a {
+  a,
+  .listing-name,
+  .card-title,
+  .link-button {
     transition:
       text-decoration-color var(--wa-transition-normal)
         var(--wa-transition-easing),
@@ -169,12 +177,22 @@ a:focus-visible {
   border-radius: var(--wa-form-control-border-radius);
 }
 
-/* wa-page pads its main slot; the recipe sets its own gutters so the sticky bar can line up with them. */
-.recipe-page > main {
+/* wa-page pads its main slot and its header; these pages set their own gutters so everything lines up on one edge. */
+.recipe-page > main,
+.listing-page::part(main-content),
+.listing-page::part(header) {
   padding: 0;
 }
 
-.recipe {
+.listing-page::part(header) {
+  border: 0;
+  background: none;
+}
+
+.recipe,
+.listing,
+.recipe-nav,
+.site-header {
   box-sizing: border-box;
   max-inline-size: 75rem;
   margin-inline: auto;
@@ -182,8 +200,33 @@ a:focus-visible {
   --rule-gap: 2.25rem;
 }
 
+.recipe-nav,
+.site-header {
+  padding-block: var(--wa-space-xl) 0;
+}
+
+.listing {
+  padding-block: var(--wa-space-2xl) clamp(var(--wa-space-3xl), 6vw, 5rem);
+}
+
+.recipe-nav + .recipe {
+  padding-block-start: var(--wa-space-2xl);
+}
+
+/* The padding makes each link a 40px tap target without moving the words. */
+.site-nav a,
+.course-links a {
+  padding-block: var(--wa-space-xs);
+}
+
+.site-nav a[aria-current] {
+  font-weight: var(--wa-font-weight-bold);
+  text-decoration-line: none;
+}
+
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
-.recipe-head h1 {
+.recipe-head h1,
+.listing-head h1 {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
   font-weight: 800;
@@ -207,6 +250,65 @@ a:focus-visible {
 @media (width < 64rem) {
   .recipe-head h1 .wa-text-nowrap {
     white-space: normal;
+  }
+}
+
+/* A listing's title is as big as keeps its longest word on the page and, where it can, the whole title on one line.
+   0.64em is Free Lunch's widest capital (W); 0.5em is a typical one. Past 16 letters a single word may break between letters. */
+.listing-head h1 {
+  --title-room: calc(min(100vw, 75rem) - 2 * var(--page-gutter));
+  --word-fit: calc(var(--title-room) / (var(--longest-word) * 0.64));
+  --line-fit: calc(var(--title-room) / (var(--title-letters) * 0.5));
+  --title-size: clamp(2.5rem, min(var(--word-fit), var(--line-fit)), 8rem);
+}
+
+.listing-head h1.can-break .title-word {
+  white-space: normal;
+}
+
+/* Each letter of a listing's title is its own box, so it can lean when the pointer crosses it. Words stay whole. */
+.title-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.title-letter {
+  display: inline-block;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .title-letter {
+    transition:
+      scale var(--settle) var(--ease-spring),
+      rotate var(--settle) var(--ease-spring);
+  }
+
+  .title-letter:hover {
+    scale: 1.08;
+    rotate: -4deg;
+  }
+
+  .title-letter:nth-child(even):hover {
+    rotate: 4deg;
+  }
+}
+
+/* On wide screens the lede sits beside the title, on its baseline, starting on the second column's edge. Otherwise it drops under it. */
+.listing-head {
+  align-items: last baseline;
+}
+
+.listing-head .description {
+  flex: 1 1 100%;
+  max-inline-size: 24em;
+  font-size: clamp(1.25rem, 1.05rem + 0.5vw, 1.375rem);
+  line-height: 1.4;
+}
+
+@media (min-width: 64rem) {
+  .listing-head .description {
+    flex: 0 0 calc(50% - var(--column-gap) / 2);
+    max-inline-size: none;
   }
 }
 
@@ -286,7 +388,8 @@ a:focus-visible {
 /* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
    because a solid shape reads darker than a row of dots at the same value. */
 @media (hover: hover) {
-  .recipe-icons:hover wa-icon {
+  .recipe-icons:hover wa-icon,
+  .recipe-card:hover .recipe-icons wa-icon {
     --primary-color: var(--ink);
     --secondary-opacity: 0.16;
   }
@@ -312,15 +415,18 @@ a:focus-visible {
   }
 
   @media (hover: hover) {
-    .recipe-icons:hover wa-icon {
+    .recipe-icons:hover wa-icon,
+    .recipe-card:hover .recipe-icons wa-icon {
       scale: 1.2;
     }
 
-    .recipe-icons:hover wa-icon:nth-child(odd) {
+    .recipe-icons:hover wa-icon:nth-child(odd),
+    .recipe-card:hover .recipe-icons wa-icon:nth-child(odd) {
       rotate: -8deg;
     }
 
-    .recipe-icons:hover wa-icon:nth-child(even) {
+    .recipe-icons:hover wa-icon:nth-child(even),
+    .recipe-card:hover .recipe-icons wa-icon:nth-child(even) {
       rotate: 8deg;
     }
   }
@@ -452,13 +558,16 @@ a:focus-visible {
   background: var(--hatch);
 }
 
-[data-mode='cook'] .mode-switch::before {
+[data-mode='cook'] .mode-switch::before,
+[data-view='list'] .mode-switch::before {
   translate: 100% 0;
 }
 
 /* Every head below the title shares one style, so a sidebar block reads level with Ingredients. */
 .section-head,
-.needs-subhead {
+.needs-subhead,
+.card-title,
+.empty-joke {
   font-family: var(--wa-font-family-body);
   font-size: var(--section-head-size);
   font-weight: 800;
@@ -625,14 +734,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* The dots run across the row's first line, behind the text (see the leader rule below), so the name and note sit above them. */
 .ingredient,
-.timing-rows li {
+.timing-rows li,
+.listing-rows li {
   position: relative;
 }
 
 .ingredient > :first-child,
 .ingredient .note,
 .timing-label,
-.timing-step {
+.timing-step,
+.listing-name,
+.listing-detail {
   position: relative;
   z-index: 1;
 }
@@ -657,7 +769,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .ingredient .note,
-.timing-step {
+.timing-step,
+.listing-detail,
+.card-time,
+.course-count,
+.untimed-note {
   font-size: var(--note-size);
   color: var(--note-ink);
 }
@@ -670,7 +786,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   box-decoration-break: clone;
 }
 
-.ingredient > :first-child .row-words {
+.ingredient > :first-child .row-words,
+.listing-name .row-words {
   padding-inline-end: var(--leader-clearance);
 }
 
@@ -749,21 +866,24 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* The leader is one strip of dots across the row's first line. The text on either side covers it with paper,
    so the dots show only in the gap, and a row keeps them however its name or note wraps. */
 .timing-rows li::after,
-.ingredient:has(.note)::after {
+.ingredient:has(.note)::after,
+.listing-rows li:has(.listing-detail)::after {
   content: '';
   position: absolute;
-  inset: 0.72em 0 auto;
+  inset: calc(var(--row-pad, 0px) + 0.72em) 0 auto;
   block-size: var(--dot-pitch);
   background: var(--divider-ink);
   mask: var(--divider);
 }
 
-.timing-row {
+.timing-row,
+.listing-row {
   text-decoration: none;
 }
 
 .timing-label,
-.timing-step {
+.timing-step,
+.listing-detail {
   background: var(--paper);
 }
 
@@ -771,13 +891,381 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   padding-inline-end: var(--leader-clearance);
 }
 
-.timing-step {
+.timing-step,
+.listing-detail {
   padding-inline-start: var(--leader-clearance);
   font-variant-numeric: tabular-nums;
 }
 
 .timing-row:hover .timing-name {
   text-decoration-line: underline;
+}
+
+/* A row or card is one big link, so only its title carries the link's line: clear at rest, then the same accent line any link gets on hover. */
+.listing-name,
+.card-title {
+  text-decoration-color: transparent;
+}
+
+/* The layout utilities set display, which would otherwise beat the hidden attribute the search and switch rely on. */
+.listing [hidden] {
+  display: none;
+}
+
+.view-rest {
+  --wa-form-control-height: var(--bar-control-height);
+  margin-inline-start: auto;
+}
+
+/* From tablet width up the index's toolbar sticks to the top of the window. Its padding is taken back in margin,
+   so it sits where it did before it could stick. */
+.stuck-marker {
+  block-size: 0;
+  margin-block: calc(-1 * var(--wa-space-l) / 2);
+}
+
+/* On a phone the toolbar scrolls away, so the arrow floats in the bottom corner instead, at a full 44px for a thumb. */
+.to-top {
+  position: fixed;
+  inset: auto var(--page-gutter) max(var(--wa-space-l), env(safe-area-inset-bottom)) auto;
+  z-index: 2;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1px solid var(--control-edge);
+  background: var(--paper);
+  box-shadow: var(--wa-shadow-s);
+  visibility: hidden;
+  opacity: 0;
+  translate: 0 0.5rem;
+}
+
+.is-stuck .to-top {
+  visibility: visible;
+  opacity: 1;
+  translate: 0 0;
+}
+
+.untimed-note {
+  margin: 0;
+}
+
+/* Links inside running text and the no-results choices get taller tap areas without moving the words. */
+.listing-head .description a,
+.empty-ways-out .link-button,
+.empty-random {
+  padding-block: var(--wa-space-xs);
+}
+
+@media (min-width: 48rem) {
+  .listing-controls.can-stick {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    isolation: isolate;
+    margin-block: calc(-1 * var(--wa-space-m));
+    padding-block: var(--wa-space-m);
+  }
+
+  /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
+  .listing-controls.can-stick::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0 calc(50% - 50vw);
+    border-block-end: 1px solid transparent;
+    background: var(--paper);
+  }
+
+  .listing-controls.is-stuck::before {
+    border-block-end-color: var(--wa-color-surface-border);
+  }
+
+  /* In the bar, the arrow sits just left of the switch and takes the row's spare room, so the switch never moves when it appears. */
+  .to-top {
+    position: static;
+    inline-size: var(--shortcut-size);
+    block-size: var(--shortcut-size);
+    margin-inline-start: auto;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .can-stick .view-rest {
+    margin-inline-start: 0;
+  }
+}
+
+/* The full-width bar is wider than the page's column; this keeps it from adding a sideways scroll. */
+.listing-page {
+  overflow-x: clip;
+}
+
+/* In place of the kit's 3px ring, focus turns a field's edge to ink and a pixel thicker. */
+.search-field {
+  flex: 1 1 14rem;
+  max-inline-size: 24rem;
+  border-radius: var(--wa-border-radius-m);
+  box-shadow: var(--wa-shadow-s);
+}
+
+/* Wide enough for its longest choice with the clock and the arrow either side. */
+.time-select {
+  flex: 0 0 13.5rem;
+}
+
+.time-select::part(combobox) {
+  box-shadow: var(--wa-shadow-s);
+}
+
+@media (width < 48rem) {
+  .search-field {
+    flex-basis: 100%;
+    max-inline-size: none;
+  }
+}
+
+@media (width < 30rem) {
+  .time-select {
+    flex: 1 1 7.5rem;
+  }
+
+  /* Beside the switch there is only room for the words, so the clock goes. */
+  .time-select wa-icon {
+    display: none;
+  }
+}
+
+.recipe-search,
+.time-select {
+  --wa-form-control-height: var(--bar-switch-height);
+  --wa-form-control-border-color: var(--control-edge);
+  --wa-form-control-border-radius: var(--wa-border-radius-m);
+  --wa-form-control-background-color: var(--paper);
+  --wa-form-control-placeholder-color: var(--note-ink);
+  --wa-focus-ring-width: 1px;
+  --wa-focus-ring-offset: 0px;
+}
+
+.recipe-search:focus-within,
+.time-select:focus-within {
+  --wa-form-control-border-color: var(--ink);
+}
+
+/* Once the cursor is in the field the hint steps back, so it doesn't read as text already typed. */
+.recipe-search:focus-within::part(input)::placeholder {
+  color: color-mix(in oklab, var(--note-ink) 55%, transparent);
+}
+
+.course-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.course + .course::before,
+.tag-group + .tag-group::before {
+  content: '';
+  block-size: var(--band);
+  margin-block-end: var(--wa-space-m);
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+.search-empty {
+  position: relative;
+  padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
+  text-align: center;
+}
+
+.search-empty::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--wa-border-radius-l);
+  background: var(--hatch);
+  opacity: 0.35;
+}
+
+.search-empty > * {
+  position: relative;
+}
+
+.search-empty p {
+  margin: 0;
+}
+
+.empty-ornament {
+  inline-size: min(100%, 16rem);
+}
+
+.empty-icons {
+  margin-inline: calc(3 * var(--dot-pitch));
+  font-size: var(--wa-font-size-xl);
+}
+
+.empty-icons wa-icon {
+  --primary-color: var(--ink);
+  --secondary-color: var(--ink);
+  --secondary-opacity: 0.16;
+}
+
+.empty-joke {
+  --section-head-size: clamp(1.75rem, 1.25rem + 2vw, 2.5rem);
+  text-wrap: balance;
+}
+
+.empty-detail {
+  max-inline-size: 30em;
+  font-family: var(--wa-font-family-longform);
+  font-size: var(--step-size);
+  line-height: 1.5;
+  color: var(--note-ink);
+  text-wrap: balance;
+}
+
+.empty-ways-out {
+  justify-content: center;
+}
+
+/* A button that reads as a text link, for a suggestion that fills the search instead of going somewhere. */
+.link-button {
+  display: inline;
+  block-size: auto;
+  min-block-size: 0;
+  padding: 0;
+  vertical-align: baseline;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Both forms of the list are in the page; the switch picks one. Cards show until List is chosen. */
+:root:not([data-view='list']) .recipe-rows,
+[data-view='list'] .recipe-cards {
+  display: none;
+}
+
+.recipe-cards {
+  --min-column-size: 17rem;
+  margin: 0;
+  column-gap: var(--column-gap);
+  /* wa-grid stretches a lone card across the whole row; auto-fill keeps every card the same width, in a course of one or a search with one match. */
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--min-column-size), 100%), 1fr));
+}
+
+/* Each card fills its grid cell and its body takes the spare height, so a row's feet line up whatever the descriptions run to. */
+.recipe-card {
+  display: block;
+  block-size: 100%;
+  text-decoration: none;
+}
+
+/* Until the kit's script arrives a wa-card is an unknown element; this lays its three parts out the same way in the meantime. */
+.recipe-card wa-card:not(:defined) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.recipe-card wa-card:not(:defined) .card-foot {
+  margin-block-start: auto;
+  padding-block-start: var(--wa-space-xs);
+}
+
+.recipe-card:focus-visible,
+.listing-row:focus-visible,
+.site-nav a:focus-visible {
+  outline-offset: var(--wa-space-xs);
+}
+
+/* Across a row, every card's title, description and foot share the same three grid lines, so descriptions start level. */
+@supports (grid-template-rows: subgrid) {
+  .recipe-cards > li,
+  .recipe-card,
+  .recipe-card wa-card:defined {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  /* A one-line title beside a two-line one sits on the bottom of the shared line, tight against its own description. */
+  .recipe-card wa-card::part(header) {
+    align-self: end;
+  }
+}
+
+/* The page has no boxes, so wa-card's frame, padding and section lines come off. */
+.recipe-card wa-card {
+  block-size: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.recipe-card wa-card::part(header),
+.recipe-card wa-card::part(body),
+.recipe-card wa-card::part(footer) {
+  padding: 0;
+  border: 0;
+}
+
+.recipe-card wa-card::part(body) {
+  flex: 1 1 auto;
+  padding-block: var(--wa-space-xs) var(--wa-space-m);
+}
+
+/* The section heads' style a size down, so a course still outranks its recipes. The display face stays on the page title. */
+.card-title {
+  --section-head-size: var(--wa-font-size-l);
+  margin: 0;
+  text-wrap: balance;
+  /* A two-line title has 10px between one line's baseline and the next line's capitals, so its hover line sits closer and stays 2px. */
+  text-underline-offset: 0.25em;
+}
+
+.recipe-card:hover .card-title {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+.card-time {
+  padding-inline-end: var(--leader-clearance);
+}
+
+.card-foot .recipe-icons {
+  margin-inline-end: 0;
+  pointer-events: none;
+}
+
+/* Quiet, so the titles are what the eye runs down. */
+.card-description {
+  font-family: var(--wa-font-family-longform);
+  font-size: var(--aside-size);
+  line-height: 1.5;
+  color: var(--note-ink);
+}
+
+/* Tags run in newspaper columns, down one and then the next, so an alphabetical list still reads in order. */
+.listing-rows {
+  margin: 0;
+  column-gap: var(--column-gap);
+}
+
+@media (min-width: 48rem) {
+  .listing-rows {
+    column-count: 2;
+  }
+}
+
+/* The link carries the row's spacing, so rows touch and the whole 40px strip is the tap target. */
+.listing-rows li {
+  --row-pad: var(--wa-space-xs);
+  break-inside: avoid;
+}
+
+.listing-row {
+  padding-block: var(--row-pad);
 }
 
 .timing-length {
@@ -1243,6 +1731,71 @@ wa-progress-bar.wait-run::part(indicator) {
     animation:
       mode-fade-in 200ms ease-out 60ms both,
       mode-settle var(--settle) var(--ease-settle) 60ms both;
+  }
+
+  /* Going from one page to another is one short cross-fade of the whole page. The pieces that move on their own
+     within a page are un-named here, so nothing slides or settles separately. */
+  @view-transition {
+    navigation: auto;
+    types: page-turn;
+  }
+
+  :root:active-view-transition-type(page-turn) :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
+    view-transition-name: none;
+  }
+
+  :root:active-view-transition-type(page-turn)::view-transition-group(root) {
+    animation-duration: var(--wa-transition-normal);
+  }
+
+  .listing-controls.can-stick::before {
+    transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  .to-top {
+    transition:
+      opacity var(--wa-transition-slow) var(--wa-transition-easing),
+      translate var(--settle) var(--ease-settle),
+      visibility var(--wa-transition-slow);
+  }
+
+  /* A search settles its new results in the way a mode does. The search field stays live, so typing never waits on the move. */
+  .listing-results {
+    view-transition-name: listing-results;
+  }
+
+  ::view-transition-old(listing-results) {
+    animation: mode-out var(--press) ease-in both;
+  }
+
+  ::view-transition-new(listing-results) {
+    animation:
+      mode-fade-in 200ms ease-out 60ms both,
+      mode-settle var(--settle) var(--ease-settle) 60ms both;
+  }
+
+  .search-field {
+    view-transition-name: search-field;
+  }
+
+  ::view-transition-old(search-field) {
+    display: none;
+  }
+
+  ::view-transition-new(search-field) {
+    animation: none;
+  }
+
+  .empty-icons wa-icon {
+    animation: spring-from-press var(--settle) var(--ease-spring) both;
+  }
+
+  .empty-icons wa-icon:nth-child(2) {
+    animation-delay: 45ms;
+  }
+
+  .empty-icons wa-icon:nth-child(3) {
+    animation-delay: 90ms;
   }
 
   .checklist li {

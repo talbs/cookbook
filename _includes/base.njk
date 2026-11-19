@@ -13,13 +13,34 @@
     <meta property="og:title" content="{{ title or site.title }}">
     <meta property="og:description" content="{{ pageDescription }}">
     <meta property="og:type" content="{{ 'article' if recipe else 'website' }}">
+    <script>
+      const darkScheme = matchMedia('(prefers-color-scheme: dark)');
+      function matchColorScheme() {
+        document.documentElement.classList.toggle('wa-dark', darkScheme.matches);
+      }
+      matchColorScheme();
+      darkScheme.addEventListener('change', matchColorScheme);
+    </script>
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/native.css">
+    <script type="module" src="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.loader.js" data-fa-kit-code="d7ec6ed89a"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400..800&family=Ancizar+Serif:wght@400..700&display=swap">
+    <link rel="stylesheet" href="/assets/site.css">
+    <meta name="theme-color" content="#fefefc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1c1a19" media="(prefers-color-scheme: dark)">
     {%- block head %}{% endblock %}
   </head>
   <body>
-    {%- block page %}
-    <main>
-      {%- block content %}{{ content | safe }}{% endblock %}
-    </main>
-    {%- endblock %}
+    {#- One wa-page for every view. `header` fills its header slot; `content` is its main content, the default slot. #}
+    <wa-page class="{% block pageClass %}{% endblock %}"{% block pageAttributes %}{% endblock %} mobile-breakpoint="48rem" disable-navigation-toggle>
+      {%- block header %}{% endblock %}
+      <main{% block mainAttributes %}{% endblock %}>
+        {%- block content %}{{ content | safe }}{% endblock %}
+      </main>
+    </wa-page>
+    {%- block scripts %}{% endblock %}
   </body>
 </html>

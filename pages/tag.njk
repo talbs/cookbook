@@ -1,5 +1,4 @@
 ---
-layout: base.njk
 pagination:
   data: collections
   size: 1
@@ -11,7 +10,16 @@ eleventyComputed:
   title: "{{ tag }}"
   description: "Recipes tagged {{ tag }}."
 ---
-<h1>{{ tag }}</h1>
-<p><a href="/tags/">All tags</a></p>
-{% set recipeList = collections[tag] | sortByTitle %}
-{% include "recipe-list.njk" %}
+{% extends "listing.njk" %}
+{% from "recipe-list.njk" import recipeRows %}
+
+{% block lede %}
+{%- set tagRecipes = collections[tag] %}
+{%- set relatedTags = tagRecipes | relatedTags(tag) %}
+{{- tagRecipes.length }} {{ "recipe" if tagRecipes.length == 1 else "recipes" }}.
+{%- if relatedTags.length %} Also tagged {% for name in relatedTags %}<a href="/tags/{{ name }}/">{{ name }}</a>{% if not loop.last %}{{ " and " if loop.revindex0 == 1 else ", " }}{% endif %}{% endfor %}.{% endif %}
+{%- endblock %}
+
+{% block results %}
+{{ recipeRows(collections[tag] | sortByTitle, false) }}
+{% endblock %}

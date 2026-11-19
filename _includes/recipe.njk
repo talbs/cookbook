@@ -1,24 +1,6 @@
 {% extends "base.njk" %}
 
 {% block head %}
-    <script>
-      const darkScheme = matchMedia('(prefers-color-scheme: dark)');
-      function matchColorScheme() {
-        document.documentElement.classList.toggle('wa-dark', darkScheme.matches);
-      }
-      matchColorScheme();
-      darkScheme.addEventListener('change', matchColorScheme);
-    </script>
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/native.css">
-    <script type="module" src="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.loader.js" data-fa-kit-code="d7ec6ed89a"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400..800&family=Ancizar+Serif:wght@400..700&display=swap">
-    <link rel="stylesheet" href="/assets/site.css">
-    <meta name="theme-color" content="#fefefc" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#1c1a19" media="(prefers-color-scheme: dark)">
     <script type="application/ld+json">{{ jsonLd | safe }}</script>
 {% endblock %}
 
@@ -70,8 +52,11 @@
       </span></wa-checkbox></li>
 {%- endmacro %}
 
-{% block page %}
-<wa-page class="recipe-page" data-mode="overview" mobile-breakpoint="48rem" disable-navigation-toggle>
+{% block pageClass %}recipe-page{% endblock %}
+
+{% block pageAttributes %} data-mode="overview"{% endblock %}
+
+{% block header %}
   <div class="mode-bar" slot="header">
     <div class="wa-split wa-flex-nowrap wa-align-items-center wa-gap-s">
       <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
@@ -86,11 +71,12 @@
     </div>
     {{ modeSwitch() }}
   </div>
-  {{ super() }}
-</wa-page>
 {% endblock %}
 
 {% block content %}
+<div class="recipe-nav">
+  {% include "site-nav.njk" %}
+</div>
 <article id="top" class="recipe wa-stack wa-gap-l" data-recipe="{{ page.fileSlug }}">
   {%- set hasSource = source and source.name %}
   <header class="recipe-head wa-stack wa-gap-m">
