@@ -62,11 +62,11 @@
 
 {% macro checklistLine(ingredient, checkId, recipes, note) %}
       <li><wa-checkbox data-check="{{ checkId }}"><wa-icon class="box-unchecked" variant="regular" name="square"></wa-icon><wa-icon class="box-checked" family="duotone" variant="regular" name="square-check"></wa-icon><span class="ingredient wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l">
-        <span class="wa-text-pretty"><span class="strike">
+        <span class="wa-text-pretty"><span class="row-words">
           {%- if ingredient.amount %}<span class="amount wa-font-weight-bold">{{ ingredient.amount | typeset | safe }}</span> {% endif -%}
           <span class="name">{{ ingredientName(ingredient, recipes) | keepHyphenatedWordsWhole | keepLastWordsTogether | safe }}</span>
         </span></span>
-        {%- if note | trim | length %} <span class="note wa-text-end"><span class="strike">{{ note | trim | keepHyphenatedWordsWhole | safe }}</span></span>{% endif -%}
+        {%- if note | trim | length %} <span class="note wa-text-end"><span class="row-words">{{ note | trim | keepHyphenatedWordsWhole | safe }}</span></span>{% endif -%}
       </span></wa-checkbox></li>
 {%- endmacro %}
 
