@@ -311,7 +311,6 @@ wa-page > main {
 .site-name {
   font-family: var(--wa-font-family-heading);
   font-size: 1.125rem;
-  text-transform: uppercase;
   color: var(--ink);
   text-decoration-line: none;
   transition: color var(--wa-transition-normal) var(--wa-transition-easing);
@@ -327,6 +326,7 @@ wa-page > main {
 .listing-head h1 {
   font-weight: 800;
   font-synthesis: none;
+  text-transform: uppercase;
 }
 
 .recipe-head h1,
@@ -334,7 +334,6 @@ wa-page > main {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
   line-height: 0.92;
-  text-transform: uppercase;
   text-box: trim-both cap alphabetic;
 }
 
