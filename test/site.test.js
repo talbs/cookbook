@@ -99,3 +99,19 @@ test('every page names its own address on the live site as canonical, except the
     assert.equal(match[1], `https://cookbook.talbs.me${page.url}`);
   }
 });
+
+test('every link to a page on this site leads to a page the build wrote', () => {
+  const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
+  const builtUrls = new Set(builtPages.map(page => page.url));
+  let checkedLinkCount = 0;
+
+  for (const page of htmlPages) {
+    for (const [, href] of page.content.matchAll(/href="(\/[^"]*)"/g)) {
+      const address = href.split('#')[0].split('?')[0];
+      if (address.startsWith('/assets/')) continue;
+      assert.ok(builtUrls.has(address), `${page.url} links to ${href}, which isn't a built page`);
+      checkedLinkCount += 1;
+    }
+  }
+  assert.ok(checkedLinkCount > 0);
+});
