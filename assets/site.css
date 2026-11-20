@@ -615,6 +615,7 @@ a:focus-visible {
   block-size: var(--shortcut-size);
   color: var(--note-ink);
   text-decoration: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .shortcut:hover {
@@ -1901,13 +1902,39 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: translate var(--settle) var(--ease-slide);
   }
 
-  .mode-switch {
-    transition: scale var(--press) ease-out;
+  /* Dip fast on press, spring back on release. */
+  .mode-switch,
+  wa-button[appearance='outlined'],
+  .time-select::part(combobox),
+  .shortcut wa-icon {
+    transition: scale var(--settle) var(--ease-spring);
+  }
+
+  @media (hover: hover) {
+    .shortcut:hover wa-icon {
+      scale: 1.15;
+    }
   }
 
   .mode-switch:active,
-  .print-control:active {
+  wa-button[appearance='outlined']:active,
+  .time-select:active::part(combobox) {
     scale: 0.97;
+    transition: scale var(--press) ease-out;
+  }
+
+  .shortcut:active wa-icon {
+    scale: 0.8;
+    transition: scale var(--press) ease-out;
+  }
+
+  /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
+  .mode-rest .print-control:active {
+    scale: 0.97;
+  }
+
+  .mode-rest .print-control wa-icon {
+    scale: none;
   }
 
   .mode-bar {
