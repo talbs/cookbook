@@ -1,7 +1,39 @@
 @font-face {
   font-family: 'Free Lunch';
-  src: url('/assets/fonts/FreeLunch-Regular.woff2') format('woff2');
+  src: url('fonts/FreeLunch-Regular.woff2') format('woff2');
   font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('open-fonts/HankenGrotesk.woff2') format('woff2');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ancizar Serif';
+  src: url('open-fonts/AncizarSerif.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* Local condensed faces sized to Free Lunch's width, so a title wraps onto the same lines while the font loads or
+   when it is missing. The overrides are Free Lunch's ascent and descent divided by the size adjustment. */
+@font-face {
+  font-family: 'Free Lunch Fallback Apple';
+  src: local('Avenir Next Condensed Heavy'), local('AvenirNextCondensed-Heavy');
+  size-adjust: 84%;
+  ascent-override: 119%;
+  descent-override: 24%;
+}
+
+@font-face {
+  font-family: 'Free Lunch Fallback Windows';
+  src: local('Impact');
+  size-adjust: 89%;
+  ascent-override: 112%;
+  descent-override: 22%;
 }
 
 html,
@@ -47,7 +79,7 @@ body {
   --wa-font-family-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
   /* Hanken Grotesk at 600 reads close to its regular, so bold is 700. */
   --wa-font-weight-bold: 700;
-  --wa-font-family-heading: 'Free Lunch', 'Hanken Grotesk', sans-serif;
+  --wa-font-family-heading: 'Free Lunch', 'Free Lunch Fallback Apple', 'Free Lunch Fallback Windows', 'Hanken Grotesk', sans-serif;
   --wa-font-family-longform: 'Ancizar Serif', ui-serif, serif;
   --wa-color-text-link: var(--wa-color-text-normal);
   --wa-color-focus: var(--wa-color-text-normal);
@@ -294,6 +326,7 @@ wa-page > main {
 .listing-head h1 {
   font-weight: 800;
   font-synthesis: none;
+  text-transform: uppercase;
 }
 
 .recipe-head h1,
@@ -301,7 +334,6 @@ wa-page > main {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
   line-height: 0.92;
-  text-transform: uppercase;
   text-box: trim-both cap alphabetic;
 }
 
