@@ -82,9 +82,6 @@ body {
   --wa-font-family-heading: 'Free Lunch', 'Free Lunch Fallback Apple', 'Free Lunch Fallback Windows', 'Hanken Grotesk', sans-serif;
   --wa-font-family-longform: 'Ancizar Serif', ui-serif, serif;
   --wa-color-text-link: var(--wa-color-text-normal);
-  --wa-color-focus: var(--wa-color-text-normal);
-  --wa-focus-ring-width: 2px;
-  --wa-focus-ring-offset: 3px;
   --wa-color-brand-fill-loud: var(--wa-color-text-normal);
   --wa-color-brand-on-loud: var(--wa-color-surface-default);
   --ink: var(--wa-color-text-normal);
@@ -171,6 +168,14 @@ body {
       var(--bar-switch-height) + 1px
   );
   scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-m));
+}
+
+/* The kit's .wa-dark restates its own blue, wider ring, so the dark source dialog takes the site's ring again. */
+:root,
+.wa-dark {
+  --wa-color-focus: var(--wa-color-text-normal);
+  --wa-focus-ring-width: 2px;
+  --wa-focus-ring-offset: 3px;
 }
 
 /* Text links match Tiny Tells: a solid 1px underline in the text colour, set 0.2em below, instead of WA's dotted 70% one. */
@@ -2058,9 +2063,12 @@ wa-progress-bar.wait-run::part(indicator) {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: var(--wa-space-s);
+  gap: var(--wa-space-l) var(--wa-space-s);
   block-size: 1lh;
-  overflow: hidden;
+  /* The clip reaches past the line far enough for the cooklang link's focus ring; the row gap keeps a wrapped note, and its ring, below that reach.
+     Chrome drops a calc() margin, so --wa-space-xs is written out as 0.5rem. */
+  overflow: clip;
+  overflow-clip-margin: 0.5rem;
 }
 
 .source-name {
