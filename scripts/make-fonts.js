@@ -24,21 +24,21 @@ const sourceFolder = join(homedir(), '.config', 'cookbook');
 const faces = [
   {
     source: join(sourceFolder, 'HankenGrotesk[wght].ttf'),
-    output: 'assets/open-fonts/HankenGrotesk.woff2',
+    output: 'site/assets/open-fonts/HankenGrotesk.woff2',
     characters: BODY_CHARACTERS,
     keepFeatures: BODY_FEATURES,
     variationAxes: { wght: { min: 400, max: 800 } },
   },
   {
     source: join(sourceFolder, 'AncizarSerif[wght].ttf'),
-    output: 'assets/open-fonts/AncizarSerif.woff2',
+    output: 'site/assets/open-fonts/AncizarSerif.woff2',
     characters: BODY_CHARACTERS,
     keepFeatures: BODY_FEATURES,
     variationAxes: { wght: { min: 400, max: 700 } },
   },
   {
     source: join(sourceFolder, 'FreeLunch-Regular.otf'),
-    output: 'assets/fonts/FreeLunch-Regular.woff2',
+    output: 'site/assets/fonts/FreeLunch-Regular.woff2',
     characters: TITLE_CHARACTERS,
     keepFeatures: ['kern'],
     isRequired: true,

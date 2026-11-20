@@ -1,27 +1,115 @@
-# cookbook
+# Cookbook
 
 Personally approved collection of recipes culled from books, shows, and the Internet.
 
-## Run it
+Each recipe is one plain text file written in [Cooklang](https://cooklang.org). [Eleventy](https://www.11ty.dev) turns those files into a static site with a searchable index and a page per tag. Each recipe page has an Overview mode for reading, a Cook mode with countdown timers, and its own print layout.
 
-You need Node 24.19 or newer, and npm, which comes with it. Nothing else to install. Web Awesome, the icons and the text fonts load from CDNs, so pages need a network connection to look right.
+## Contents
+
+- [Quick start](#quick-start)
+- [Commands](#commands)
+- [How it works](#how-it-works)
+- [Project layout](#project-layout)
+- [Tests and CI](#tests-and-ci)
+- [Add a recipe](#add-a-recipe)
+- [Bringing one in from somewhere else](#bringing-one-in-from-somewhere-else)
+- [When the build fails](#when-the-build-fails)
+- [License](#license)
+
+## Quick start
+
+You need Node 24.19 or newer (`.node-version` pins it), and npm, which comes with it.
 
 ```bash
-npm ci          # installs what package-lock.json lists
-npm start       # local site at http://localhost:4186/
-npm test        # checks the recipe rules and the built pages
-npm run build   # writes the site to _site/
+git clone https://github.com/talbs/cookbook.git
+cd cookbook
+npm ci
+npm start
 ```
 
-`npm start` rebuilds when you save a recipe, a template, a data file or anything in `assets/`. It restarts itself when you save `eleventy.config.js` or a file in `lib/`. Either way the browser reloads on its own. If port 4186 is taken it uses the next free one and prints the address.
+The site is at http://localhost:4186/. If that port is taken, it uses the next free one and prints the address.
+
+Two things to know on a fresh clone:
+
+- **Pages need a network connection to look right.** Web Awesome (the components and page shell) and the Font Awesome icons load from CDNs. The text fonts are in the repo.
+- **Titles show in the wrong font.** They're set in [Free Lunch](https://simplebits.shop/products/free-lunch), a paid font that isn't in the repo. Without it titles fall back to a condensed font already on your machine (Avenir Next Condensed on a Mac, Impact on Windows), and the browser logs one missing file: `/assets/fonts/FreeLunch-Regular.woff2`. Everything else works. To see the real titles, put your licensed `FreeLunch-Regular.otf` in `~/.config/cookbook/` and run `npm run font`. It writes the web font to `site/assets/fonts/`, which Git ignores.
+
+## Commands
+
+| Command         | What it does                                                          |
+| --------------- | --------------------------------------------------------------------- |
+| `npm ci`        | Installs exactly what `package-lock.json` lists                       |
+| `npm start`     | Serves the site at http://localhost:4186/ and rebuilds when you save  |
+| `npm test`      | Checks the recipe rules and the built pages                           |
+| `npm run build` | Writes the site to `_site/`                                           |
+| `npm run font`  | Rebuilds the web fonts from source files in `~/.config/cookbook/`     |
+
+`npm start` rebuilds when you save a recipe, a template, a data file or anything in `site/assets/`. It restarts itself when you save `eleventy.config.js` or a file in `lib/`. Either way the browser reloads on its own.
 
 `npm start` and `npm run build` both empty `_site/` first, so a renamed or deleted recipe never leaves an old page behind. `_site/` is the only folder they write to. `npm test` builds the site in memory and writes nothing.
 
-The build checks every recipe as it goes. One bad recipe stops it with exit code 1 and names the file. [When the build fails](#when-the-build-fails) lists each message. Every pull request runs `npm ci`, `npm test` and `npm run build`.
+## How it works
 
-### The title font
+1. Eleventy finds every `recipes/*.cook` file. `eleventy.config.js` tells it what a `.cook` file is.
+2. `lib/recipe.js` reads the file with the official Cooklang parser (`@cooklang/cooklang`), then shapes the result for the page: ingredients with their amounts added up, equipment, steps, timers and notes.
+3. `lib/validate-recipe.js` checks the recipe against this site's rules. One bad recipe stops the build with exit code 1 and names the file. [When the build fails](#when-the-build-fails) lists each message.
+4. `site/_includes/recipe.njk` lays the recipe out as a page at `/recipes/<file name>/`. It also writes [schema.org Recipe](https://schema.org/Recipe) data into the page for search engines.
+5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search box reads.
 
-Titles are set in Free Lunch, which isn't in the repo. On a fresh clone they show in Hanken Grotesk instead, and the browser logs one missing file: `/assets/fonts/FreeLunch-Regular.woff2`. Everything else works. To see the real titles, put `FreeLunch-Regular.woff2` in `assets/fonts/`. Git ignores that folder.
+No bundler, no framework. The scripts in `site/assets/` are plain ES modules, and the browser loads them as written.
+
+## Project layout
+
+```
+recipes/              One .cook file per recipe. The file name is the URL
+  recipes.json        Gives every recipe the recipe.njk layout
+site/                 Everything that turns recipes into a website
+  pages/              Every page that isn't a recipe
+    index.njk         Home: all recipes, with search, a time filter and a cards/list switch
+    tags.njk          /tags/, every tag grouped as dishes, methods and seasons
+    tag.njk           /tags/<tag>/, one page per tag
+    about.njk         /about/
+    404.njk
+    search.11ty.js    /search.json, what the search box reads
+  _includes/          Layouts and partials
+    base.njk          The HTML shell, CDN links, font preloads and color scheme
+    recipe.njk        The recipe page
+    listing.njk       The shell shared by index, tag and About pages
+    recipe-list.njk   Recipe cards
+    site-header.njk, site-nav.njk, site-footer.njk
+  _data/              Site-wide data: the site title, footer links, the jokes shown when a search finds nothing
+  assets/             Sent to the browser as written, served from /assets/
+    site.css          All the site's own styles
+    listing.js        Search, the time filter and the cards/list switch
+    recipe.js         Overview and Cook modes, checked-off steps, print
+    timers.js         Countdown timers in Cook mode
+    timer-phase.js    Timer math, shared with the tests
+    open-fonts/       The two text fonts and their licenses
+lib/                  Build-time code (Node)
+  recipe.js           Parses a .cook file and shapes it for the templates
+  validate-recipe.js  The recipe rules and their error messages
+  quantity.js         Units, and how amounts are added up and printed
+  notes.js            Splits a note into its title and body
+  typeset.js          Fractions, number ranges and line-break rules for text
+  json-ld.js          The schema.org data for search engines
+  icon-names.js       The Font Awesome icons a recipe may use
+test/                 Node's built-in test runner
+  fixtures/           Sample recipes, most of them broken on purpose, one per rule
+scripts/
+  make-fonts.js       What npm run font runs. Trims each font to the characters the site uses
+eleventy.config.js    The .cook extension, filters, the recipes collection, dev server settings
+```
+
+## Tests and CI
+
+`npm test` runs four files with Node's built-in test runner. Nothing else to install.
+
+- `test/validation.test.js` loads each broken recipe in `test/fixtures/` and expects the build to refuse it and name the file.
+- `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers.
+- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json` and the search engine data.
+- `test/timer-phase.test.js` covers the timer math.
+
+GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request and on every push to `main`. It doesn't deploy anything.
 
 ## Add a recipe
 
@@ -65,23 +153,23 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | `description` | yes      | One sentence. Shows in link previews and search results                                                                                                                                                                                                                              |
 | `tags`        | no       | A list: `[cookies, baking]`, in lowercase words joined by hyphens. Three kinds: dish type (`pasta`), method or gear (`sheet-pan`) and season. The seasons are `spring`, `early-summer`, `midsummer`, `late-summer`, `fall`, `winter` and `year-round`. `all` and `recipes` are taken |
 | `course`      | yes      | One of `main`, `side`, `dessert`, `breakfast`, `drink`, `condiment`                                                                                                                                                                                                                  |
-| `cuisine`     | no       | `French`, `Mexican`                                                                                                                                                                                                                                                                  |
+| `cuisine`     | no       | `French`, `Mexican`. Shows with the recipe's other facts                                                                                                                                                                                                                             |
 | `author`      | no       | Who created the recipe                                                                                                                                                                                                                                                               |
-| `source`      | no       | A name, a URL, or `{ name, url, author }`. `author` is who wrote the article or book                                                                                                                                                                                                 |
+| `source`      | no       | A name, a URL, or `{ name, url, author, book }`. `author` is who wrote the article or book. `book` is the book's title, shown after the name                                                                                                                                         |
 | `adapted`     | no       | `true` shows "Adapted from" instead of "Source:". This one is ours, not Cooklang's                                                                                                                                                                                                   |
 | `servings`    | no       | How many it serves                                                                                                                                                                                                                                                                   |
 | `yield`       | no       | What it makes, as an amount and unit: `16%cookies`, or a list: `[500%ml, 350%g]`                                                                                                                                                                                                     |
 | `time`        | no       | Total time: `1h30m`, `45m`. Use this, or `prep time` and `cook time`, not both                                                                                                                                                                                                       |
 | `prep time`   | no       | Prep time only: `15m`                                                                                                                                                                                                                                                                |
 | `cook time`   | no       | Cooking time only: `1h`. With prep time, the page shows both and the total goes to search engines                                                                                                                                                                                    |
-| `image`       | no       | An image URL, or a list of them. Search engines need one to show a recipe card                                                                                                                                                                                                       |
-| `diet`        | no       | `vegetarian`, or a list. Not shown on the page yet                                                                                                                                                                                                                                   |
-| `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Not shown on the page yet                                                                                                                             |
+| `image`       | no       | An image URL, or a list of them. Not shown on the page. Search engines need one to show a recipe card                                                                                                                                                                                |
+| `diet`        | no       | `vegetarian`, or a list. Not used yet                                                                                                                                                                                                                                                |
+| `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Shows with the recipe's other facts                                                                                                                   |
 | `locale`      | no       | `en_GB`. Not used yet                                                                                                                                                                                                                                                                |
 | `why`         | no       | Why the method works, as a list of sentences. Shows under "Why it works" in Overview only                                                                                                                                                                                            |
-| `icons`       | yes      | Three Font Awesome icon names, most defining first: `[pepper-hot, garlic, bowl-hot]`. Shown on the dotted rule in the header. New names go in `lib/icon-names.js` first. This one is ours, not Cooklang's                                                                            |
+| `icons`       | yes      | Three Font Awesome icon names, most defining first: `[pepper-hot, garlic, bowl-hot]`. Shown on the recipe's card and on the rule above its credits. New names go in `lib/icon-names.js` first. This one is ours, not Cooklang's                                                      |
 
-Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `duration`, `images`). The build asks for the names above so every page reads the same key. Any other key stops the build.
+Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `time required`, `duration`, `images`, `picture`, `pictures`). The build asks for the names above so every page reads the same key. Any other key stops the build.
 
 ### Writing the steps
 
@@ -167,3 +255,7 @@ The build names the file and says what's wrong. What each message means:
 | `no steps` / `no ingredients`                         | The recipe needs at least one step and one `@` ingredient                                                                           |
 
 Warnings print during the build but don't stop it.
+
+## License
+
+[MIT](LICENSE). That covers the code. The recipes are adapted from other people's work, and each one credits its source.
