@@ -1,6 +1,14 @@
 {% extends "base.njk" %}
 
 {% block head %}
+    {#- Only this template knows the title, so the running footer's text is set here; site.css styles and places it. #}
+    <style>
+      @page {
+        @bottom-left {
+          content: "{{ (site.title + "  ·  " + title) | replace('\\', '\\\\') | replace('"', '\\"') | safe }}";
+        }
+      }
+    </style>
     <script type="application/ld+json">{{ jsonLd | safe }}</script>
 {% endblock %}
 
@@ -9,6 +17,11 @@
       <wa-radio appearance="button" value="overview">Overview</wa-radio>
       <wa-radio appearance="button" value="cook">Cook</wa-radio>
     </wa-radio-group>
+{%- endmacro %}
+
+{% macro printControl(id) %}
+    <button class="shortcut print-control wa-border-radius-s" id="{{ id }}" type="button"><wa-icon name="print" variant="regular" label="Print or save as PDF"></wa-icon></button>
+    <wa-tooltip for="{{ id }}" placement="bottom">Print or save as PDF</wa-tooltip>
 {%- endmacro %}
 
 {% macro ingredientName(ingredient, recipes) %}
@@ -29,9 +42,13 @@
   {%- endif -%}
 {% endmacro %}
 
+{% macro noteTitleRow(note, classes) -%}
+<div class="{{ classes }}"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
+{%- endmacro %}
+
 {% macro noteDetails(note) %}
           {%- if note.isShort %}
-          <div class="step-note note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
+          {{ noteTitleRow(note, "step-note note-static") }}
           {%- else %}
           <wa-details class="step-note" appearance="plain" icon-placement="start">
             <wa-icon slot="expand-icon" class="note-icon" name="note-sticky" variant="regular"></wa-icon>
@@ -39,6 +56,10 @@
             <span slot="summary" class="note-title wa-text-truncate">{{ note.titleHtml | safe }}</span>
             <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </wa-details>
+          <div class="step-note note-print">
+            {{ noteTitleRow(note, "note-static") }}
+            <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
+          </div>
           {%- endif %}
 {%- endmacro %}
 
@@ -60,13 +81,14 @@
   <div class="mode-bar" slot="header">
     <div class="wa-split wa-flex-nowrap wa-align-items-center wa-gap-s">
       <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
-      <nav class="shortcuts wa-cluster wa-flex-nowrap wa-gap-xs" aria-label="Jump to">
+      <nav class="shortcuts wa-cluster wa-flex-nowrap wa-gap-xs" aria-label="Shortcuts">
         <a class="shortcut shortcut-ingredients wa-border-radius-s" id="shortcut-ingredients" href="#ingredients-heading"><wa-icon name="basket-shopping" variant="regular" label="Ingredients"></wa-icon></a>
         <wa-tooltip for="shortcut-ingredients" placement="bottom">Ingredients</wa-tooltip>
         <a class="shortcut wa-border-radius-s" id="shortcut-steps" href="#preparation-heading"><wa-icon name="pot-food" variant="regular" label="Steps"></wa-icon></a>
         <wa-tooltip for="shortcut-steps" placement="bottom">Steps</wa-tooltip>
         <a class="shortcut wa-border-radius-s" id="shortcut-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to top"></wa-icon></a>
         <wa-tooltip for="shortcut-top" placement="bottom">Back to top</wa-tooltip>
+        {{ printControl("shortcut-print") }}
       </nav>
     </div>
     {{ modeSwitch() }}
@@ -79,13 +101,24 @@
 </div>
 <article id="top" class="recipe wa-stack wa-gap-l" data-recipe="{{ page.fileSlug }}">
   {%- set hasSource = source and source.name %}
+  {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
+  {%- set hasFacts = servings or yield or course or difficulty or totalMinutes != null %}
+  {%- set hasCredit = hasSource or author %}
+  {%- set creditLine %}
+        <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
+        <dd>
+          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}" data-print-address="{{ source.address }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
+          {%- else %}{{ author }}{% endif -%}
+        </dd>
+  {%- endset %}
+  {%- set usedInLine %}<dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd>{% endset %}
   <header class="recipe-head wa-stack wa-gap-m">
     <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | showPlainLetters | safe }}</h1>
     <div class="recipe-intro wa-stack wa-gap-l">
       <p class="description wa-text-balance">{{ description }}</p>
       <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
-      {%- if servings or yield or course or difficulty or totalMinutes != null %}
-      <dl class="facts wa-grid wa-gap-m">
+      {%- if hasFacts or hasCredit or cuisine or usedIn.length %}
+      <dl class="facts wa-grid wa-gap-m{% if not hasFacts %} print-fact{% endif %}">
         {%- if servings %}
         <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
         {%- endif %}
@@ -101,12 +134,22 @@
         {%- if course %}
         <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
         {%- endif %}
+        {%- if cuisine %}
+        <div class="print-fact"><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
+        {%- endif %}
+        {%- if hasCredit %}
+        <div class="print-fact fact-credit">{{ creditLine | safe }}</div>
+        {%- endif %}
+        {%- if usedIn.length %}
+        <div class="print-fact">{{ usedInLine | safe }}</div>
+        {%- endif %}
       </dl>
       {%- endif %}
     </div>
   </header>
 
   <div class="mode-rest" hidden>
+    {{ printControl("resting-print") }}
     {{ modeSwitch() }}
   </div>
 
@@ -241,7 +284,6 @@
   </div>
 
 
-  {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
   {%- if hasSource or author or usedIn.length or tags.length or cuisine or icons.length %}
   <footer class="attribution wa-caption-s">
     <div class="footer-rule wa-span-grid wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true">
@@ -255,15 +297,9 @@
       <span class="rule-run"></span>
       {%- endif %}
     </div>
-    {%- if hasSource or author %}
+    {%- if hasCredit %}
     <dl class="credit">
-      <div>
-        <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
-        <dd>
-          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
-          {%- else %}{{ author }}{% endif -%}
-        </dd>
-      </div>
+      <div>{{ creditLine | safe }}</div>
     </dl>
     {%- endif %}
     {%- if tags.length or usedIn.length or cuisine %}
@@ -275,7 +311,7 @@
       <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% endfor %}</dd></div>
       {%- endif %}
       {%- if usedIn.length %}
-      <div><dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd></div>
+      <div>{{ usedInLine | safe }}</div>
       {%- endif %}
     </dl>
     {%- endif %}
