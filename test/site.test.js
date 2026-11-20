@@ -128,3 +128,16 @@ test("every recipe's source file is published unchanged as plain text, and its p
     assert.equal(match[1], `https://cookbook.talbs.me/recipes/${recipeName}.txt`);
   }
 });
+
+test('llms.txt lists every recipe once, each at the address of a file the build wrote', () => {
+  const llmsPage = builtPages.find(page => page.url === '/llms.txt');
+  assert.ok(llmsPage, 'no /llms.txt');
+
+  const linkedAddresses = [...llmsPage.content.matchAll(/^- \[[^\]]+\]\(([^)]+)\): \S/gm)].map(match => match[1]);
+  const builtAddresses = listRecipePages().map(page => `https://cookbook.talbs.me${page.url.replace(/\/$/, '.txt')}`);
+  assert.deepEqual([...linkedAddresses].sort(), [...builtAddresses].sort());
+  for (const address of linkedAddresses) {
+    const builtUrl = address.replace('https://cookbook.talbs.me', '');
+    assert.ok(builtPages.some(page => page.url === builtUrl), `${address} was not built`);
+  }
+});
