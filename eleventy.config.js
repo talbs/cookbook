@@ -16,6 +16,7 @@ const COURSE_HEADINGS = {
 const METHOD_TAGS = [
   'baking',
   'canning',
+  'grill',
   'make-ahead',
   'one-pan',
   'one-pot',
