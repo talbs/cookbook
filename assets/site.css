@@ -115,7 +115,7 @@ body {
   --print-column-gap: var(--wa-space-2xl);
   /* Room for a two-digit step number set to the left of its text, so every step's text shares one edge. */
   --print-step-indent: 2.4rem;
-  /* The same dots as --divider, drawn in their own colour. Printed through a mask, each run of dots picks up a hairline at both ends. */
+  /* As thick as the screen's dots are wide, so the printed dotted lines carry the same weight. */
   --print-leader-weight: 1.5px;
   --bar-control-height: 2rem;
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
@@ -2195,8 +2195,6 @@ wa-page[view='desktop'] {
 @media print {
   html {
     font-size: var(--print-root-size);
-    orphans: 2;
-    widows: 2;
   }
 
   /* WA's dark theme is layered, so these win whichever scheme the screen was in. */
@@ -2256,7 +2254,7 @@ wa-page[view='desktop'] {
     margin-block-start: var(--wa-space-xs);
   }
 
-  /* Browsers drop backgrounds on paper unless asked, and the dots, their paper covers and the icons' tones are all backgrounds. */
+  /* Browsers drop backgrounds on paper unless asked, and the paper covers that stop a leader short of its words are backgrounds. */
   .recipe {
     display: block;
     max-inline-size: none;
@@ -2265,7 +2263,6 @@ wa-page[view='desktop'] {
     --aside-size: var(--print-aside-size);
     --section-head-size: var(--print-head-size);
     --rule-gap: 1.25rem;
-    -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
