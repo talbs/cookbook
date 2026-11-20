@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rm -rf _site && eleventy",
     "start": "rm -rf _site && node --watch --watch-preserve-output node_modules/@11ty/eleventy/cmd.cjs --serve --quiet",
-    "test": "node --test \"test/*.test.js\""
+    "test": "node --test \"test/*.test.js\"",
+    "font": "node scripts/make-fonts.js"
   },
   "author": "Brian Talbot",
   "license": "MIT",
@@ -13,7 +14,8 @@
   "private": true,
   "devDependencies": {
     "@11ty/eleventy": "3.1.8",
-    "@cooklang/cooklang": "0.19.1"
+    "@cooklang/cooklang": "0.19.1",
+    "subset-font": "2.9.0"
   },
   "engines": {
     "node": ">=24.19"
