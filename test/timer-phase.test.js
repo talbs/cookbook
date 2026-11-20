@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isLongTimer, readTimerPhase } from '../assets/timer-phase.js';
+import { isLongTimer, readTimerPhase } from '../site/assets/timer-phase.js';
 
 const m = (minutes) => minutes * 60 * 1000;
 

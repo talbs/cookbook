@@ -141,7 +141,7 @@ function listRecipesThatUse(recipes, recipeName) {
 export default function (eleventyConfig) {
   eleventyConfig.setTemplateFormats(['njk', '11ty.js', 'cook']);
   eleventyConfig.ignores.add('test/**');
-  eleventyConfig.addPassthroughCopy('assets');
+  eleventyConfig.addPassthroughCopy({ 'site/assets': 'assets' });
   // The dev server would otherwise patch an open page in place, which resets what the page's scripts have set without running them again.
   eleventyConfig.setServerOptions({ domDiff: false, port: 4186 });
 
@@ -177,4 +177,6 @@ export default function (eleventyConfig) {
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))
   );
+
+  return { dir: { includes: 'site/_includes', data: 'site/_data' } };
 }

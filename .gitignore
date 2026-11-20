@@ -3,7 +3,7 @@ node_modules/
 _site/
 
 # The title font isn't in the repo; each machine brings its own copy
-assets/fonts/
+site/assets/fonts/
 
 # Secrets
 .env

@@ -10,7 +10,7 @@ eleventyComputed:
 {% block head %}
     <script>
       // A phone starts on the list, which is a fifth the length of the cards there; a saved choice always wins.
-      // assets/listing.js saves the choice under this same key.
+      // listing.js saves the choice under this same key.
       let listingView = matchMedia('(width < 48rem)').matches ? 'list' : 'cards';
       try {
         listingView = localStorage.getItem('listing-view') ?? listingView;
