@@ -89,6 +89,17 @@ for (const modeSwitch of modeSwitches) {
   });
 }
 
+// A printed page can't be clicked back to, so each sheet's footer carries the address it came from.
+// Only the browser knows the host, so the rule is written here; site.css styles the box.
+const pageAddress = (location.host + location.pathname).replaceAll('\\', '').replaceAll('"', '');
+const printAddressStyle = document.createElement('style');
+printAddressStyle.textContent = `@page { @bottom-center { content: "${pageAddress}"; } }`;
+document.head.append(printAddressStyle);
+
+for (const printControl of page.querySelectorAll('.print-control')) {
+  printControl.addEventListener('click', () => window.print());
+}
+
 // iOS Safari only applies :active while a touch listener exists, and the checkboxes and switch squish on :active.
 document.addEventListener('touchstart', () => {}, { passive: true });
 

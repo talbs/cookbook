@@ -32,12 +32,15 @@ body {
   --timer-ink: #9e1800;
 }
 
-/* site.css is unlayered, so the light surface above would beat WA's layered dark one; dark sets its own, a step above neutral-05. */
-.wa-dark {
-  --wa-color-surface-default: #1c1a19;
-  --wa-color-text-normal: #e8e7e5;
-  --accent: #ff9079;
-  --timer-ink: #e17460;
+/* site.css is unlayered, so the light surface above would beat WA's layered dark one; dark sets its own, a step above neutral-05.
+   Screen only: paper is always light. */
+@media screen {
+  .wa-dark {
+    --wa-color-surface-default: #1c1a19;
+    --wa-color-text-normal: #e8e7e5;
+    --accent: #ff9079;
+    --timer-ink: #e17460;
+  }
 }
 
 :root {
@@ -100,6 +103,20 @@ body {
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --page-gutter: 1.25rem;
   --section-space: var(--wa-space-l);
+  /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
+     Serif text and heads sit a little under their screen ratios, which is what keeps most recipes to one sheet. */
+  --print-root-size: 9.5pt;
+  --print-title-size: 3.6rem;
+  --print-description-size: 1.25rem;
+  --print-head-size: 1.35rem;
+  --print-step-size: 1.1rem;
+  --print-aside-size: 1rem;
+  --print-needs-share: 38%;
+  --print-column-gap: var(--wa-space-2xl);
+  /* Room for a two-digit step number set to the left of its text, so every step's text shares one edge. */
+  --print-step-indent: 2.4rem;
+  /* As thick as the screen's dots are wide, so the printed dotted lines carry the same weight. */
+  --print-leader-weight: 1.5px;
   --bar-control-height: 2rem;
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
   --bar-switch-height: calc(var(--bar-control-height) + 8px);
@@ -209,8 +226,10 @@ a:focus-visible {
   padding-block: var(--wa-space-2xl) clamp(var(--wa-space-3xl), 6vw, 5rem);
 }
 
-.recipe-nav + .recipe {
-  padding-block-start: var(--wa-space-2xl);
+@media screen {
+  .recipe-nav + .recipe {
+    padding-block-start: var(--wa-space-2xl);
+  }
 }
 
 /* The padding makes each link a 40px tap target without moving the words. */
@@ -364,7 +383,7 @@ a:focus-visible {
 }
 
 /* Once the page has columns, the set ends the line at the right edge, so it shares an edge with the columns. */
-@media (min-width: 48rem) {
+@media print, screen and (min-width: 48rem) {
   .recipe-icons {
     margin-inline-end: 0;
   }
@@ -440,7 +459,35 @@ a:focus-visible {
    36px buttons plus the switch's padding and border make it 44px, a full touch target. */
 .mode-rest {
   --wa-form-control-height: 2.25rem;
+  --rest-switch-height: calc(var(--wa-form-control-height) + 8px);
   padding-block: var(--wa-space-m);
+}
+
+/* Not wa-cluster: its display would beat the hidden attribute this row carries until the script is ready. */
+@media screen {
+  .mode-rest:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: var(--wa-space-m);
+  }
+}
+
+.mode-rest .mode-switch {
+  flex: 1;
+}
+
+/* The bar only shows after scrolling, so the print control also rests here, ahead of the switch as it is in the bar.
+   It wears the switch's frame at the switch's height, so the two read as one set of controls. */
+.mode-rest .print-control {
+  flex: none;
+  inline-size: var(--rest-switch-height);
+  block-size: var(--rest-switch-height);
+  border: 1px solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+}
+
+.mode-rest .print-control:hover {
+  border-color: var(--accent);
 }
 
 /* wa-page's header slot is sticky, but this bar sits outside the flow, so the slot is zero tall and the page starts with the title.
@@ -526,6 +573,24 @@ a:focus-visible {
   color: var(--accent);
 }
 
+/* WA's native styles dress a button as a filled control; this one is a bare icon like the links beside it. */
+button.shortcut {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
+@media screen {
+  .note-print,
+  .print-fact,
+  .print-address {
+    display: none;
+  }
+}
+
 [data-mode='cook'] .shortcut-ingredients {
   display: none;
 }
@@ -599,7 +664,7 @@ a:focus-visible {
 }
 
 /* From tablet width the sticky bar is one row, as tall as its taller item. */
-@media (min-width: 48rem) {
+@media screen and (min-width: 48rem) {
   :root {
     --bar-height: calc(
       2 * var(--wa-space-m) +
@@ -611,7 +676,7 @@ a:focus-visible {
 
 /* Tablets have room for two columns before the page splits into its desktop grid:
    ingredients on the left, equipment, notes and timing on the right, instead of one capped column with empty space beside it. */
-@media (48rem <= width < 64rem) {
+@media screen and (48rem <= width < 64rem) {
   .needs {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -703,9 +768,14 @@ a:focus-visible {
   }
 }
 
-wa-checkbox:state(checked) .box-unchecked,
 wa-checkbox:not(:state(checked)) .box-checked {
   display: none;
+}
+
+@media screen {
+  wa-checkbox:state(checked) .box-unchecked {
+    display: none;
+  }
 }
 
 /* Registered so the tick's red can fade back to ink; unregistered custom properties jump. wa-icon still sets both on :host. */
@@ -796,17 +866,20 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* A ticked row steps back so the rows still to do come forward: half strength, no bold amount, no dots.
-   At this strength its text sits under 4.5:1 on purpose; a ticked row is done with, and unticking brings it back. */
-.checklist li:has(wa-checkbox:state(checked)) {
-  opacity: var(--done-strength);
-}
+   At this strength its text sits under 4.5:1 on purpose; a ticked row is done with, and unticking brings it back.
+   On paper every row prints unticked and full strength. */
+@media screen {
+  .checklist li:has(wa-checkbox:state(checked)) {
+    opacity: var(--done-strength);
+  }
 
-.checklist wa-checkbox:state(checked) .amount {
-  font-weight: var(--wa-font-weight-normal);
-}
+  .checklist wa-checkbox:state(checked) .amount {
+    font-weight: var(--wa-font-weight-normal);
+  }
 
-.checklist wa-checkbox:state(checked) .ingredient::after {
-  opacity: 0;
+  .checklist wa-checkbox:state(checked) .ingredient::after {
+    opacity: 0;
+  }
 }
 
 .needs-list > .timing-section {
@@ -1590,74 +1663,77 @@ wa-progress-bar.wait-run::part(indicator) {
   color: var(--ink);
 }
 
-[data-mode='overview'] .step-needs {
-  display: none;
-}
+/* Overview and Cook are two ways to read the screen. Paper gets one layout, set in the print rules at the end. */
+@media screen {
+  [data-mode='overview'] .step-needs {
+    display: none;
+  }
 
-[data-mode='cook'] .needs {
-  display: none;
-}
+  [data-mode='cook'] .needs {
+    display: none;
+  }
 
-/* Cook hides the planning column, so its "Before you start" notes get their own section ahead of the method. */
-[data-mode='overview'] .before-start {
-  display: none;
-}
+  /* Cook hides the planning column, so its "Before you start" notes get their own section ahead of the method. */
+  [data-mode='overview'] .before-start {
+    display: none;
+  }
 
-/* Cook's step text is 22px, so section names step up to stay above it. */
-[data-mode='cook'] :is(.method, .before-start) {
-  --section-head-size: 1.75rem;
-}
+  /* Cook's step text is 22px, so section names step up to stay above it. */
+  [data-mode='cook'] :is(.method, .before-start) {
+    --section-head-size: 1.75rem;
+  }
 
-/* Cook is read from arm's length: steps and asides each move up a size. Ingredient rows stay as in Overview. */
-.recipe-page[data-mode='cook'] {
-  --step-size: 1.375rem;
-  --aside-size: var(--wa-font-size-l);
-}
+  /* Cook is read from arm's length: steps and asides each move up a size. Ingredient rows stay as in Overview. */
+  .recipe-page[data-mode='cook'] {
+    --step-size: 1.375rem;
+    --aside-size: var(--wa-font-size-l);
+  }
 
-[data-mode='cook'] .method {
-  --step-gap: var(--wa-space-2xl);
-}
+  [data-mode='cook'] .method {
+    --step-gap: var(--wa-space-2xl);
+  }
 
-[data-mode='cook'] .steps {
-  gap: var(--step-gap);
-}
+  [data-mode='cook'] .steps {
+    gap: var(--step-gap);
+  }
 
-[data-mode='cook'] .step-needs {
-  gap: var(--wa-space-s);
-}
-
-/* With no Before You Start above it, the whole page is the preparation, so its name is for screen readers only. */
-.recipe-page[data-mode='cook']:not(:has(.before-start)) #preparation-heading {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
-[data-mode='cook'] .attribution :is(.credit, .connections) {
-  display: none;
-}
-
-/* Pads each row to a 44px tap target for a cook with wet hands; a mouse doesn't need it. */
-@media (pointer: coarse) {
   [data-mode='cook'] .step-needs {
-    gap: 0;
+    gap: var(--wa-space-s);
   }
 
-  [data-mode='cook'] .step-needs wa-checkbox {
-    padding-block: 0.625rem;
+  /* With no Before You Start above it, the whole page is the preparation, so its name is for screen readers only. */
+  .recipe-page[data-mode='cook']:not(:has(.before-start)) #preparation-heading {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-}
 
-[data-mode='cook'] .step-needs wa-checkbox::part(control) {
-  margin-block-start: 0.1875rem;
-}
+  /* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
+  [data-mode='cook'] .attribution :is(.credit, .connections) {
+    display: none;
+  }
 
-[data-mode='cook'] .step-needs :is(.box-unchecked, .box-checked) {
-  inset-block-start: 0.1875rem;
+  /* Pads each row to a 44px tap target for a cook with wet hands; a mouse doesn't need it. */
+  @media (pointer: coarse) {
+    [data-mode='cook'] .step-needs {
+      gap: 0;
+    }
+
+    [data-mode='cook'] .step-needs wa-checkbox {
+      padding-block: 0.625rem;
+    }
+  }
+
+  [data-mode='cook'] .step-needs wa-checkbox::part(control) {
+    margin-block-start: 0.1875rem;
+  }
+
+  [data-mode='cook'] .step-needs :is(.box-unchecked, .box-checked) {
+    inset-block-start: 0.1875rem;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1674,7 +1750,8 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: scale var(--press) ease-out;
   }
 
-  .mode-switch:active {
+  .mode-switch:active,
+  .print-control:active {
     scale: 0.97;
   }
 
@@ -1686,6 +1763,13 @@ wa-progress-bar.wait-run::part(indicator) {
 
   .mode-switch wa-radio {
     transition: color var(--wa-transition-fast) var(--wa-transition-easing);
+  }
+
+  .print-control {
+    transition:
+      color var(--wa-transition-fast) var(--wa-transition-easing),
+      border-color var(--wa-transition-fast) var(--wa-transition-easing),
+      scale var(--press) ease-out;
   }
 
   /* The bar stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
@@ -1922,7 +2006,7 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 /* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
-@media (min-width: 64rem) {
+@media screen and (min-width: 64rem) {
   .recipe {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
   }
@@ -1993,10 +2077,18 @@ wa-progress-bar.wait-run::part(indicator) {
 
   /* At the end of the facts row, directly above the columns it switches. */
   .mode-rest {
+    position: relative;
     grid-column: 3;
     grid-row: 4;
     align-self: end;
     padding: 0;
+  }
+
+  /* Outside the switch's column, so the switch keeps its full width. */
+  .mode-rest .print-control {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: calc(100% + var(--wa-space-m));
   }
 }
 
@@ -2020,7 +2112,7 @@ wa-page[view='desktop'] {
   }
 }
 
-@media (min-width: 64rem) {
+@media screen and (min-width: 64rem) {
   .recipe-body {
     margin-block-start: var(--wa-space-l);
   }
@@ -2072,5 +2164,320 @@ wa-page[view='desktop'] {
     grid-row: 1 / span 2;
     align-self: start;
     margin-block-start: 0;
+  }
+}
+
+/* 0.4in clears every common printer's unprintable edge. No size, so Letter and A4 both work.
+   The foot is deeper, for a running line: recipe.njk sets the left text and recipe.js the address, which only the browser knows.
+   Chrome draws these in the margin; a browser that can't leaves them out. */
+@page {
+  margin: 0.4in 0.4in 0.5in;
+
+  font: 8.25pt 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  @bottom-left {
+    vertical-align: bottom;
+    padding-block-end: 0.18in;
+  }
+
+  @bottom-center {
+    vertical-align: bottom;
+    padding-block-end: 0.18in;
+  }
+
+  @bottom-right {
+    content: counter(page) ' / ' counter(pages);
+    vertical-align: bottom;
+    padding-block-end: 0.18in;
+  }
+}
+
+@media print {
+  html {
+    font-size: var(--print-root-size);
+  }
+
+  /* WA's dark theme is layered, so these win whichever scheme the screen was in. */
+  :root {
+    color-scheme: light;
+    --wa-color-surface-default: white;
+    --wa-color-text-normal: black;
+    --wa-color-text-quiet: var(--wa-color-neutral-30);
+    /* Dots and icon lines at the screen's 22% can vanish in a laser printer's halftone, so paper gets a firmer grey. */
+    --mark: color-mix(in oklab, black 45%, transparent);
+    --timer-ink: var(--ink);
+  }
+
+  /* Paper is black only, to save ink; weight marks a timer where red did. */
+  .step-timer {
+    font-weight: var(--wa-font-weight-bold);
+  }
+
+  html,
+  body {
+    background: none;
+  }
+
+  /* wa-page holds itself a full screen tall on nested grids. On paper that spills a blank second sheet,
+     and grids are the layout print engines break worst, so its shell goes back to plain blocks. */
+  .recipe-page,
+  .recipe-page::part(base),
+  .recipe-page::part(body),
+  .recipe-page::part(main) {
+    display: block;
+    min-block-size: 0;
+  }
+
+  .mode-bar,
+  .recipe-nav,
+  .mode-rest,
+  wa-tooltip,
+  wa-details.step-note,
+  .wait-mark,
+  .step .step-needs,
+  .before-start,
+  .step-note .recipe-note::before,
+  .checklist .box-checked,
+  .step:target .step-text::before {
+    display: none;
+  }
+
+  /* A note is an aside to its step, and its title is often a whole sentence: at full bold it outweighed the step above it. */
+  .note-print > .note-static {
+    font-weight: var(--wa-font-weight-semibold);
+    line-height: 1.35;
+    color: var(--ink);
+    break-after: avoid;
+  }
+
+  .note-print > .recipe-note {
+    margin-block-start: var(--wa-space-xs);
+  }
+
+  /* Browsers drop backgrounds on paper unless asked, and the paper covers that stop a leader short of its words are backgrounds. */
+  .recipe {
+    display: block;
+    max-inline-size: none;
+    padding: 0;
+    --step-size: var(--print-step-size);
+    --aside-size: var(--print-aside-size);
+    --section-head-size: var(--print-head-size);
+    --rule-gap: 1.25rem;
+    print-color-adjust: exact;
+  }
+
+  .recipe-head h1 {
+    --title-size: var(--print-title-size);
+  }
+
+  /* The sheet is wide enough for most descriptions on one line; balancing would split them into two short ones. */
+  .description {
+    max-inline-size: none;
+    font-size: var(--print-description-size);
+    text-wrap: pretty;
+  }
+
+  .recipe-head h1.is-long {
+    --title-size: calc(0.8 * var(--print-title-size));
+  }
+
+  .recipe-head h1.is-longer {
+    --title-size: calc(0.65 * var(--print-title-size));
+  }
+
+  /* The credits join the facts, where the row has room to spare, so they cost the sheet no lines of their own.
+     Only the credit may narrow: a long address turns onto a second line under its source's name. */
+  .facts {
+    display: flex;
+    column-gap: var(--wa-space-2xl);
+  }
+
+  .facts > div {
+    flex: none;
+  }
+
+  .facts > .fact-credit {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+
+  /* Blocks and a float, not flex or grid: every print engine can break those across pages.
+     The ingredients column floats beside the steps, as in Overview on a wide screen. */
+  .recipe-body,
+  .needs,
+  .needs-list,
+  .checklist,
+  .method,
+  .steps,
+  .step,
+  .timing-rows {
+    display: block;
+  }
+
+  .recipe-body {
+    margin-block-start: var(--wa-space-2xl);
+  }
+
+  .checklist wa-checkbox {
+    --wa-form-control-toggle-size: 1.125rem;
+  }
+
+  /* The column is too narrow for a name and a note to sit apart across dots. The note runs on after the name
+     and wraps with it, as a cookbook sets it; Timing's rows keep their leaders. */
+  .ingredient,
+  .ingredient > :first-child,
+  .ingredient .note {
+    display: inline;
+    max-inline-size: none;
+    text-align: start;
+  }
+
+  .ingredient:has(.note)::after {
+    display: none;
+  }
+
+  .checklist .ingredient .row-words {
+    padding: 0;
+    background: none;
+  }
+
+  .ingredient .note {
+    margin-inline-start: 0.25em;
+  }
+
+  /* Real dotted borders, not the gradient dots: macOS Preview smears or drops the gradient at this size, and a border stays sharp.
+     The margins keep each line centred in the strip the dots used to fill. */
+  .rule-run,
+  .timing-rows li::after {
+    block-size: 0;
+    border-block-start: var(--print-leader-weight) dotted var(--mark);
+    background: none;
+    mask: none;
+  }
+
+  .rule-run {
+    margin-block: calc((var(--band) - var(--print-leader-weight)) / 2);
+  }
+
+  .timing-rows li::after {
+    margin-block-start: calc((var(--dot-pitch) - var(--print-leader-weight)) / 2);
+  }
+
+  /* A handful of one-word items reads as a line, and takes a third of the grid's height. */
+  .equipment ul {
+    display: block;
+  }
+
+  .equipment li {
+    display: inline;
+    white-space: nowrap;
+  }
+
+  /* The dot follows its item, so a wrapped line never starts with one. */
+  .equipment li:not(:last-child)::after {
+    content: '\00a0·';
+  }
+
+  .needs {
+    float: inline-start;
+    inline-size: var(--print-needs-share);
+    max-inline-size: none;
+  }
+
+  .method {
+    margin-inline-start: calc(var(--print-needs-share) + var(--print-column-gap));
+  }
+
+  .needs-list > * + *,
+  .checklist > li + li,
+  .timing-rows > li + li {
+    margin-block-start: var(--wa-space-xs);
+  }
+
+  .method > * + *,
+  .method > .steps + .steps,
+  .steps > li + li {
+    margin-block-start: var(--wa-space-m);
+  }
+
+  .step-text,
+  .recipe-note {
+    line-height: 1.35;
+  }
+
+  /* Rows of one or two lines keep the screen's open leading, which gives the tick boxes room; a paragraph of sans sets tighter. */
+  .lead-notes {
+    line-height: 1.4;
+  }
+
+  /* The smallest size on the sheet opens up a little, so 8pt sans doesn't clog in print. */
+  .ingredient .note,
+  .timing-step,
+  .timing-section,
+  .facts dt {
+    letter-spacing: 0.01em;
+  }
+
+  .step {
+    position: relative;
+    padding-inline-start: var(--print-step-indent);
+  }
+
+  .step:target .step-text {
+    position: static;
+  }
+
+  .step-number {
+    position: absolute;
+    inset-inline-start: 0;
+    inline-size: calc(var(--print-step-indent) - 0.5em);
+    margin: 0;
+    text-align: end;
+  }
+
+  .method > .step-note {
+    margin-inline-start: var(--print-step-indent);
+  }
+
+  /* Tags are a way around the site, which paper has no use for; the rest of the footer prints with the facts. */
+  .attribution {
+    display: none;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  /* A link is no use on paper, so the source's address prints after its name.
+     Each stretch between slashes stays whole, so a long address turns only after a slash, never at a hyphen. */
+  .print-address {
+    color: var(--note-ink);
+  }
+
+  .print-address span {
+    white-space: nowrap;
+  }
+
+  .section-head,
+  .needs-subhead,
+  .timing-section,
+  .timing > div {
+    break-after: avoid;
+  }
+
+  /* A step never parts from its note's title, but a long note may turn the page between its paragraphs. */
+  .step-text:has(+ .step-note) {
+    break-after: avoid;
+  }
+
+  .needs li,
+  .step-text,
+  .note-static,
+  .recipe-note > *,
+  .recipe-note li,
+  .lead-notes p,
+  .facts,
+  .equipment {
+    break-inside: avoid;
   }
 }
