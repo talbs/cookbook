@@ -321,6 +321,11 @@ wa-page > main {
   padding-block: 0 var(--wa-space-2xl);
 }
 
+/* A recipe already ends on its own dotted line, a few rows up; a second one would box the credits in. */
+.recipe-page .site-footer .header-rule {
+  display: none;
+}
+
 .made-by {
   margin: 0;
   color: var(--note-ink);
