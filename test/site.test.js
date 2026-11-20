@@ -14,6 +14,10 @@ function listRecipePages() {
   return builtPages.filter(page => page.url.startsWith('/recipes/'));
 }
 
+function listHtmlPages() {
+  return builtPages.filter(page => page.outputPath.endsWith('.html'));
+}
+
 function readJsonLd(page) {
   const match = page.content.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   assert.ok(match, `${page.url} has no JSON-LD script`);
@@ -85,7 +89,7 @@ test("every search.json entry has the documented shape", () => {
 });
 
 test('every page names its own address on the live site as canonical, except the 404', () => {
-  const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
+  const htmlPages = listHtmlPages();
   assert.ok(htmlPages.length > 0);
   assert.ok(htmlPages.some(page => page.url === '/404.html'), 'no page at /404.html');
 
@@ -101,7 +105,7 @@ test('every page names its own address on the live site as canonical, except the
 });
 
 test('every link to a page on this site leads to a page the build wrote', () => {
-  const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
+  const htmlPages = listHtmlPages();
   const builtUrls = new Set(builtPages.map(page => page.url));
   let checkedLinkCount = 0;
 
