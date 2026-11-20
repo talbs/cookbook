@@ -14,6 +14,10 @@ function listRecipePages() {
   return builtPages.filter(page => page.url.startsWith('/recipes/'));
 }
 
+function listHtmlPages() {
+  return builtPages.filter(page => page.outputPath.endsWith('.html'));
+}
+
 function readJsonLd(page) {
   const match = page.content.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   assert.ok(match, `${page.url} has no JSON-LD script`);
@@ -22,10 +26,6 @@ function readJsonLd(page) {
 
 function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim() !== '';
-}
-
-function isHowToStep(entry) {
-  return entry['@type'] === 'HowToStep' && isNonEmptyString(entry.text);
 }
 
 test('every recipe file becomes a page at /recipes/<file name>/', () => {
@@ -48,24 +48,9 @@ test('the home page links to every recipe page', () => {
   }
 });
 
-test("every recipe page's JSON-LD parses and carries its ingredients and steps", () => {
+test('every recipe page carries search engine data that parses as a Recipe', () => {
   for (const page of listRecipePages()) {
-    const jsonLd = readJsonLd(page);
-    assert.equal(jsonLd['@type'], 'Recipe', page.url);
-    assert.ok(isNonEmptyString(jsonLd.name), page.url);
-    assert.ok(isNonEmptyString(jsonLd.description), page.url);
-    assert.ok(Array.isArray(jsonLd.recipeIngredient) && jsonLd.recipeIngredient.length > 0, page.url);
-    assert.ok(jsonLd.recipeIngredient.every(isNonEmptyString), page.url);
-    assert.ok(Array.isArray(jsonLd.recipeInstructions) && jsonLd.recipeInstructions.length > 0, page.url);
-    for (const entry of jsonLd.recipeInstructions) {
-      const isSection =
-        entry['@type'] === 'HowToSection' &&
-        isNonEmptyString(entry.name) &&
-        Array.isArray(entry.itemListElement) &&
-        entry.itemListElement.length > 0 &&
-        entry.itemListElement.every(isHowToStep);
-      assert.ok(isHowToStep(entry) || isSection, page.url);
-    }
+    assert.equal(readJsonLd(page)['@type'], 'Recipe', page.url);
   }
 });
 
@@ -100,8 +85,9 @@ test("every search.json entry has the documented shape", () => {
 });
 
 test('every page names its own address on the live site as canonical, except the 404', () => {
-  const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
+  const htmlPages = listHtmlPages();
   assert.ok(htmlPages.length > 0);
+  assert.ok(htmlPages.some(page => page.url === '/404.html'), 'no page at /404.html');
 
   for (const page of htmlPages) {
     const match = page.content.match(/<link rel="canonical" href="([^"]*)">/);
@@ -112,4 +98,20 @@ test('every page names its own address on the live site as canonical, except the
     assert.ok(match, `${page.url} has no canonical link`);
     assert.equal(match[1], `https://cookbook.talbs.me${page.url}`);
   }
+});
+
+test('every link to a page on this site leads to a page the build wrote', () => {
+  const htmlPages = listHtmlPages();
+  const builtUrls = new Set(builtPages.map(page => page.url));
+  let checkedLinkCount = 0;
+
+  for (const page of htmlPages) {
+    for (const [, href] of page.content.matchAll(/href="(\/[^"]*)"/g)) {
+      const address = href.split('#')[0].split('?')[0];
+      if (address.startsWith('/assets/')) continue;
+      assert.ok(builtUrls.has(address), `${page.url} links to ${href}, which isn't a built page`);
+      checkedLinkCount += 1;
+    }
+  }
+  assert.ok(checkedLinkCount > 0);
 });

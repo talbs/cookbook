@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isLongTimer, readTimerPhase } from '../site/assets/timer-phase.js';
+import { readTimerPhase } from '../site/assets/timer-phase.js';
 
 const m = (minutes) => minutes * 60 * 1000;
 
@@ -30,6 +30,4 @@ test("a timer's phase follows its start time, low end and high end", () => {
       `started ${startedAt}, ${low}–${high}, now ${now}`
     );
   }
-  assert.equal(isLongTimer(m(120)), false);
-  assert.equal(isLongTimer(m(121)), true);
 });

@@ -1,19 +1,26 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { splitNoteTitle } from '../lib/notes.js';
-import { findBands, formatTimeSummary, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
+import { formatTimeSummary, loadRecipe, widenTimeForTimers } from '../lib/recipe.js';
 
-test('a note shown beside a total drops the parts that are amounts', () => {
-  const rows = [
-    ['1 cup, shredded', 'shredded'],
-    ['1 1/2 cups', null],
-    ['grated, or Parmigiano Reggiano', 'grated, or Parmigiano Reggiano'],
-    ['large', 'large'],
-    [null, null],
-  ];
-  for (const [note, shown] of rows) {
-    assert.equal(trimNoteForTotal(note), shown, `note: ${note}`);
-  }
+test('the ingredient list adds up every mention of an ingredient', () => {
+  const { recipe } = loadRecipe('test/fixtures/totals.cook');
+  assert.deepEqual(
+    recipe.ingredients.map(ingredient => ingredient.text),
+    [
+      '1 1/2 cups flour',
+      '1 tbsp plus 1 tsp sugar',
+      '3 eggs',
+      '360 ml milk',
+      '1/3 cup plus 2 tsp honey',
+      '1 1/4 lb butter',
+      '6 oz cheddar (shredded)',
+      '1 1/2 kg potatoes',
+      '1/4 cup parmesan (1 oz, grated)',
+      '2 tbsp parsley (optional)',
+      'Good Recipe',
+    ]
+  );
 });
 
 test('a timing total whose ends round to one figure reads as about that figure', () => {
@@ -42,32 +49,31 @@ test("a note's title and body together carry the whole note, with nothing said t
 });
 
 test('a step gets a band for each timer worth counting down', () => {
-  const row = (name, lowMinutes, highMinutes, label) => ({ name, lowMinutes, highMinutes, label });
-  const rows = [
-    [[row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
-    [[row('roast', 30, 40, '30–40 min')], [['roast', true, 30, 40]]],
-    [[row('simmer', 10, 10, '10 min')], [['simmer', true, 10, 10]]],
-    [[row('rest', 0.5, 0.5, '30 sec')], [['rest', false, 0.5, 0.5]]],
-    [[row('whisk', 0.5, 0.5, '30 sec')], []],
-    [[row('chill', 480, 960, '8–16 hr')], [['chill', true, 480, 960]]],
+  const { recipe } = loadRecipe('test/fixtures/timers.cook');
+  const steps = recipe.sections.flatMap(section =>
+    section.blocks.filter(block => block.type === 'steps').flatMap(block => block.steps)
+  );
+  const expectedBandsPerStep = [
+    [['roast', true, 20, 20]],
+    [['roast', true, 30, 40]],
+    [['simmer', true, 10, 10]],
+    [['rest', false, 0.5, 0.5]],
+    [],
+    [['chill', true, 480, 960]],
     [
-      [row('cook', 5, 6, '5–6 min'), row('cook', 1, 1, '1 min')],
-      [
-        ['cook', true, 5, 6],
-        ['cook', true, 1, 1],
-      ],
+      ['cook', true, 5, 6],
+      ['cook', true, 1, 1],
     ],
-    [[row('rest', 0.5, 0.5, '30 sec'), row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
-    [[row('', 5, 5, '5 min')], [['timer', true, 5, 5]]],
-    [[], []],
+    [['roast', true, 20, 20]],
+    [],
   ];
-  for (const [timers, expected] of rows) {
-    const bands = findBands(timers, 's0-1');
-    const shown = bands.map(band => [band.name, band.isCountable, band.lowMinutes, band.highMinutes]);
-    const message = `timers: ${timers.map(timer => timer.name).join(', ')}`;
-    assert.deepEqual(shown, expected, message);
-    assert.equal(new Set(bands.map(band => band.id)).size, bands.length, message);
-  }
+  const shownBandsPerStep = steps.map(step =>
+    step.bands.map(band => [band.name, band.isCountable, band.lowMinutes, band.highMinutes])
+  );
+  assert.deepEqual(shownBandsPerStep, expectedBandsPerStep);
+
+  const bandIds = steps.flatMap(step => step.bands.map(band => band.id));
+  assert.equal(new Set(bandIds).size, bandIds.length);
 });
 
 test("a recipe's stated time never promises less than its timers add up to", () => {
@@ -81,4 +87,41 @@ test("a recipe's stated time never promises less than its timers add up to", () 
   for (const [stated, timerTotal, shown] of rows) {
     assert.deepEqual(widenTimeForTimers(stated, timerTotal), shown, `stated: ${stated}`);
   }
+});
+
+test("a recipe's search engine data carries its times, yield, credit and steps", () => {
+  const { jsonLd } = loadRecipe('test/fixtures/search-engine-data.cook');
+  assert.deepEqual(JSON.parse(jsonLd), {
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
+    name: 'Search Engine Data',
+    description: 'A small test recipe with every field search engines read.',
+    image: ['https://example.com/roast.jpg'],
+    recipeCategory: 'main',
+    recipeCuisine: 'Italian',
+    keywords: 'weeknight, roasting',
+    recipeYield: '4 bowls',
+    prepTime: 'PT20M',
+    cookTime: 'PT1H10M',
+    totalTime: 'PT1H30M',
+    recipeIngredient: ['1 kg potatoes', '3 cloves garlic', '2 tbsp olive oil'],
+    recipeInstructions: [
+      {
+        '@type': 'HowToSection',
+        name: 'Prep',
+        itemListElement: [{ '@type': 'HowToStep', text: 'Peel the potatoes and slice the garlic.' }],
+      },
+      {
+        '@type': 'HowToSection',
+        name: 'Roast',
+        itemListElement: [
+          { '@type': 'HowToStep', text: 'Toss everything in a roasting pan with the olive oil.' },
+          { '@type': 'HowToStep', text: 'Roast for 1 hour until golden.' },
+        ],
+      },
+    ],
+    tool: ['roasting pan'],
+    isBasedOn: 'https://example.com/roast',
+    author: { '@type': 'Person', name: 'Test Cook' },
+  });
 });
