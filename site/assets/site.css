@@ -43,7 +43,7 @@ body {
 }
 
 /* Near-neutral greys with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool greys and white.
-   The theme-color metas in base.njk repeat both papers. */
+   The head script in base.njk repeats both papers for the theme-color meta. */
 :root {
   --wa-color-neutral-95: #f2f1f0;
   --wa-color-neutral-90: #e6e5e3;
@@ -154,6 +154,8 @@ body {
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
   --bar-switch-height: calc(var(--bar-control-height) + 8px);
   --shortcut-size: 2.5rem;
+  /* Negative: how far a 1rem icon's tap box overhangs the icon on each side. */
+  --shortcut-inset: calc((1rem - var(--shortcut-size)) / 2);
   --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
@@ -264,9 +266,10 @@ wa-page > main {
   --rule-gap: 2.25rem;
 }
 
+/* The icons sit 12px inside their tap boxes, so this top padding puts them as far from the top edge as the gutter puts them from the side. */
 .recipe-nav,
 .site-header {
-  padding-block: var(--wa-space-xl) 0;
+  padding-block: var(--wa-space-xs) 0;
 }
 
 .site-footer {
@@ -655,14 +658,26 @@ wa-page > main {
 }
 
 /* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
-.shortcuts,
+.shortcuts {
+  margin-inline-end: var(--shortcut-inset);
+}
+
+/* In the site bar the inset comes off both sides, so the gaps between icons measure the same as the gaps between nav words. */
 .site-bar .shortcut {
-  margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
+  margin-inline: var(--shortcut-inset);
+}
+
+/* Below 360px the bar's wa-gap-l no longer fits on one line, so the nav would wrap; a step tighter keeps it whole down to 320px. */
+@media (width < 22.5rem) {
+  .site-bar,
+  .site-bar .wa-cluster {
+    gap: var(--wa-space-m);
+  }
 }
 
 .pinned-lead {
   min-inline-size: 0;
-  margin-inline-start: calc((1rem - var(--shortcut-size)) / 2);
+  margin-inline-start: var(--shortcut-inset);
 }
 
 .shortcut {
@@ -2311,6 +2326,11 @@ wa-progress-bar.wait-run::part(indicator) {
 @media screen and (min-width: 64rem) {
   .recipe {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
+  }
+
+  .recipe-nav,
+  .site-header {
+    padding-block-start: var(--wa-space-xl);
   }
 
   :root {
