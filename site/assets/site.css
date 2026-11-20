@@ -688,6 +688,21 @@ button.shortcut {
   cursor: pointer;
 }
 
+#site-scheme {
+  overflow: clip;
+}
+
+#site-scheme wa-icon {
+  grid-area: 1 / 1;
+  margin: 0;
+}
+
+:root:not(.wa-dark) .shortcut .to-light,
+.wa-dark .shortcut .to-dark {
+  opacity: 0;
+  translate: 0 100%;
+}
+
 /* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
 @media screen {
   .note-print,
@@ -1994,6 +2009,28 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: scale var(--press) ease-out;
   }
 
+  /* Switching scheme, the old icon sets down out of the button and the new one rises into its place, timed like a mode's body. */
+  .shortcut :is(.to-dark, .to-light) {
+    transition:
+      scale var(--settle) var(--ease-spring),
+      opacity 200ms ease-out 60ms,
+      translate var(--settle) var(--ease-settle) 60ms;
+  }
+
+  .shortcut:active :is(.to-dark, .to-light) {
+    transition:
+      scale var(--press) ease-out,
+      opacity 200ms ease-out 60ms,
+      translate var(--settle) var(--ease-settle) 60ms;
+  }
+
+  :root:not(.wa-dark) .shortcut .to-light,
+  .wa-dark .shortcut .to-dark {
+    transition:
+      opacity var(--press) ease-in,
+      translate var(--press) ease-in;
+  }
+
   /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
   .mode-rest .print-control:active {
     scale: 0.97;
@@ -2072,12 +2109,28 @@ wa-progress-bar.wait-run::part(indicator) {
     types: page-turn;
   }
 
-  :root:active-view-transition-type(page-turn) :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
+  :root:active-view-transition-type(page-turn, scheme)
+    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
     view-transition-name: none;
   }
 
-  :root:active-view-transition-type(page-turn)::view-transition-group(root) {
+  :root:active-view-transition-type(page-turn, scheme)::view-transition-group(
+      root
+    ) {
     animation-duration: var(--wa-transition-normal);
+  }
+
+  /* A scheme change crossfades the whole page's colour, while the toggle stays live so its icons can set and rise. */
+  :root:active-view-transition-type(scheme) #site-scheme {
+    view-transition-name: scheme-toggle;
+  }
+
+  ::view-transition-old(scheme-toggle) {
+    display: none;
+  }
+
+  ::view-transition-new(scheme-toggle) {
+    animation: none;
   }
 
   .listing-controls.can-stick::before {
