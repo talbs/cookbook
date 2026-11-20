@@ -7,8 +7,8 @@
     "start": "rm -rf _site && eleventy --serve",
     "test": "node --test \"test/*.test.js\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Brian Talbot",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "devDependencies": {
