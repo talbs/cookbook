@@ -1,0 +1,55 @@
+---
+permalink: /about/
+title: About
+description: Who’s cooking, where it came from, and what’s under the hood. (The range hood.)
+---
+{% extends "listing.njk" %}
+
+{% block results %}
+{%- set recipes = collections.recipes %}
+{%- set sources = recipes | recipeSources %}
+<div class="about-body wa-stack wa-gap-3xl">
+  <div class="about-prose wa-stack wa-gap-3xl">
+    <section class="wa-stack wa-gap-m">
+      <h2 class="section-head">Why This Exists</h2>
+      <p class="wa-text-pretty">Someone always asks for the recipe. This is <a href="https://github.com/talbs">@talbs</a>’s answer: one link to send, instead of a screenshot of a screenshot of a page that’s mostly ads.</p>
+      <p class="wa-text-pretty">Everything here is personally approved. Cooked first, then changed until we liked it better. (The notes say what we changed.)</p>
+    </section>
+    <section class="wa-stack wa-gap-m">
+      <h2 class="section-head">With Thanks</h2>
+      <p class="wa-text-pretty">To the other half of “we,” and to the family and friends who passed along a recipe, a favorite, or just kept asking for one until it landed here. Some of these are yours. You know which ones.</p>
+    </section>
+    <section class="wa-stack wa-gap-m">
+      <h2 class="section-head">Colophon</h2>
+      <p class="wa-text-pretty">What the site is made of. The recipes would taste the same without it.</p>
+      <dl class="colophon wa-stack wa-gap-m wa-text-pretty">
+        <div><dt>Recipes</dt><dd>Plain text files, written in <a href="https://cooklang.org">Cooklang</a> and read by its official parser.</dd></div>
+        <div><dt>Type</dt><dd><a href="https://simplebits.shop/products/free-lunch">Free Lunch</a> by Dan Cederholm for titles. <a href="https://fonts.google.com/specimen/Hanken+Grotesk">Hanken Grotesk</a> for labels and lists. <a href="https://fonts.google.com/specimen/Ancizar+Serif">Ancizar Serif</a> for the long reads.</dd></div>
+        <div><dt>Icons</dt><dd>Font Awesome, by way of <a href="https://webawesome.com">Web Awesome</a>, which also does the page shell and the controls.</dd></div>
+        <div><dt>Built with</dt><dd><a href="https://www.11ty.dev">Eleventy</a> turns the recipes into pages. The tests run in Node’s own test runner.</dd></div>
+        <div><dt>Source</dt><dd>The <a href="{{ site.source }}">public repo</a> on GitHub, if you want the recipe for the recipes.</dd></div>
+        <div><dt>Made by</dt><dd>Brian Talbot.</dd></div>
+      </dl>
+    </section>
+  </div>
+  <div class="about-data wa-stack wa-gap-3xl">
+    <section class="wa-stack wa-gap-m">
+      <h2 class="section-head">By the Numbers</h2>
+      <dl class="stats wa-cluster wa-gap-2xl">
+        <div><dt>Recipes</dt><dd><a href="/">{{ recipes.length }}</a></dd></div>
+        <div><dt>Tags</dt><dd><a href="/tags/">{{ (collections | tagNames).length }}</a></dd></div>
+        <div><dt>Sources</dt><dd><a href="#sources-heading">{{ sources.length }}</a></dd></div>
+      </dl>
+    </section>
+    <section class="wa-stack wa-gap-m">
+      <h2 class="section-head" id="sources-heading">Where the Recipes Come From</h2>
+      <p>Books, shows, and the Internet. Every recipe keeps its credit and a link back to where it started. Some places get raided more than others.</p>
+      <ul class="listing-rows wa-list-plain" role="list">
+        {%- for source in sources %}
+        <li><span class="listing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l"><span class="listing-name"><span class="row-words">{{ source.name }}</span></span> <span class="listing-detail wa-text-nowrap">{{ source.count }}<span class="wa-visually-hidden"> {{ "recipe" if source.count == 1 else "recipes" }}</span></span></span></li>
+        {%- endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -120,6 +120,17 @@ function findRecipeNamed(recipes, recipeName) {
   return recipes.find(item => item.fileSlug === recipeName);
 }
 
+function countRecipeSources(recipes) {
+  const countsByName = new Map();
+  for (const item of recipes) {
+    const name = item.data.source?.name;
+    if (name) countsByName.set(name, (countsByName.get(name) ?? 0) + 1);
+  }
+  return [...countsByName]
+    .sort(([firstName, firstCount], [secondName, secondCount]) => secondCount - firstCount || firstName.localeCompare(secondName))
+    .map(([name, count]) => ({ name, count }));
+}
+
 function listRecipesThatUse(recipes, recipeName) {
   return recipes.filter(item => item.data.linkedRecipeNames.includes(recipeName));
 }
@@ -159,6 +170,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('groupTagsByKind', groupTagsByKind);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
   eleventyConfig.addFilter('recipesThatUse', listRecipesThatUse);
+  eleventyConfig.addFilter('recipeSources', countRecipeSources);
 
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))

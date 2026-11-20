@@ -356,7 +356,8 @@ a:focus-visible {
 
 .description,
 .step-text,
-.recipe-note {
+.recipe-note,
+.about-prose p {
   font-family: var(--wa-font-family-longform);
   font-size: var(--step-size);
   line-height: 1.5;
@@ -888,7 +889,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .listing-detail,
 .card-time,
 .course-count,
-.untimed-note {
+.untimed-note,
+.stats dt {
   font-size: var(--note-size);
   color: var(--note-ink);
 }
@@ -1075,6 +1077,13 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 @media (min-width: 48rem) {
+  .colophon > div {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--wa-space-l);
+  }
+
   .listing-controls.can-stick {
     position: sticky;
     inset-block-start: 0;
@@ -1380,6 +1389,36 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .listing-rows {
     column-count: 2;
   }
+}
+
+/* The number reads first, so it sits above its label; the markup keeps the label first for screen readers. */
+.stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--wa-space-2xs);
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--wa-font-family-heading);
+  font-size: var(--wa-font-size-4xl);
+  font-weight: 800;
+  font-synthesis: none;
+  line-height: 1;
+}
+
+/* At this size the site's hover underline lands on the label below, so the number takes the accent instead. */
+.stats dd a {
+  text-decoration-line: none;
+}
+
+.stats dd a:hover {
+  color: var(--accent);
+}
+
+/* About's sources sit in a side column, too narrow for two columns of rows. */
+.about-body .listing-rows {
+  column-count: 1;
 }
 
 /* The link carries the row's spacing, so rows touch and the whole 40px strip is the tap target. */
@@ -1697,7 +1736,7 @@ wa-progress-bar.wait-run::part(indicator) {
   margin: 0;
 }
 
-:is(.facts, .attribution) dt {
+:is(.facts, .attribution, .colophon) dt {
   margin-block-end: var(--wa-space-xs);
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
@@ -1707,7 +1746,8 @@ wa-progress-bar.wait-run::part(indicator) {
   font-size: var(--note-size);
 }
 
-.attribution dd {
+.attribution dd,
+.colophon dd {
   margin: 0;
   font-size: var(--list-size);
   line-height: 1.5;
@@ -2081,6 +2121,18 @@ wa-progress-bar.wait-run::part(indicator) {
 
   .recipe > * {
     grid-column: 1 / -1;
+  }
+
+  /* About borrows the recipe's columns: the dotted list takes the ingredients' place on the left, the prose the steps'. */
+  .about-body {
+    display: grid;
+    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(0, 1fr);
+    column-gap: var(--column-gap);
+    align-items: start;
+  }
+
+  .about-data {
+    grid-area: 1 / 1;
   }
 
   /* Lets the title, description, facts and switch sit on the page grid as one row of cells. */

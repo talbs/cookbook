@@ -12,6 +12,7 @@
       {%- endfor %}
     </p>
     <nav class="site-nav wa-cluster wa-gap-l" aria-label="Footer">
+      <a href="/about/"{% if page.url == "/about/" %} aria-current="page"{% endif %}>About</a>
       <a href="{{ site.source }}">Source</a>
     </nav>
   </div>
