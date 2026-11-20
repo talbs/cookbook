@@ -1,6 +1,6 @@
 # Cookbook
 
-Personally approved collection of recipes culled from books, shows, and the Internet.
+Recipes, personally approved. Culled from books, shows, and the Internet, then changed until we liked them better.
 
 Each recipe is one plain text file written in [Cooklang](https://cooklang.org). [Eleventy](https://www.11ty.dev) turns those files into a static site with a searchable index and a page per tag. Each recipe page has an Overview mode for reading, a Cook mode with countdown timers, and its own print layout.
 

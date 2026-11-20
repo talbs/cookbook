@@ -1,7 +1,7 @@
 {
   "name": "cookbook",
   "version": "1.0.0",
-  "description": "Personally approved collection of recipes culled from books, shows, and the Internet.",
+  "description": "Recipes, personally approved. Culled from books, shows, and the Internet, then changed until we liked them better.",
   "scripts": {
     "build": "rm -rf _site && eleventy",
     "start": "rm -rf _site && node --watch --watch-preserve-output node_modules/@11ty/eleventy/cmd.cjs --serve --quiet",
