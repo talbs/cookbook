@@ -62,7 +62,7 @@ eleventyComputed:
   {{ recipeRows(group.recipes, true) }}
 </section>
 {%- endfor %}
-<div class="search-empty wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
+<div class="search-empty empty-state wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
   <wa-random-content class="empty-jokes" animation="fade-up">
     {%- for joke in searchJokes %}
     <div class="wa-stack wa-gap-l wa-align-items-center">
@@ -79,7 +79,7 @@ eleventyComputed:
     </div>
     {%- endfor %}
   </wa-random-content>
-  <div class="empty-ways-out wa-cluster wa-align-items-center wa-gap-l">
+  <div class="empty-ways-out wa-cluster wa-align-items-center wa-justify-content-center wa-gap-l">
     <wa-button class="empty-clear" appearance="outlined">Clear the search</wa-button>
     <span class="wa-cluster wa-align-items-center wa-gap-s">or try
       <wa-random-content class="empty-tags" items="3">

@@ -1204,13 +1204,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   mask: var(--divider);
 }
 
-.search-empty {
+.empty-state {
   position: relative;
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
+}
+
+.search-empty {
   text-align: center;
 }
 
-.search-empty::before {
+.empty-state::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1219,11 +1222,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   opacity: 0.35;
 }
 
-.search-empty > * {
+.empty-state > * {
   position: relative;
 }
 
-.search-empty p {
+.empty-state p {
   margin: 0;
 }
 
@@ -1236,7 +1239,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   font-size: var(--wa-font-size-xl);
 }
 
-.empty-icons wa-icon {
+.empty-icons wa-icon,
+.not-found .stats wa-icon {
   --primary-color: var(--ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0.16;
@@ -1256,8 +1260,50 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-wrap: balance;
 }
 
-.empty-ways-out {
-  justify-content: center;
+.not-found-page main {
+  padding-block-end: var(--wa-space-2xl);
+}
+
+.not-found {
+  --stat-size: clamp(7rem, 30vw, 18rem);
+}
+
+.not-found .stats {
+  margin-block: auto;
+  text-align: center;
+}
+
+/* The egg stands in for the 0, so it matches a figure's height (about 0.7em in Free Lunch) and sits on the baseline.
+   The icon box is far wider than the egg, so negative margins pull the 4s in to the gap a real 0 would leave. */
+.not-found .stats wa-icon {
+  font-size: 0.7em;
+  vertical-align: baseline;
+  margin-inline: -0.19em;
+  transform-origin: 50% 100%;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .not-found .stats dd > span:hover wa-icon {
+    animation: egg-wobble calc(2 * var(--settle)) ease-out;
+  }
+}
+
+@keyframes egg-wobble {
+  20% {
+    rotate: -9deg;
+  }
+
+  45% {
+    rotate: 6deg;
+  }
+
+  70% {
+    rotate: -3deg;
+  }
+
+  88% {
+    rotate: 1deg;
+  }
 }
 
 /* A button that reads as a text link, for a suggestion that fills the search instead of going somewhere. */
@@ -1403,7 +1449,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .stats dd {
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  font-size: var(--wa-font-size-4xl);
+  font-size: var(--stat-size, var(--wa-font-size-4xl));
   font-weight: 800;
   font-synthesis: none;
   line-height: 1;
