@@ -1,19 +1,25 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { splitNoteTitle } from '../lib/notes.js';
-import { formatTimeSummary, loadRecipe, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
+import { formatTimeSummary, loadRecipe, widenTimeForTimers } from '../lib/recipe.js';
 
-test('a note shown beside a total drops the parts that are amounts', () => {
-  const rows = [
-    ['1 cup, shredded', 'shredded'],
-    ['1 1/2 cups', null],
-    ['grated, or Parmigiano Reggiano', 'grated, or Parmigiano Reggiano'],
-    ['large', 'large'],
-    [null, null],
-  ];
-  for (const [note, shown] of rows) {
-    assert.equal(trimNoteForTotal(note), shown, `note: ${note}`);
-  }
+test('the ingredient list adds up every mention of an ingredient', () => {
+  const { recipe } = loadRecipe('test/fixtures/totals.cook');
+  assert.deepEqual(
+    recipe.ingredients.map(ingredient => ingredient.text),
+    [
+      '1 1/2 cups flour',
+      '1 tbsp plus 1 tsp sugar',
+      '3 eggs',
+      '360 ml milk',
+      '1 1/4 lb butter',
+      '6 oz cheddar (shredded)',
+      '1 1/2 kg potatoes',
+      '1/4 cup parmesan (1 oz, grated)',
+      '2 tbsp parsley (optional)',
+      'Good Recipe',
+    ]
+  );
 });
 
 test('a timing total whose ends round to one figure reads as about that figure', () => {
