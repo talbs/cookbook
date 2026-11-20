@@ -2951,6 +2951,10 @@ wa-page[view='desktop'] {
     margin-block-start: var(--wa-space-xs);
   }
 
+  .note-print:not(:last-child) {
+    padding-block-end: var(--wa-space-xs);
+  }
+
   /* Browsers drop backgrounds on paper unless asked, and the paper covers that stop a leader short of its words are backgrounds. */
   .recipe {
     display: block;
