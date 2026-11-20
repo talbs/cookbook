@@ -2162,6 +2162,16 @@ wa-progress-bar.wait-run::part(indicator) {
       mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
   }
 
+  /* wa-cloak on the html tag hides the page until every component has loaded, then shows it at once.
+     The first selector matches from that moment, so the page arrives the way a new mode does.
+     The kit then removes wa-cloak; the head script in base.njk swaps in is-revealed so the animation isn't cut off. */
+  .wa-cloak:not(:has(:not(:defined))) wa-page,
+  .is-revealed wa-page {
+    animation:
+      mode-fade-in var(--fade-in) ease-out,
+      mode-settle var(--settle) var(--ease-settle);
+  }
+
   /* Going from one page to another is one short cross-fade of the whole page. The pieces that move on their own
      within a page are un-named here, so nothing slides or settles separately. */
   @view-transition {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="wa-cloak">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,6 +50,16 @@
       }
       matchColorScheme();
       darkScheme.addEventListener('change', matchColorScheme);
+
+      // The kit's loader takes wa-cloak off the html tag as soon as it fires this event, which would stop the reveal animation keyed on it.
+      // This listener is added first, so it runs first and leaves a class the animation can keep hold of.
+      function keepRevealRunning() {
+        const isStillCloaked = document.documentElement.classList.contains('wa-cloak');
+        if (isStillCloaked) {
+          document.documentElement.classList.add('is-revealed');
+        }
+      }
+      document.addEventListener('wa-discovery-complete', keepRevealRunning, { once: true });
     </script>
     <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
     <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
