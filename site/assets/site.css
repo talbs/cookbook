@@ -744,6 +744,13 @@ button.shortcut {
   overflow: clip;
 }
 
+/* The toggle needs its script, so without scripting it would be a button that does nothing. */
+@media (scripting: none) {
+  #site-scheme {
+    display: none;
+  }
+}
+
 #site-scheme wa-icon {
   grid-area: 1 / 1;
   margin: 0;
