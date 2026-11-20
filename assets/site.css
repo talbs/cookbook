@@ -1260,6 +1260,21 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-wrap: balance;
 }
 
+/* Outlined buttons sit on the hatch, so they keep a solid paper fill. */
+wa-button[appearance='outlined']::part(base) {
+  background: var(--paper);
+  color: var(--ink);
+  transition:
+    color var(--wa-transition-normal) var(--wa-transition-easing),
+    border-color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button[appearance='outlined']:hover::part(base) {
+  background: var(--paper);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .not-found-page main {
   padding-block-end: var(--wa-space-2xl);
 }
