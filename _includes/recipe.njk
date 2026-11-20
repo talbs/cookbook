@@ -107,7 +107,7 @@
   {%- set creditLine %}
         <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
         <dd>
-          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}" data-print-address="{{ source.address }}">{{ source.name }}</a>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
+          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a><span class="print-address"> {% for part in source.address.split("/") %}<span>{{ part }}{% if not loop.last %}/{% endif %}</span>{% if not loop.last %}<wbr>{% endif %}{% endfor %}</span>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
           {%- else %}{{ author }}{% endif -%}
         </dd>
   {%- endset %}

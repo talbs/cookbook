@@ -585,7 +585,8 @@ button.shortcut {
 /* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
 @media screen {
   .note-print,
-  .print-fact {
+  .print-fact,
+  .print-address {
     display: none;
   }
 }
@@ -2450,11 +2451,14 @@ wa-page[view='desktop'] {
     text-decoration: none;
   }
 
-  /* A link is no use on paper, so the source's address prints after its name. */
-  .fact-credit a[data-print-address]::after {
-    content: '\2002' attr(data-print-address);
+  /* A link is no use on paper, so the source's address prints after its name.
+     Each stretch between slashes stays whole, so a long address turns only after a slash, never at a hyphen. */
+  .print-address {
     color: var(--note-ink);
-    overflow-wrap: break-word;
+  }
+
+  .print-address span {
+    white-space: nowrap;
   }
 
   .section-head,
