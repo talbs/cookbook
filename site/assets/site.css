@@ -307,10 +307,11 @@ wa-page > main {
   text-decoration-line: none;
 }
 
-/* 18px keeps the wordmark's capitals only a little taller than the 16px nav's. */
+/* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
 .site-name {
   font-family: var(--wa-font-family-heading);
-  font-size: 1.125rem;
+  font-size: var(--wa-font-size-l);
+  text-box: trim-both cap alphabetic;
   color: var(--ink);
   text-decoration-line: none;
   transition: color var(--wa-transition-normal) var(--wa-transition-easing);
