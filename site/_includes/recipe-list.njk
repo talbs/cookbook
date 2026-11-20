@@ -1,0 +1,41 @@
+{#- A recipe as a card: title, description, then a foot of time, dots and the recipe's three icons. #}
+{% macro recipeCards(items, headingTag) %}
+<ul class="recipe-cards wa-list-plain wa-grid wa-gap-2xl" role="list">
+  {%- for item in items %}
+  {%- set hasTime = item.data.totalMinutes != null %}
+  <li data-minutes="{{ item.data.totalMinutes if hasTime }}">
+    <a class="recipe-card" href="{{ item.url }}" aria-labelledby="card-title-{{ item.fileSlug }}{% if hasTime %} card-time-{{ item.fileSlug }}{% endif %}">
+      <wa-card appearance="plain" with-header with-footer>
+        <{{ headingTag }} slot="header" class="card-title" id="card-title-{{ item.fileSlug }}">{{ item.data.title }}</{{ headingTag }}>
+        <span class="card-description">{{ item.data.description }}</span>
+        <span slot="footer" class="card-foot wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0">
+          {%- if hasTime %}
+          <time class="card-time" id="card-time-{{ item.fileSlug }}" datetime="{{ item.data.longestMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>
+          {%- endif %}
+          <span class="rule-run" aria-hidden="true"></span>
+          {%- if item.data.icons.length %}
+          <span class="recipe-icons wa-cluster wa-flex-nowrap wa-gap-s" aria-hidden="true">
+            {%- for name in item.data.icons %}
+            <wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>
+            {%- endfor %}
+          </span>
+          {%- endif %}
+        </span>
+      </wa-card>
+    </a>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endmacro %}
+
+{#- A recipe as a leader row: title, dots, time. Where the reader can switch to cards, the rows carry the class the switch hides. #}
+{% macro recipeRows(items, isSwitchable) %}
+<ul class="{% if isSwitchable %}recipe-rows {% endif %}listing-rows wa-list-plain" role="list">
+  {%- for item in items %}
+  {%- set hasTime = item.data.totalMinutes != null %}
+  <li data-minutes="{{ item.data.totalMinutes if hasTime }}"><a class="listing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="{{ item.url }}"><span class="listing-name"><span class="row-words">{{ item.data.title }}</span></span>
+    {%- if hasTime %} <time class="listing-detail wa-text-nowrap" datetime="{{ item.data.longestMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>{% endif -%}
+  </a></li>
+  {%- endfor %}
+</ul>
+{%- endmacro %}

@@ -1,0 +1,29 @@
+---
+pagination:
+  data: collections
+  size: 1
+  alias: tag
+  # The same names as RESERVED_TAGS in lib/validate-recipe.js; YAML front matter can't import it.
+  filter: [all, recipes]
+permalink: /tags/{{ tag }}/
+eleventyComputed:
+  title: "{{ tag }}"
+  description: >-
+    {%- set tagRecipes = collections[tag] | sortByTitle -%}
+    {{ tagRecipes.length }} {{ "recipe" if tagRecipes.length == 1 else "recipes" }} tagged {{ tag }}
+    {%- if tagRecipes.length > 3 %}, including {% else %}: {% endif -%}
+    {%- for recipe in tagRecipes.slice(0, 3) %}{{ recipe.data.title | safe }}{% if not loop.last %}{{ " and " if loop.revindex0 == 1 else ", " }}{% endif %}{% endfor %}.
+---
+{% extends "listing.njk" %}
+{% from "recipe-list.njk" import recipeRows %}
+
+{% block lede %}
+{%- set tagRecipes = collections[tag] %}
+{%- set relatedTags = tagRecipes | relatedTags(tag) %}
+{{- tagRecipes.length }} {{ "recipe" if tagRecipes.length == 1 else "recipes" }}.
+{%- if relatedTags.length %} Also tagged {% for name in relatedTags %}<a href="/tags/{{ name }}/">{{ name }}</a>{% if not loop.last %}{{ " and " if loop.revindex0 == 1 else ", " }}{% endif %}{% endfor %}.{% endif %}
+{%- endblock %}
+
+{% block results %}
+{{ recipeRows(collections[tag] | sortByTitle, false) }}
+{% endblock %}

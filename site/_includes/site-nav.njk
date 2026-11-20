@@ -1,0 +1,4 @@
+<nav class="site-nav wa-cluster wa-gap-l" aria-label="Site">
+  <a href="/"{% if page.url == "/" %} aria-current="page"{% endif %}>Recipes</a>
+  <a href="/tags/"{% if page.url == "/tags/" %} aria-current="page"{% elif "/tags/" in page.url %} aria-current="true"{% endif %}>Tags</a>
+</nav>

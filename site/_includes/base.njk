@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" class="wa-cloak">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {%- set pageDescription = description or site.description %}
+    {%- set isNotFoundPage = page.url == "/404.html" %}
+    {%- set pageUrl = site.url + page.url %}
+    {%- if page.url == "/" %}
+    <title>{{ site.title }}</title>
+    {%- else %}
+    <title>{{ title }} · {{ site.title }}</title>
+    {%- endif %}
+    <meta name="description" content="{{ pageDescription }}">
+    <meta property="og:title" content="{{ title or site.title }}">
+    <meta property="og:description" content="{{ pageDescription }}">
+    <meta property="og:type" content="{{ 'article' if recipe else 'website' }}">
+    {%- if isNotFoundPage %}
+    <meta name="robots" content="noindex">
+    {%- else %}
+    <link rel="canonical" href="{{ pageUrl }}">
+    <meta property="og:url" content="{{ pageUrl }}">
+    {%- endif %}
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="generator" content="{{ eleventy.generator }}">
+    <meta name="theme-color" content="#fefefc">
+    <script>
+      const darkScheme = matchMedia('(prefers-color-scheme: dark)');
+      const schemeStorageKey = 'color-scheme';
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      function systemScheme() {
+        return darkScheme.matches ? 'dark' : 'light';
+      }
+      function readSavedScheme() {
+        try {
+          return localStorage.getItem(schemeStorageKey);
+        } catch {
+          return null;
+        }
+      }
+      function showColorScheme(scheme) {
+        const isDark = scheme === 'dark';
+        document.documentElement.classList.toggle('wa-dark', isDark);
+        themeColorMeta.content = isDark ? '#1c1a19' : '#fefefc';
+      }
+      function matchColorScheme() {
+        showColorScheme(readSavedScheme() ?? systemScheme());
+      }
+      matchColorScheme();
+      darkScheme.addEventListener('change', matchColorScheme);
+
+      // The kit's loader takes wa-cloak off the html tag as soon as it fires this event, which would stop the reveal animation keyed on it.
+      // This listener is added first, so it runs first and leaves a class the animation can keep hold of.
+      function keepRevealRunning() {
+        const isStillCloaked = document.documentElement.classList.contains('wa-cloak');
+        if (isStillCloaked) {
+          document.documentElement.classList.add('is-revealed');
+        }
+      }
+      document.addEventListener('wa-discovery-complete', keepRevealRunning, { once: true });
+    </script>
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
+    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/native.css">
+    <script type="module" src="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.loader.js" data-fa-kit-code="62a22b24d5"></script>
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/open-fonts/HankenGrotesk.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/FreeLunch-Regular.woff2">
+    <link rel="stylesheet" href="/assets/site.css">
+    <script type="module" src="/assets/scheme.js"></script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="8510e4bc-084f-461a-8f19-0603b157a93f" data-domains="cookbook.talbs.me"></script>
+    {%- block head %}{% endblock %}
+  </head>
+  <body>
+    {#- One wa-page for every view. `header` fills its header slot; `content` is its main content, the default slot. #}
+    <wa-page class="{% block pageClass %}{% endblock %}"{% block pageAttributes %}{% endblock %} mobile-breakpoint="48rem" disable-navigation-toggle>
+      <span slot="skip-to-content">Skip to Content</span>
+      {%- block header %}{% endblock %}
+      <main{% block mainAttributes %}{% endblock %}>
+        {%- block content %}{{ content | safe }}{% endblock %}
+      </main>
+      {% include "site-footer.njk" %}
+    </wa-page>
+    {%- block scripts %}{% endblock %}
+  </body>
+</html>

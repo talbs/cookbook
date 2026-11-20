@@ -1,0 +1,26 @@
+---
+permalink: /404.html
+title: Eighty-Sixed
+description: Kitchen talk for “we’re out.” This page is off the menu, or it never made it on.
+---
+{% extends "listing.njk" %}
+
+{% block pageClass %}listing-page not-found-page{% endblock %}
+
+{% block content %}
+<section class="not-found empty-state wa-stack wa-gap-2xl">
+  <dl class="stats">
+    <div><dt class="wa-visually-hidden">Page not found</dt><dd><span aria-hidden="true">4<wa-icon name="egg" family="duotone" variant="regular"></wa-icon>4</span><span class="wa-visually-hidden">404</span></dd></div>
+  </dl>
+  <div class="wa-split wa-align-items-end wa-gap-l">
+    <div class="wa-stack wa-gap-xs">
+      <h1 class="empty-joke">{{ title }}</h1>
+      <p class="empty-detail">{{ description }}</p>
+    </div>
+    <div class="empty-ways-out wa-cluster wa-align-items-center wa-gap-l">
+      <wa-button href="/" appearance="outlined">Back to the Recipes</wa-button>
+      <a href="/tags/">Browse the tags</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

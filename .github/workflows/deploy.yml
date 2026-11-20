@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# A deploy that has started always finishes; if several pushes queue behind it, only the newest runs next.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Run by hand from another branch, this does nothing: only main is ever published.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      # The title font is licensed and stays out of the repo, so it arrives as a secret.
+      # A missing or damaged font stops the deploy: fallback titles should never go live unnoticed.
+      # A woff2 file starts with the letters wOF2 and stores its own length in bytes 8 to 11, so a cut-off secret is caught too.
+      - name: Add the title font
+        env:
+          TITLE_FONT_WOFF2_BASE64: ${{ secrets.TITLE_FONT_WOFF2_BASE64 }}
+        run: |
+          if [ -z "$TITLE_FONT_WOFF2_BASE64" ]; then
+            echo "::error::The TITLE_FONT_WOFF2_BASE64 secret is missing or empty."
+            exit 1
+          fi
+          font_file=site/assets/fonts/FreeLunch-Regular.woff2
+          mkdir -p site/assets/fonts
+          printf '%s' "$TITLE_FONT_WOFF2_BASE64" | base64 --decode > "$font_file"
+          if [ "$(head -c 4 "$font_file")" != "wOF2" ]; then
+            echo "::error::The TITLE_FONT_WOFF2_BASE64 secret did not decode to a woff2 file."
+            exit 1
+          fi
+          length_in_header=$((16#$(xxd -s 8 -l 4 -p "$font_file")))
+          length_on_disk=$(wc -c < "$font_file" | tr -d ' ')
+          if [ "$length_in_header" != "$length_on_disk" ]; then
+            echo "::error::The TITLE_FONT_WOFF2_BASE64 secret is cut off: the font should be $length_in_header bytes and is $length_on_disk."
+            exit 1
+          fi
+
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
