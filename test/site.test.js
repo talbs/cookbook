@@ -102,6 +102,7 @@ test("every search.json entry has the documented shape", () => {
 test('every page names its own address on the live site as canonical, except the 404', () => {
   const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
   assert.ok(htmlPages.length > 0);
+  assert.ok(htmlPages.some(page => page.url === '/404.html'), 'no page at /404.html');
 
   for (const page of htmlPages) {
     const match = page.content.match(/<link rel="canonical" href="([^"]*)">/);
