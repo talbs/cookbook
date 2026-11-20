@@ -289,7 +289,6 @@
   </div>
 
 
-  {%- if hasSource or author or usedIn.length or tags.length or cuisine or icons.length %}
   <footer class="attribution wa-caption-s">
     <div class="footer-rule wa-span-grid wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true">
       <span class="rule-run"></span>
@@ -302,11 +301,12 @@
       <span class="rule-run"></span>
       {%- endif %}
     </div>
-    {%- if hasCredit %}
-    <dl class="credit">
+    <dl class="credit wa-cluster wa-align-items-start wa-gap-2xl">
+      {%- if hasCredit %}
       <div>{{ creditLine | safe }}</div>
+      {%- endif %}
+      <div><dt>File</dt><dd><a class="file-link" href="/recipes/{{ page.fileSlug }}.txt">{{ page.fileSlug }}.cook</a></dd></div>
     </dl>
-    {%- endif %}
     {%- if tags.length or usedIn.length or cuisine %}
     <dl class="connections wa-cluster wa-align-items-start wa-gap-2xl">
       {%- if cuisine %}
@@ -321,8 +321,21 @@
     </dl>
     {%- endif %}
   </footer>
-  {%- endif %}
   <p class="timer-status wa-visually-hidden" role="status"></p>
 </article>
+<wa-dialog class="source-dialog wa-dark" label="{{ page.fileSlug }}.cook" light-dismiss>
+  <span slot="label" class="source-title">
+    <span class="source-name wa-text-truncate"><span class="source-prompt" aria-hidden="true">$ cat </span>{{ page.fileSlug }}.cook</span>
+    <span class="source-note">-- <a href="https://cooklang.org/docs/spec/">cooklang</a>, {{ sourceLineCount }} lines</span>
+  </span>
+  <wa-copy-button slot="header-actions" class="source-copy" from="source-code.code" copy-label="Copy" success-label="Copied" tooltip-placement="bottom">
+    <wa-icon slot="copy-icon" name="copy" variant="regular"></wa-icon>
+    <wa-icon slot="success-icon" name="check" variant="regular"></wa-icon>
+  </wa-copy-button>
+  <a slot="header-actions" class="shortcut wa-border-radius-s" id="source-plain" href="/recipes/{{ page.fileSlug }}.txt"><wa-icon name="file-lines" variant="regular" label="Open as plain text"></wa-icon></a>
+  <wa-tooltip for="source-plain" placement="bottom">Open as plain text</wa-tooltip>
+  <wa-code-highlighter id="source-code" without-copy wrap label="Cooklang source for this recipe"></wa-code-highlighter>
+</wa-dialog>
+<script type="module" src="/assets/source.js"></script>
 <script type="module" src="/assets/recipe.js"></script>
 {% endblock %}
