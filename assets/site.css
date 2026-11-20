@@ -101,6 +101,7 @@ body {
   /* Sans words set inside serif text. Ingredient names also take weight 500, or they stop reading as ingredients. */
   --inline-sans-size: 0.875em;
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
+  --side-column: calc(4 / 11 * (100% - var(--column-gap)));
   --page-gutter: 1.25rem;
   --section-space: var(--wa-space-l);
   /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
@@ -121,6 +122,7 @@ body {
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
   --bar-switch-height: calc(var(--bar-control-height) + 8px);
   --shortcut-size: 2.5rem;
+  --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
   --bar-height: calc(
@@ -1049,8 +1051,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   position: fixed;
   inset: auto var(--page-gutter) max(var(--wa-space-l), env(safe-area-inset-bottom)) auto;
   z-index: 2;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
+  inline-size: var(--to-top-size);
+  block-size: var(--to-top-size);
   border: 1px solid var(--control-edge);
   background: var(--paper);
   box-shadow: var(--wa-shadow-s);
@@ -1153,7 +1155,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* The floating back-to-top arrow would cover the footer's last link, so the footer ends above it. */
   .listing-page:has(.to-top) .site-footer {
-    padding-block-end: calc(2.75rem + 2 * var(--wa-space-l));
+    padding-block-end: calc(var(--to-top-size) + var(--wa-space-l) + max(var(--wa-space-l), env(safe-area-inset-bottom)));
   }
 }
 
@@ -2111,10 +2113,7 @@ wa-progress-bar.wait-run::part(indicator) {
   /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
   .recipe {
     display: grid;
-    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(
-        0,
-        1fr
-      ) 15rem;
+    grid-template-columns: var(--side-column) minmax(0, 1fr) 15rem;
     gap: var(--wa-space-l) var(--column-gap);
     align-items: start;
   }
@@ -2126,7 +2125,7 @@ wa-progress-bar.wait-run::part(indicator) {
   /* About borrows the recipe's columns: the dotted list takes the ingredients' place on the left, the prose the steps'. */
   .about-body {
     display: grid;
-    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(0, 1fr);
+    grid-template-columns: var(--side-column) minmax(0, 1fr);
     column-gap: var(--column-gap);
     align-items: start;
   }

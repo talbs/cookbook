@@ -1,5 +1,6 @@
-<div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l{% if page.url == "/" %} wa-justify-content-end{% endif %}">
-  {%- if page.url != "/" %}
+{%- set isHome = page.url == "/" -%}
+<div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l{% if isHome %} wa-justify-content-end{% endif %}">
+  {%- if not isHome %}
   <a class="site-name" href="/">{{ site.title }}</a>
   {%- endif %}
   <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-l">
