@@ -107,8 +107,8 @@
   {%- set creditLine %}
         <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
         <dd>
-          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a><span class="print-address"> {% for part in source.address.split("/") %}<span>{{ part }}{% if not loop.last %}/{% endif %}</span>{% if not loop.last %}<wbr>{% endif %}{% endfor %}</span>{% else %}{{ source.name }}{% endif %}{% if source.author %}, {{ source.author }}{% endif %}{% if author %}, by {{ author }}{% endif %}
-          {%- else %}{{ author }}{% endif -%}
+          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a><span class="print-address"> {% for part in source.address.split("/") %}<span>{{ part }}{% if not loop.last %}/{% endif %}</span>{% if not loop.last %}<wbr>{% endif %}{% endfor %}</span>{% else %}{{ source.name }}{% endif %}{% if source.author %}, <span class="wa-text-nowrap">{{ source.author }}</span>{% endif %}{% if author %}, by <span class="wa-text-nowrap">{{ author }}</span>{% endif %}
+          {%- else %}<span class="wa-text-nowrap">{{ author }}</span>{% endif -%}
         </dd>
   {%- endset %}
   {%- set usedInLine %}<dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd>{% endset %}
