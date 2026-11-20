@@ -293,14 +293,16 @@ wa-page::part(skip-to-content):focus {
   wa-select:focus-within::part(combobox),
   wa-checkbox:focus-within::part(control),
   .step-note::part(header):focus-visible,
-  .timer-control:focus-visible .timer-square {
+  .timer-control:focus-visible .timer-square,
+  .mode-switch:has(wa-radio:focus-visible),
+  :is(.site-nav a, .course-links a, .site-name):focus-visible::after {
     animation: ring-settle var(--wa-transition-normal) var(--ease-settle);
   }
 }
 
 @keyframes ring-settle {
   from {
-    outline-offset: 7px;
+    outline-offset: calc(var(--wa-focus-ring-offset) + 4px);
   }
 }
 
@@ -377,11 +379,44 @@ wa-page > main {
   }
 }
 
-/* The padding makes each link a 40px tap target without moving the words. */
+/* The padding makes each link a 40px tap target without moving the words.
+   It would also make the focus ring twice as tall as the words. The ring goes on a box centred on the link instead,
+   1.3em tall (the height of the letters' own area) and a little wider than the words, so its gap is even all round. */
 .site-nav a,
 .course-links a,
 .site-name {
+  position: relative;
   padding-block: var(--wa-space-xs);
+
+  &:focus-visible {
+    outline: 0;
+  }
+
+  &:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: calc(50% - 0.65em) -3px;
+    border-radius: var(--wa-form-control-border-radius);
+    outline: var(--wa-focus-ring);
+    outline-offset: var(--wa-focus-ring-offset);
+  }
+}
+
+/* The scroller clips at its edges, which would cut the first and last links' rings. The links get room inside it, and it grows by as much, so nothing moves.
+   The scroll margin keeps that room when a tabbed-to link is scrolled into view. */
+wa-scroller:has(.course-links) {
+  max-inline-size: none;
+  margin-inline: calc(-1 * var(--wa-space-s));
+}
+
+.course-links {
+  /* Sized to its links, so the end padding is part of what scrolls instead of being overflowed past. */
+  min-inline-size: max-content;
+  padding-inline: var(--wa-space-s);
+}
+
+.course-links a {
+  scroll-margin-inline: var(--wa-space-s);
 }
 
 .site-nav a[aria-current] {
@@ -609,6 +644,12 @@ wa-page > main {
   }
 }
 
+/* A keyboard gets the same inked icons on a focused card, on any device, so this sits outside the hover query. */
+.recipe-card:focus-visible .recipe-icons wa-icon {
+  --primary-color: var(--ink);
+  --secondary-opacity: 0.16;
+}
+
 /* The curve overshoots and settles, which reads as a little bounce. */
 @media (prefers-reduced-motion: no-preference) {
   .recipe-icons wa-icon {
@@ -626,6 +667,18 @@ wa-page > main {
 
   .recipe-icons wa-icon:nth-child(3) {
     transition-delay: 90ms;
+  }
+
+  .recipe-card:focus-visible .recipe-icons wa-icon {
+    scale: 1.2;
+  }
+
+  .recipe-card:focus-visible .recipe-icons wa-icon:nth-child(odd) {
+    rotate: -8deg;
+  }
+
+  .recipe-card:focus-visible .recipe-icons wa-icon:nth-child(even) {
+    rotate: 8deg;
   }
 
   @media (hover: hover) {
@@ -847,6 +900,17 @@ button.shortcut {
 
 .mode-switch wa-radio:not(:state(checked)):hover {
   color: var(--accent);
+}
+
+/* The kit rings the focused radio, which lands on top of the group's frame, so the group wears the ring instead.
+   Focus always sits on the chosen radio, which the hatch already marks. */
+.mode-switch wa-radio:focus-visible {
+  outline: 0;
+}
+
+.mode-switch:has(wa-radio:focus-visible) {
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
 }
 
 /* One hatched block behind both radios, so the chosen state can slide from one to the other. */
@@ -1539,8 +1603,10 @@ wa-button[appearance='outlined']:hover::part(base) {
   grid-template-columns: repeat(auto-fill, minmax(min(var(--min-column-size), 100%), 1fr));
 }
 
-/* Each card fills its grid cell and its body takes the spare height, so a row's feet line up whatever the descriptions run to. */
+/* Each card fills its grid cell and its body takes the spare height, so a row's feet line up whatever the descriptions run to.
+   The card has no frame or padding, so its focus ring stands further off than a button's to clear the words. */
 .recipe-card {
+  --wa-focus-ring-offset: 6px;
   display: block;
   block-size: 100%;
   text-decoration: none;
