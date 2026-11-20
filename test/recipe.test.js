@@ -87,3 +87,40 @@ test("a recipe's stated time never promises less than its timers add up to", () 
     assert.deepEqual(widenTimeForTimers(stated, timerTotal), shown, `stated: ${stated}`);
   }
 });
+
+test("a recipe's search engine data carries its times, yield, credit and steps", () => {
+  const { jsonLd } = loadRecipe('test/fixtures/search-engine-data.cook');
+  assert.deepEqual(JSON.parse(jsonLd), {
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
+    name: 'Search Engine Data',
+    description: 'A small test recipe with every field search engines read.',
+    image: ['https://example.com/roast.jpg'],
+    recipeCategory: 'main',
+    recipeCuisine: 'Italian',
+    keywords: 'weeknight, roasting',
+    recipeYield: '4 bowls',
+    prepTime: 'PT20M',
+    cookTime: 'PT1H10M',
+    totalTime: 'PT1H30M',
+    recipeIngredient: ['1 kg potatoes', '3 cloves garlic', '2 tbsp olive oil'],
+    recipeInstructions: [
+      {
+        '@type': 'HowToSection',
+        name: 'Prep',
+        itemListElement: [{ '@type': 'HowToStep', text: 'Peel the potatoes and slice the garlic.' }],
+      },
+      {
+        '@type': 'HowToSection',
+        name: 'Roast',
+        itemListElement: [
+          { '@type': 'HowToStep', text: 'Toss everything in a roasting pan with the olive oil.' },
+          { '@type': 'HowToStep', text: 'Roast for 1 hour until golden.' },
+        ],
+      },
+    ],
+    tool: ['roasting pan'],
+    isBasedOn: 'https://example.com/roast',
+    author: { '@type': 'Person', name: 'Test Cook' },
+  });
+});
