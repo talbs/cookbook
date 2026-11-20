@@ -131,7 +131,7 @@
         <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
         {%- endif %}
         {%- if totalMinutes != null %}
-        <div><dt>Time</dt><dd><time datetime="{{ longestMinutes | isoDuration }}">{{ timeLabel }}</time></dd></div>
+        <div><dt>Time</dt><dd><time datetime="{{ longestMinutes | isoDuration }}">{% for end in timeLabel.split(' – ') %}<span class="wa-text-nowrap">{{ end }}</span>{% if not loop.last %}&nbsp;– {% endif %}{% endfor %}</time></dd></div>
         {%- endif %}
         {%- if difficulty %}
         <div><dt>Difficulty</dt><dd>{{ difficulty | capitalize }}</dd></div>

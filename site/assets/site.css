@@ -513,9 +513,23 @@ wa-page > main {
 }
 
 .facts {
-  --min-column-size: 7.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   font-size: var(--list-size);
   line-height: var(--wa-line-height-condensed);
+}
+
+/* Two columns until every recipe's facts fit on one line (the widest, pancakes, measures 466px);
+   past that each fact takes its own width with even gaps, as in the wide layout. */
+@media screen and (33rem <= width < 64rem) {
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--wa-space-2xl);
+  }
+
+  .facts > div {
+    flex: none;
+  }
 }
 
 /* The dotted dividers. The footer's has the recipe's icons in its middle, like a printer's ornament:
