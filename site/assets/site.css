@@ -138,6 +138,7 @@ body {
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --side-column: calc(4 / 11 * (100% - var(--column-gap)));
   --page-gutter: 1.25rem;
+  --header-inset: var(--wa-space-xs);
   --section-space: var(--wa-space-l);
   /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
      Serif text and heads sit a little under their screen ratios, which is what keeps most recipes to one sheet. */
@@ -234,10 +235,11 @@ a:focus-visible {
   border-radius: var(--wa-form-control-border-radius);
 }
 
-/* wa-page shows its skip link in the flow when focused, which pushes the page down; fixed, it floats over the header instead. */
+/* wa-page shows its skip link in the flow when focused, which pushes the page down; fixed, it floats over the header instead.
+   Its padding matches the nav links', so starting at the header's inset centres it on the same line as the bar. */
 wa-page::part(skip-to-content):focus {
   position: fixed;
-  inset-block-start: var(--wa-space-s);
+  inset-block-start: var(--header-inset);
   inset-inline-start: var(--page-gutter);
   z-index: 3;
   padding: var(--wa-space-xs) var(--wa-space-m);
@@ -263,7 +265,7 @@ wa-page::part(skip-to-content):focus {
 @keyframes skip-drop {
   from {
     opacity: 0;
-    translate: 0 calc(-100% - var(--wa-space-s));
+    translate: 0 calc(-100% - var(--header-inset));
   }
 }
 
@@ -306,7 +308,7 @@ wa-page > main {
 /* The icons sit 12px inside their tap boxes, so this top padding puts them as far from the top edge as the gutter puts them from the side. */
 .recipe-nav,
 .site-header {
-  padding-block: var(--wa-space-xs) 0;
+  padding-block: var(--header-inset) 0;
 }
 
 .site-footer {
@@ -2554,12 +2556,8 @@ wa-progress-bar.wait-run::part(indicator) {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
   }
 
-  .recipe-nav,
-  .site-header {
-    padding-block-start: var(--wa-space-xl);
-  }
-
   :root {
+    --header-inset: var(--wa-space-xl);
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
     --section-space: var(--wa-space-xl);
   }
