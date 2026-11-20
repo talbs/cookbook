@@ -242,14 +242,20 @@ wa-page::part(skip-to-content):focus {
   inset-block-start: var(--header-inset);
   inset-inline-start: var(--page-gutter);
   z-index: 3;
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* The site's heaviest accent: paper words on solid ink. A class can't reach inside wa-page, so the skip link shares the rule by selector. */
+.ink-button,
+wa-page::part(skip-to-content):focus {
   padding: var(--wa-space-xs) var(--wa-space-m);
+  border: 0;
   border-radius: var(--wa-border-radius-s);
   background: var(--ink);
   color: var(--paper);
   font-weight: var(--wa-font-weight-bold);
   text-decoration-line: none;
-  outline: var(--wa-focus-ring);
-  outline-offset: var(--wa-focus-ring-offset);
 }
 
 /* The link is clipped to a pixel until focused, which a transition can't run from, so its arrival is a keyframe.
