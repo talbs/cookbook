@@ -203,6 +203,18 @@ a:focus-visible {
   padding: 0;
 }
 
+/* Every page's main runs down to the footer, so a short page's content area meets it instead of stopping early.
+   In a flex column, main's centring margins would shrink it to fit its content, so it keeps the full width explicitly. */
+wa-page::part(main-content) {
+  display: flex;
+  flex-direction: column;
+}
+
+wa-page > main {
+  flex: 1;
+  inline-size: 100%;
+}
+
 .listing-page::part(header) {
   border: 0;
   background: none;
@@ -1210,7 +1222,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
 }
 
+/* With no matches, the results area and its panel run down to the footer, like the 404's. */
+.listing-results {
+  flex: 1;
+}
+
 .search-empty {
+  flex: 1;
+  justify-content: center;
   text-align: center;
 }
 
@@ -1276,12 +1295,14 @@ wa-button[appearance='outlined']:hover::part(base) {
   color: var(--accent);
 }
 
-.not-found-page main {
+.not-found-page main,
+.listing:has(.search-empty:not([hidden])) {
   padding-block-end: var(--wa-space-2xl);
 }
 
 .not-found {
   --stat-size: clamp(7rem, 30vw, 18rem);
+  flex: 1;
 }
 
 .not-found .stats {
