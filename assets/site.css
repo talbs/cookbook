@@ -4,6 +4,20 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('open-fonts/HankenGrotesk.woff2') format('woff2');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ancizar Serif';
+  src: url('open-fonts/AncizarSerif.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 /* Local condensed faces sized to Free Lunch's width, so a title wraps onto the same lines while the font loads or
    when it is missing. The overrides are Free Lunch's ascent and descent divided by the size adjustment. */
 @font-face {
