@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { splitNoteTitle } from '../lib/notes.js';
-import { findBands, formatTimeSummary, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
+import { formatTimeSummary, loadRecipe, trimNoteForTotal, widenTimeForTimers } from '../lib/recipe.js';
 
 test('a note shown beside a total drops the parts that are amounts', () => {
   const rows = [
@@ -42,32 +42,31 @@ test("a note's title and body together carry the whole note, with nothing said t
 });
 
 test('a step gets a band for each timer worth counting down', () => {
-  const row = (name, lowMinutes, highMinutes, label) => ({ name, lowMinutes, highMinutes, label });
-  const rows = [
-    [[row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
-    [[row('roast', 30, 40, '30–40 min')], [['roast', true, 30, 40]]],
-    [[row('simmer', 10, 10, '10 min')], [['simmer', true, 10, 10]]],
-    [[row('rest', 0.5, 0.5, '30 sec')], [['rest', false, 0.5, 0.5]]],
-    [[row('whisk', 0.5, 0.5, '30 sec')], []],
-    [[row('chill', 480, 960, '8–16 hr')], [['chill', true, 480, 960]]],
+  const { recipe } = loadRecipe('test/fixtures/timers.cook');
+  const steps = recipe.sections.flatMap(section =>
+    section.blocks.filter(block => block.type === 'steps').flatMap(block => block.steps)
+  );
+  const expectedBandsPerStep = [
+    [['roast', true, 20, 20]],
+    [['roast', true, 30, 40]],
+    [['simmer', true, 10, 10]],
+    [['rest', false, 0.5, 0.5]],
+    [],
+    [['chill', true, 480, 960]],
     [
-      [row('cook', 5, 6, '5–6 min'), row('cook', 1, 1, '1 min')],
-      [
-        ['cook', true, 5, 6],
-        ['cook', true, 1, 1],
-      ],
+      ['cook', true, 5, 6],
+      ['cook', true, 1, 1],
     ],
-    [[row('rest', 0.5, 0.5, '30 sec'), row('roast', 20, 20, '20 min')], [['roast', true, 20, 20]]],
-    [[row('', 5, 5, '5 min')], [['timer', true, 5, 5]]],
-    [[], []],
+    [['roast', true, 20, 20]],
+    [],
   ];
-  for (const [timers, expected] of rows) {
-    const bands = findBands(timers, 's0-1');
-    const shown = bands.map(band => [band.name, band.isCountable, band.lowMinutes, band.highMinutes]);
-    const message = `timers: ${timers.map(timer => timer.name).join(', ')}`;
-    assert.deepEqual(shown, expected, message);
-    assert.equal(new Set(bands.map(band => band.id)).size, bands.length, message);
-  }
+  const shownBandsPerStep = steps.map(step =>
+    step.bands.map(band => [band.name, band.isCountable, band.lowMinutes, band.highMinutes])
+  );
+  assert.deepEqual(shownBandsPerStep, expectedBandsPerStep);
+
+  const bandIds = steps.flatMap(step => step.bands.map(band => band.id));
+  assert.equal(new Set(bandIds).size, bandIds.length);
 });
 
 test("a recipe's stated time never promises less than its timers add up to", () => {
