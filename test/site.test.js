@@ -1,6 +1,6 @@
 import { before, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import Eleventy from '@11ty/eleventy';
 
 let builtPages = [];
@@ -11,7 +11,7 @@ before(async () => {
 });
 
 function listRecipePages() {
-  return builtPages.filter(page => page.url.startsWith('/recipes/'));
+  return builtPages.filter(page => page.url.startsWith('/recipes/') && page.url.endsWith('/'));
 }
 
 function listHtmlPages() {
@@ -114,4 +114,17 @@ test('every link to a page on this site leads to a page the build wrote', () => 
     }
   }
   assert.ok(checkedLinkCount > 0);
+});
+
+test("every recipe's source file is published unchanged as plain text, and its page points to it", () => {
+  for (const page of listRecipePages()) {
+    const recipeName = page.url.split('/')[2];
+    const rawPage = builtPages.find(built => built.url === `/recipes/${recipeName}.txt`);
+    assert.ok(rawPage, `no plain text file for ${page.url}`);
+    assert.equal(rawPage.content, readFileSync(`recipes/${recipeName}.cook`, 'utf8'), recipeName);
+
+    const match = page.content.match(/<link rel="alternate" type="text\/plain" title="Cooklang source" href="([^"]*)">/);
+    assert.ok(match, `${page.url} has no alternate link`);
+    assert.equal(match[1], `https://cookbook.talbs.me/recipes/${recipeName}.txt`);
+  }
 });
