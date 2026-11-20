@@ -4,14 +4,24 @@ Personally approved collection of recipes culled from books, shows, and the Inte
 
 ## Run it
 
-You need Node 24.19 or newer.
+You need Node 24.19 or newer, and npm, which comes with it. Nothing else to install. Web Awesome, the icons and the text fonts load from CDNs, so pages need a network connection to look right.
 
 ```bash
-npm install
-npm start       # local site with live reload
+npm ci          # installs what package-lock.json lists
+npm start       # local site at http://localhost:4186/
+npm test        # checks the recipe rules and the built pages
 npm run build   # writes the site to _site/
-npm test
 ```
+
+`npm start` rebuilds when you save a recipe, a template, a data file or anything in `assets/`. It restarts itself when you save `eleventy.config.js` or a file in `lib/`. Either way the browser reloads on its own. If port 4186 is taken it uses the next free one and prints the address.
+
+`npm start` and `npm run build` both empty `_site/` first, so a renamed or deleted recipe never leaves an old page behind. `_site/` is the only folder they write to. `npm test` builds the site in memory and writes nothing.
+
+The build checks every recipe as it goes. One bad recipe stops it with exit code 1 and names the file. [When the build fails](#when-the-build-fails) lists each message. Every pull request runs `npm ci`, `npm test` and `npm run build`.
+
+### The title font
+
+Titles are set in Free Lunch, which isn't in the repo. On a fresh clone they show in Hanken Grotesk instead, and the browser logs one missing file: `/assets/fonts/FreeLunch-Regular.woff2`. Everything else works. To see the real titles, put `FreeLunch-Regular.woff2` in `assets/fonts/`. Git ignores that folder.
 
 ## Add a recipe
 
