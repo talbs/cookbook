@@ -1,21 +1,9 @@
+import { changeWithTransition } from './transition.js';
+
 const schemeButton = document.querySelector('#site-scheme');
 const schemeTooltip = document.querySelector('wa-tooltip[for="site-scheme"]');
 
 // darkScheme, schemeStorageKey, systemScheme and showColorScheme come from the head script in base.njk, which sets the scheme before first paint.
-const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-
-function changeWithTransition(change) {
-  const canAnimate =
-    document.startViewTransition &&
-    document.visibilityState === 'visible' &&
-    document.hasFocus();
-  if (!canAnimate || prefersReducedMotion.matches) {
-    change();
-    return;
-  }
-  document.startViewTransition({ update: change, types: ['scheme'] });
-}
-
 function currentScheme() {
   return document.documentElement.classList.contains('wa-dark')
     ? 'dark'
@@ -53,6 +41,6 @@ if (schemeButton) {
     changeWithTransition(() => {
       showColorScheme(nextScheme);
       labelButton();
-    });
+    }, ['scheme']);
   });
 }
