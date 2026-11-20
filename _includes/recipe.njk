@@ -111,7 +111,7 @@
   {%- set creditLine %}
         <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
         <dd>
-          {%- if hasSource %}{% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a><span class="print-address"> {% for part in source.address.split("/") %}<span>{{ part }}{% if not loop.last %}/{% endif %}</span>{% if not loop.last %}<wbr>{% endif %}{% endfor %}</span>{% else %}{{ source.name }}{% endif %}{% if source.author %}, <span class="wa-text-nowrap">{{ source.author }}</span>{% endif %}{% if author %}, by <span class="wa-text-nowrap">{{ author }}</span>{% endif %}
+          {%- if hasSource %}{% set sourceTitle = (source.name ~ ": " ~ source.book) if source.book else source.name %}{% if source.url %}<a href="{{ source.url }}">{{ sourceTitle }}</a><span class="print-address"> {% for part in source.address.split("/") %}<span>{{ part }}{% if not loop.last %}/{% endif %}</span>{% if not loop.last %}<wbr>{% endif %}{% endfor %}</span>{% else %}{{ sourceTitle }}{% endif %}{% if source.author %}, <span class="wa-text-nowrap">{{ source.author }}</span>{% endif %}{% if author %}, by <span class="wa-text-nowrap">{{ author }}</span>{% endif %}
           {%- else %}<span class="wa-text-nowrap">{{ author }}</span>{% endif -%}
         </dd>
   {%- endset %}
