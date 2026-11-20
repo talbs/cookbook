@@ -159,6 +159,7 @@ body {
   --shortcut-size: 2.5rem;
   /* Negative: how far a 1rem icon's tap box overhangs the icon on each side. */
   --shortcut-inset: calc((1rem - var(--shortcut-size)) / 2);
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
@@ -1940,6 +1941,19 @@ wa-progress-bar.wait-run::part(indicator) {
   margin: 0;
 }
 
+/* Both lists share capped columns so File sits over Tags, and rows sit as far apart as the lists do. */
+.credit,
+.connections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 16rem));
+  row-gap: var(--wa-space-l);
+}
+
+/* Tops up the footer's gap to the rows' gap, so the step from the credit row to the tags row matches the rest. */
+.attribution .connections {
+  margin-block-start: calc(var(--wa-space-l) - var(--wa-space-m));
+}
+
 :is(.facts, .attribution, .colophon) dt {
   margin-block-end: var(--wa-space-xs);
   font-weight: var(--wa-font-weight-bold);
@@ -1956,6 +1970,164 @@ wa-progress-bar.wait-run::part(indicator) {
   font-size: var(--list-size);
   line-height: 1.5;
   color: var(--ink);
+}
+
+.file-link {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+/* The site derives these at :root, where they resolve to light values. */
+.source-dialog {
+  --width: 46rem;
+  --spacing: var(--wa-space-l);
+  --show-duration: var(--settle);
+  --hide-duration: 160ms;
+  --ink: var(--wa-color-text-normal);
+  --paper: var(--wa-color-neutral-05);
+  --note-ink: var(--wa-color-text-quiet);
+  --divider-ink: color-mix(in oklab, var(--ink) 22%, transparent);
+  --ochre: oklch(0.82 0.12 80);
+  --umber: oklch(0.76 0.07 55);
+  color: var(--ink);
+}
+
+.source-dialog::part(dialog) {
+  border: 1px solid var(--wa-color-neutral-30);
+  border-radius: var(--wa-border-radius-l);
+  background: var(--paper);
+  box-shadow: 0 var(--wa-space-s) var(--wa-space-2xl) color-mix(in oklab, var(--wa-color-neutral-05) 22%, transparent);
+  animation-timing-function: var(--ease-settle);
+}
+
+.source-dialog::part(dialog)::backdrop {
+  background: var(--hatch), color-mix(in oklab, var(--wa-color-neutral-05) 55%, transparent);
+}
+
+.source-dialog::part(header) {
+  position: relative;
+  align-items: center;
+  padding-block: var(--wa-space-s) calc(var(--wa-space-s) + var(--band));
+}
+
+.source-dialog::part(header)::after {
+  content: '';
+  position: absolute;
+  inset: auto var(--spacing) 0;
+  block-size: var(--band);
+  background: var(--divider-ink);
+  mask: var(--divider);
+}
+
+.source-dialog::part(title) {
+  min-inline-size: 0;
+  font-family: var(--mono);
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-bold);
+}
+
+.source-dialog::part(header-actions) {
+  gap: 0;
+  align-self: center;
+}
+
+.source-dialog::part(body) {
+  padding-block: var(--wa-space-m) var(--wa-space-l);
+}
+
+/* One line, always: the title wraps inside one line's height, so the note drops out of sight when it no longer fits,
+   and only then does the file name shorten. */
+.source-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--wa-space-s);
+  block-size: 1lh;
+  overflow: hidden;
+}
+
+.source-name {
+  max-inline-size: 100%;
+}
+
+.source-prompt {
+  display: none;
+  font-weight: var(--wa-font-weight-normal);
+  color: var(--note-ink);
+}
+
+.source-note {
+  font-size: var(--wa-font-size-xs);
+  font-weight: var(--wa-font-weight-normal);
+  color: var(--note-ink);
+  white-space: nowrap;
+}
+
+.source-note a {
+  color: inherit;
+}
+
+.source-dialog::part(close-button__button),
+.source-copy::part(button) {
+  display: grid;
+  place-items: center;
+  inline-size: var(--shortcut-size);
+  block-size: var(--shortcut-size);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--note-ink);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+.source-dialog::part(close-button__button):hover,
+.source-copy::part(button):hover {
+  color: var(--accent);
+}
+
+.source-dialog wa-code-highlighter {
+  --function-color: var(--accent);
+  --constant-color: var(--ochre);
+  --type-color: var(--umber);
+  --keyword-color: var(--accent);
+  --variable-color: var(--ink);
+  --string-color: var(--ink);
+  --comment-color: var(--wa-color-text-quiet);
+  --operator-color: var(--wa-color-text-quiet);
+  --property-color: var(--wa-color-text-quiet);
+  font-family: var(--mono);
+  font-size: var(--wa-font-size-s);
+  line-height: 1.7;
+}
+
+.source-dialog wa-code-highlighter::part(pre) {
+  padding: 0;
+  background: none;
+}
+
+@media (min-width: 30rem) {
+  .source-dialog::part(title) {
+    font-size: var(--list-size);
+  }
+
+  .source-prompt {
+    display: inline;
+  }
+}
+
+@media (min-width: 48rem) {
+  .source-dialog::part(dialog) {
+    max-block-size: calc(100% - 8rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .source-dialog {
+    --show-duration: 0ms;
+    --hide-duration: 0ms;
+  }
 }
 
 /* Overview and Cook are two ways to read the screen. Paper gets one layout, set in the print rules at the end. */
@@ -2508,12 +2680,21 @@ wa-page[view='desktop'] {
     margin-block-start: var(--wa-space-l);
   }
 
+  .credit,
+  .connections {
+    display: flex;
+  }
+
   .credit {
     grid-column: 1;
   }
 
   .connections {
     grid-column: 2 / -1;
+  }
+
+  .attribution .connections {
+    margin-block-start: 0;
   }
 
   [data-mode='overview'] .recipe-body {
@@ -2828,7 +3009,8 @@ wa-page[view='desktop'] {
   }
 
   /* Tags are a way around the site, which paper has no use for; the rest of the footer prints with the facts. */
-  .attribution {
+  .attribution,
+  .source-dialog {
     display: none;
   }
 

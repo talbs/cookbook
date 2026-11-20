@@ -1,6 +1,6 @@
 import { before, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import Eleventy from '@11ty/eleventy';
 
 let builtPages = [];
@@ -11,7 +11,7 @@ before(async () => {
 });
 
 function listRecipePages() {
-  return builtPages.filter(page => page.url.startsWith('/recipes/'));
+  return builtPages.filter(page => page.url.startsWith('/recipes/') && page.url.endsWith('/'));
 }
 
 function listHtmlPages() {
@@ -114,4 +114,52 @@ test('every link to a page on this site leads to a page the build wrote', () => 
     }
   }
   assert.ok(checkedLinkCount > 0);
+});
+
+test("every recipe's source file is published unchanged as plain text, and its page points to it", () => {
+  for (const page of listRecipePages()) {
+    const recipeName = page.url.split('/')[2];
+    const rawPage = builtPages.find(built => built.url === `/recipes/${recipeName}.txt`);
+    assert.ok(rawPage, `no plain text file for ${page.url}`);
+    assert.equal(rawPage.content, readFileSync(`recipes/${recipeName}.cook`, 'utf8'), recipeName);
+
+    const match = page.content.match(/<link rel="alternate" type="text\/plain" title="Cooklang source" href="([^"]*)">/);
+    assert.ok(match, `${page.url} has no alternate link`);
+    assert.equal(match[1], `https://cookbook.talbs.me/recipes/${recipeName}.txt`);
+  }
+});
+
+test('llms.txt lists every recipe once, each at the address of a file the build wrote', () => {
+  const llmsPage = builtPages.find(page => page.url === '/llms.txt');
+  assert.ok(llmsPage, 'no /llms.txt');
+
+  const linkedAddresses = [...llmsPage.content.matchAll(/^- \[[^\]]+\]\(([^)]+)\): \S/gm)].map(match => match[1]);
+  const builtAddresses = listRecipePages().map(page => `https://cookbook.talbs.me${page.url.replace(/\/$/, '.txt')}`);
+  assert.deepEqual([...linkedAddresses].sort(), [...builtAddresses].sort());
+  for (const address of linkedAddresses) {
+    const builtUrl = address.replace('https://cookbook.talbs.me', '');
+    assert.ok(builtPages.some(page => page.url === builtUrl), `${address} was not built`);
+  }
+});
+
+test('a recipe whose time is a range tells search engines the long end', () => {
+  const expectedTotalTimes = [
+    ['/recipes/chocolate-pot-de-creme/', 'PT18H'],
+    ['/recipes/kare-raisu/', 'PT1H'],
+  ];
+  for (const [url, totalTime] of expectedTotalTimes) {
+    assert.equal(readJsonLd(builtPages.find(page => page.url === url)).totalTime, totalTime, url);
+  }
+});
+
+test("a step's note reaches search engines as a plain-text tip on that step", () => {
+  const jsonLd = readJsonLd(builtPages.find(page => page.url === '/recipes/chocolate-pot-de-creme/'));
+  const step = jsonLd.recipeInstructions.find(entry => entry.text.startsWith('Seal each jar'));
+  assert.deepEqual(step.itemListElement.map(part => part['@type']), ['HowToDirection', 'HowToTip']);
+  assert.equal(step.itemListElement[0].text, step.text);
+
+  const tip = step.itemListElement[1].text;
+  assert.ok(tip.startsWith('Fingertip tight'), tip);
+  assert.ok(tip.includes('Turn one-quarter more then stop.'), tip);
+  assert.doesNotMatch(tip, /[<>*]|&\w+;/);
 });

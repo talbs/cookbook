@@ -10,7 +10,7 @@
         <span class="card-description">{{ item.data.description }}</span>
         <span slot="footer" class="card-foot wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0">
           {%- if hasTime %}
-          <time class="card-time" id="card-time-{{ item.fileSlug }}" datetime="{{ item.data.totalMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>
+          <time class="card-time" id="card-time-{{ item.fileSlug }}" datetime="{{ item.data.longestMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>
           {%- endif %}
           <span class="rule-run" aria-hidden="true"></span>
           {%- if item.data.icons.length %}
@@ -34,7 +34,7 @@
   {%- for item in items %}
   {%- set hasTime = item.data.totalMinutes != null %}
   <li data-minutes="{{ item.data.totalMinutes if hasTime }}"><a class="listing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="{{ item.url }}"><span class="listing-name"><span class="row-words">{{ item.data.title }}</span></span>
-    {%- if hasTime %} <time class="listing-detail wa-text-nowrap" datetime="{{ item.data.totalMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>{% endif -%}
+    {%- if hasTime %} <time class="listing-detail wa-text-nowrap" datetime="{{ item.data.longestMinutes | isoDuration }}">{{ item.data.timeLabel }}</time>{% endif -%}
   </a></li>
   {%- endfor %}
 </ul>
