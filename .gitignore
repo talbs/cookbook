@@ -1,5 +1,21 @@
+# Installed and built
 node_modules/
 _site/
-.DS_Store
+
+# The title font isn't in the repo; each machine brings its own copy
 assets/fonts/
+
+# Secrets
+.env
+.env.*
+
+# Browser test output from one-off visual checks
+test-results/
+
+# Local tool and editor state
+.claude/
 .impeccable/
+.vscode/
+.cursor/
+.idea/
+.DS_Store
