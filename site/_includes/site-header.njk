@@ -7,5 +7,10 @@
     {% include "site-nav.njk" %}
     <a class="shortcut wa-border-radius-s" id="site-search" href="/#search"><wa-icon name="magnifying-glass" variant="regular" label="Search Recipes"></wa-icon></a>
     <wa-tooltip for="site-search" placement="bottom">Search Recipes</wa-tooltip>
+    <button class="shortcut wa-border-radius-s" id="site-scheme" type="button" aria-label="Switch to dark mode">
+      <wa-icon class="to-dark" name="moon" variant="regular"></wa-icon>
+      <wa-icon class="to-light" name="sun-bright" variant="regular"></wa-icon>
+    </button>
+    <wa-tooltip for="site-scheme" placement="bottom">Night Shift</wa-tooltip>
   </div>
 </div>

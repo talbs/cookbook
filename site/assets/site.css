@@ -43,7 +43,7 @@ body {
 }
 
 /* Near-neutral greys with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool greys and white.
-   The theme-color metas in base.njk repeat both papers. */
+   The head script in base.njk repeats both papers for the theme-color meta. */
 :root {
   --wa-color-neutral-95: #f2f1f0;
   --wa-color-neutral-90: #e6e5e3;
@@ -112,6 +112,9 @@ body {
   /* The page's springy moves share one length; the curves differ only in how far they overshoot. */
   --settle: 420ms;
   --press: 120ms;
+  /* A piece that fades in waits a beat for the old one to leave first. */
+  --fade-in: 200ms;
+  --fade-in-delay: 60ms;
   --ease-spring: cubic-bezier(0.34, 1.8, 0.64, 1);
   --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
   --ease-slide: cubic-bezier(0.34, 1.3, 0.64, 1);
@@ -154,6 +157,8 @@ body {
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
   --bar-switch-height: calc(var(--bar-control-height) + 8px);
   --shortcut-size: 2.5rem;
+  /* Negative: how far a 1rem icon's tap box overhangs the icon on each side. */
+  --shortcut-inset: calc((1rem - var(--shortcut-size)) / 2);
   --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
@@ -228,6 +233,39 @@ a:focus-visible {
   border-radius: var(--wa-form-control-border-radius);
 }
 
+/* wa-page shows its skip link in the flow when focused, which pushes the page down; fixed, it floats over the header instead. */
+wa-page::part(skip-to-content):focus {
+  position: fixed;
+  inset-block-start: var(--wa-space-s);
+  inset-inline-start: var(--page-gutter);
+  z-index: 3;
+  padding: var(--wa-space-xs) var(--wa-space-m);
+  border-radius: var(--wa-border-radius-s);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: var(--wa-font-weight-bold);
+  text-decoration-line: none;
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* The link is clipped to a pixel until focused, which a transition can't run from, so its arrival is a keyframe.
+   It slides down and springs up to size as it lands, the same squish the checkboxes and timers have. */
+@media (prefers-reduced-motion: no-preference) {
+  wa-page::part(skip-to-content):focus {
+    animation:
+      skip-drop var(--settle) var(--ease-settle),
+      spring-from-press var(--settle) var(--ease-spring);
+  }
+}
+
+@keyframes skip-drop {
+  from {
+    opacity: 0;
+    translate: 0 calc(-100% - var(--wa-space-s));
+  }
+}
+
 /* wa-page pads its main slot and its header; these pages set their own gutters so everything lines up on one edge. */
 .recipe-page > main,
 .listing-page::part(main-content),
@@ -264,9 +302,10 @@ wa-page > main {
   --rule-gap: 2.25rem;
 }
 
+/* The icons sit 12px inside their tap boxes, so this top padding puts them as far from the top edge as the gutter puts them from the side. */
 .recipe-nav,
 .site-header {
-  padding-block: var(--wa-space-xl) 0;
+  padding-block: var(--wa-space-xs) 0;
 }
 
 .site-footer {
@@ -307,10 +346,11 @@ wa-page > main {
   text-decoration-line: none;
 }
 
-/* 18px keeps the wordmark's capitals only a little taller than the 16px nav's. */
+/* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
 .site-name {
   font-family: var(--wa-font-family-heading);
-  font-size: 1.125rem;
+  font-size: var(--wa-font-size-l);
+  text-box: trim-both cap alphabetic;
   color: var(--ink);
   text-decoration-line: none;
   transition: color var(--wa-transition-normal) var(--wa-transition-easing);
@@ -654,14 +694,26 @@ wa-page > main {
 }
 
 /* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
-.shortcuts,
+.shortcuts {
+  margin-inline-end: var(--shortcut-inset);
+}
+
+/* In the site bar the inset comes off both sides, so the gaps between icons measure the same as the gaps between nav words. */
 .site-bar .shortcut {
-  margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
+  margin-inline: var(--shortcut-inset);
+}
+
+/* Below 360px the bar's wa-gap-l no longer fits on one line, so the nav would wrap; a step tighter keeps it whole down to 320px. */
+@media (width < 22.5rem) {
+  .site-bar,
+  .site-bar .wa-cluster {
+    gap: var(--wa-space-m);
+  }
 }
 
 .pinned-lead {
   min-inline-size: 0;
-  margin-inline-start: calc((1rem - var(--shortcut-size)) / 2);
+  margin-inline-start: var(--shortcut-inset);
 }
 
 .shortcut {
@@ -686,6 +738,28 @@ button.shortcut {
   background: none;
   font: inherit;
   cursor: pointer;
+}
+
+#site-scheme {
+  overflow: clip;
+}
+
+/* The toggle needs its script, so without scripting it would be a button that does nothing. */
+@media (scripting: none) {
+  #site-scheme {
+    display: none;
+  }
+}
+
+#site-scheme wa-icon {
+  grid-area: 1 / 1;
+  margin: 0;
+}
+
+:root:not(.wa-dark) .shortcut .to-light,
+.wa-dark .shortcut .to-dark {
+  opacity: 0;
+  translate: 0 100%;
 }
 
 /* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
@@ -1994,6 +2068,29 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: scale var(--press) ease-out;
   }
 
+  /* Switching scheme, the old icon sets down out of the button and the new one rises into its place, timed like a mode's body. */
+  .shortcut :is(.to-dark, .to-light) {
+    transition:
+      scale var(--settle) var(--ease-spring),
+      opacity var(--fade-in) ease-out var(--fade-in-delay),
+      translate var(--settle) var(--ease-settle) var(--fade-in-delay);
+  }
+
+  /* The press rule's shorter transition list would cancel a swap still in flight; this keeps the fade and rise listed while pressed. */
+  .shortcut:active :is(.to-dark, .to-light) {
+    transition:
+      scale var(--press) ease-out,
+      opacity var(--fade-in) ease-out var(--fade-in-delay),
+      translate var(--settle) var(--ease-settle) var(--fade-in-delay);
+  }
+
+  :root:not(.wa-dark) .shortcut .to-light,
+  .wa-dark .shortcut .to-dark {
+    transition:
+      opacity var(--press) ease-in,
+      translate var(--press) ease-in;
+  }
+
   /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
   .mode-rest .print-control:active {
     scale: 0.97;
@@ -2061,8 +2158,8 @@ wa-progress-bar.wait-run::part(indicator) {
 
   ::view-transition-new(recipe-body) {
     animation:
-      mode-fade-in 200ms ease-out 60ms both,
-      mode-settle var(--settle) var(--ease-settle) 60ms both;
+      mode-fade-in var(--fade-in) ease-out var(--fade-in-delay) both,
+      mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
   }
 
   /* Going from one page to another is one short cross-fade of the whole page. The pieces that move on their own
@@ -2072,12 +2169,28 @@ wa-progress-bar.wait-run::part(indicator) {
     types: page-turn;
   }
 
-  :root:active-view-transition-type(page-turn) :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
+  :root:active-view-transition-type(page-turn, scheme)
+    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
     view-transition-name: none;
   }
 
-  :root:active-view-transition-type(page-turn)::view-transition-group(root) {
+  :root:active-view-transition-type(page-turn, scheme)::view-transition-group(
+      root
+    ) {
     animation-duration: var(--wa-transition-normal);
+  }
+
+  /* A scheme change crossfades the whole page's colour, while the toggle stays live so its icons can set and rise. */
+  :root:active-view-transition-type(scheme) #site-scheme {
+    view-transition-name: scheme-toggle;
+  }
+
+  ::view-transition-old(scheme-toggle) {
+    display: none;
+  }
+
+  ::view-transition-new(scheme-toggle) {
+    animation: none;
   }
 
   .listing-controls.can-stick::before {
@@ -2102,8 +2215,8 @@ wa-progress-bar.wait-run::part(indicator) {
 
   ::view-transition-new(listing-results) {
     animation:
-      mode-fade-in 200ms ease-out 60ms both,
-      mode-settle var(--settle) var(--ease-settle) 60ms both;
+      mode-fade-in var(--fade-in) ease-out var(--fade-in-delay) both,
+      mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
   }
 
   .search-field {
@@ -2257,6 +2370,11 @@ wa-progress-bar.wait-run::part(indicator) {
 @media screen and (min-width: 64rem) {
   .recipe {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
+  }
+
+  .recipe-nav,
+  .site-header {
+    padding-block-start: var(--wa-space-xl);
   }
 
   :root {

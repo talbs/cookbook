@@ -1,4 +1,5 @@
 import { startTimers } from './timers.js';
+import { changeWithTransition } from './transition.js';
 
 const page = document.querySelector('.recipe-page');
 const recipe = page.querySelector('.recipe');
@@ -44,18 +45,11 @@ function showMode(mode) {
   writeModeToUrl(mode);
 }
 
-const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-
 function switchMode(mode) {
-  const update = () => {
+  changeWithTransition(() => {
     showMode(mode);
     saveState();
-  };
-  if (!document.startViewTransition || prefersReducedMotion.matches) {
-    update();
-    return;
-  }
-  document.startViewTransition(update);
+  });
 }
 
 function restoreChecks(checkedIds) {

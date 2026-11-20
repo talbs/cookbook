@@ -1,18 +1,8 @@
+import { changeWithTransition } from './transition.js';
+
 const viewRest = document.querySelector('.view-rest');
 const viewSwitch = viewRest.querySelector('.view-switch');
 const storageKey = 'listing-view';
-
-const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-
-// A page nobody is looking at has no frames to animate in, and a transition started there holds the change back until it times out.
-function changeWithTransition(change) {
-  const canAnimate = document.startViewTransition && document.visibilityState === 'visible' && document.hasFocus();
-  if (!canAnimate || prefersReducedMotion.matches) {
-    change();
-    return;
-  }
-  document.startViewTransition(change);
-}
 
 function showView(view) {
   document.documentElement.dataset.view = view;
