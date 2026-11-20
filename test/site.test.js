@@ -141,3 +141,13 @@ test('llms.txt lists every recipe once, each at the address of a file the build 
     assert.ok(builtPages.some(page => page.url === builtUrl), `${address} was not built`);
   }
 });
+
+test('a recipe whose time is a range tells search engines the long end', () => {
+  const expectedTotalTimes = [
+    ['/recipes/chocolate-pot-de-creme/', 'PT18H'],
+    ['/recipes/kare-raisu/', 'PT1H'],
+  ];
+  for (const [url, totalTime] of expectedTotalTimes) {
+    assert.equal(readJsonLd(builtPages.find(page => page.url === url)).totalTime, totalTime, url);
+  }
+});
