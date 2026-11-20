@@ -172,7 +172,7 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | Key           | Required | What it holds                                                                                                                                                                                                                                                                        |
 | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `title`       | yes      | The recipe's name                                                                                                                                                                                                                                                                    |
-| `description` | yes      | One sentence. Shows in link previews and search results                                                                                                                                                                                                                              |
+| `description` | yes      | One sentence, about 70 to 105 characters. See [Writing a description](#writing-a-description)                                                                                                                                                                                        |
 | `tags`        | no       | A list: `[cookies, baking]`, in lowercase words joined by hyphens. Three kinds: dish type (`pasta`), method or gear (`sheet-pan`) and season. The seasons are `spring`, `early-summer`, `midsummer`, `late-summer`, `fall`, `winter` and `year-round`. `all` and `recipes` are taken |
 | `course`      | yes      | One of `main`, `side`, `dessert`, `breakfast`, `drink`, `condiment`                                                                                                                                                                                                                  |
 | `cuisine`     | no       | `French`, `Mexican`. Shows with the recipe's other facts                                                                                                                                                                                                                             |
@@ -192,6 +192,20 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | `icons`       | yes      | Three Font Awesome icon names, most defining first: `[pepper-hot, garlic, bowl-hot]`. Shown on the recipe's card and on the rule above its credits. New names go in `lib/icon-names.js` first. This one is ours, not Cooklang's                                                      |
 
 Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `time required`, `duration`, `images`, `picture`, `pictures`). The build asks for the names above so every page reads the same key. Any other key stops the build.
+
+### Writing a description
+
+One sentence, about 70 to 105 characters. It shows on the recipe's card, at the top of its page and in link previews.
+
+- Say what the dish is in plain words. If the title doesn't explain itself (Kare Raisu), the description does.
+- Give one hook: a technique, an odd ingredient or a wait.
+- Tell the reader something the title doesn't.
+- Use adjectives you could see or feel (charred, thin, crisp). Skip verdicts like "delicious". Two at most.
+- Pick, don't list. Three named ingredients is the ceiling.
+- No colon followed by a space. It breaks the front matter, and the build reports a missing title.
+- Most descriptions run "dish with a thing, done a certain way". Break that shape now and then so the list of recipes doesn't read like a template.
+
+A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple glazed tofu and baby bok choy.`
 
 ### Writing the steps
 
