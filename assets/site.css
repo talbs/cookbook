@@ -203,6 +203,18 @@ a:focus-visible {
   padding: 0;
 }
 
+/* Every page's main runs down to the footer, so a short page's content area meets it instead of stopping early.
+   In a flex column, main's centring margins would shrink it to fit its content, so it keeps the full width explicitly. */
+wa-page::part(main-content) {
+  display: flex;
+  flex-direction: column;
+}
+
+wa-page > main {
+  flex: 1;
+  inline-size: 100%;
+}
+
 .listing-page::part(header) {
   border: 0;
   background: none;
@@ -258,23 +270,36 @@ a:focus-visible {
   padding-block: var(--wa-space-xs);
 }
 
-.site-nav a[aria-current],
-.site-name {
+.site-nav a[aria-current] {
   font-weight: var(--wa-font-weight-bold);
   text-decoration-line: none;
 }
 
+/* 18px keeps the wordmark's capitals only a little taller than the 16px nav's. */
+.site-name {
+  font-family: var(--wa-font-family-heading);
+  font-size: 1.125rem;
+  color: var(--ink);
+  text-decoration-line: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
 .site-name:hover {
-  text-decoration-line: underline;
+  color: var(--accent);
 }
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
+.site-name,
+.recipe-head h1,
+.listing-head h1 {
+  font-weight: 800;
+  font-synthesis: none;
+}
+
 .recipe-head h1,
 .listing-head h1 {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
-  font-weight: 800;
-  font-synthesis: none;
   line-height: 0.92;
   text-transform: uppercase;
   text-box: trim-both cap alphabetic;
@@ -615,6 +640,7 @@ a:focus-visible {
   block-size: var(--shortcut-size);
   color: var(--note-ink);
   text-decoration: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .shortcut:hover {
@@ -1204,13 +1230,23 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   mask: var(--divider);
 }
 
-.search-empty {
+.empty-state {
   position: relative;
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
+}
+
+/* With no matches, the results area and its panel run down to the footer, like the 404's. */
+.listing-results {
+  flex: 1;
+}
+
+.search-empty {
+  flex: 1;
+  justify-content: center;
   text-align: center;
 }
 
-.search-empty::before {
+.empty-state::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1219,11 +1255,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   opacity: 0.35;
 }
 
-.search-empty > * {
+.empty-state > * {
   position: relative;
 }
 
-.search-empty p {
+.empty-state p {
   margin: 0;
 }
 
@@ -1236,7 +1272,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   font-size: var(--wa-font-size-xl);
 }
 
-.empty-icons wa-icon {
+.empty-icons wa-icon,
+.not-found .stats wa-icon {
   --primary-color: var(--ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0.16;
@@ -1256,8 +1293,67 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-wrap: balance;
 }
 
-.empty-ways-out {
-  justify-content: center;
+/* Outlined buttons sit on the hatch, so they keep a solid paper fill. */
+wa-button[appearance='outlined']::part(base) {
+  background: var(--paper);
+  color: var(--ink);
+  transition:
+    color var(--wa-transition-normal) var(--wa-transition-easing),
+    border-color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button[appearance='outlined']:hover::part(base) {
+  background: var(--paper);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.not-found-page main,
+.listing:has(.search-empty:not([hidden])) {
+  padding-block-end: var(--wa-space-2xl);
+}
+
+.not-found {
+  --stat-size: clamp(7rem, 30vw, 18rem);
+  flex: 1;
+}
+
+.not-found .stats {
+  margin-block: auto;
+  text-align: center;
+}
+
+/* The egg stands in for the 0, so it matches a figure's height (about 0.7em in Free Lunch) and sits on the baseline.
+   The icon box is far wider than the egg, so negative margins pull the 4s in to the gap a real 0 would leave. */
+.not-found .stats wa-icon {
+  font-size: 0.7em;
+  vertical-align: baseline;
+  margin-inline: -0.19em;
+  transform-origin: 50% 100%;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .not-found .stats dd > span:hover wa-icon {
+    animation: egg-wobble calc(2 * var(--settle)) ease-out;
+  }
+}
+
+@keyframes egg-wobble {
+  20% {
+    rotate: -9deg;
+  }
+
+  45% {
+    rotate: 6deg;
+  }
+
+  70% {
+    rotate: -3deg;
+  }
+
+  88% {
+    rotate: 1deg;
+  }
 }
 
 /* A button that reads as a text link, for a suggestion that fills the search instead of going somewhere. */
@@ -1403,7 +1499,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .stats dd {
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  font-size: var(--wa-font-size-4xl);
+  font-size: var(--stat-size, var(--wa-font-size-4xl));
   font-weight: 800;
   font-synthesis: none;
   line-height: 1;
@@ -1840,13 +1936,39 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: translate var(--settle) var(--ease-slide);
   }
 
-  .mode-switch {
-    transition: scale var(--press) ease-out;
+  /* Dip fast on press, spring back on release. */
+  .mode-switch,
+  wa-button[appearance='outlined'],
+  .time-select::part(combobox),
+  .shortcut wa-icon {
+    transition: scale var(--settle) var(--ease-spring);
+  }
+
+  @media (hover: hover) {
+    .shortcut:hover wa-icon {
+      scale: 1.15;
+    }
   }
 
   .mode-switch:active,
-  .print-control:active {
+  wa-button[appearance='outlined']:active,
+  .time-select:active::part(combobox) {
     scale: 0.97;
+    transition: scale var(--press) ease-out;
+  }
+
+  .shortcut:active wa-icon {
+    scale: 0.8;
+    transition: scale var(--press) ease-out;
+  }
+
+  /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
+  .mode-rest .print-control:active {
+    scale: 0.97;
+  }
+
+  .mode-rest .print-control wa-icon {
+    scale: none;
   }
 
   .mode-bar {
