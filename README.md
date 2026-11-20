@@ -55,6 +55,7 @@ Two things to know on a fresh clone:
 3. `lib/validate-recipe.js` checks the recipe against this site's rules. One bad recipe stops the build with exit code 1 and names the file. [When the build fails](#when-the-build-fails) lists each message.
 4. `site/_includes/recipe.njk` lays the recipe out as a page at `/recipes/<file name>/`. It also writes [schema.org Recipe](https://schema.org/Recipe) data into the page for search engines.
 5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search box reads.
+6. The build also publishes each recipe's `.cook` file as plain text at `/recipes/<file name>.txt` and writes `/llms.txt`, a list of every recipe for AI agents. On a recipe page, the File link in the footer shows the file.
 
 No bundler, no framework. The scripts in `site/assets/` are plain ES modules, and the browser loads them as written.
 
@@ -71,6 +72,8 @@ site/                 Everything that turns recipes into a website
     about.njk         /about/
     404.njk
     search.11ty.js    /search.json, what the search box reads
+    raw-recipe.11ty.js /recipes/<file name>.txt, each recipe's .cook file as plain text
+    llms.11ty.js      /llms.txt, every recipe's file, grouped by course
   _includes/          Layouts and partials
     base.njk          The HTML shell, CDN links, font preloads and color scheme
     recipe.njk        The recipe page
@@ -82,6 +85,7 @@ site/                 Everything that turns recipes into a website
     site.css          All the site's own styles
     listing.js        Search, the time filter and the cards/list switch
     recipe.js         Overview and Cook modes, checked-off steps, print
+    source.js         The recipe's .cook file in a dialog, with Cooklang colors
     timers.js         Countdown timers in Cook mode
     timer-phase.js    Timer math, shared with the tests
     open-fonts/       The two text fonts and their licenses
@@ -106,7 +110,7 @@ eleventy.config.js    The .cook extension, filters, the recipes collection, dev 
 
 - `test/validation.test.js` loads each broken recipe in `test/fixtures/` and expects the build to refuse it and name the file.
 - `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers, ingredient totals and the search engine data.
-- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page.
+- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page. Each recipe's `.cook` file must be published unchanged, and `llms.txt` must list every recipe.
 - `test/timer-phase.test.js` covers the timer math.
 
 GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request and on every push to `main`. It doesn't deploy anything.
