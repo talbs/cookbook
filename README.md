@@ -105,8 +105,8 @@ eleventy.config.js    The .cook extension, filters, the recipes collection, dev 
 `npm test` runs four files with Node's built-in test runner. Nothing else to install.
 
 - `test/validation.test.js` loads each broken recipe in `test/fixtures/` and expects the build to refuse it and name the file.
-- `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers.
-- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json` and the search engine data.
+- `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers, ingredient totals and the search engine data.
+- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page.
 - `test/timer-phase.test.js` covers the timer math.
 
 GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request and on every push to `main`. It doesn't deploy anything.
