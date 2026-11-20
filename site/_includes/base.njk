@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {%- set pageDescription = description or site.description %}
+    {%- set isNotFoundPage = page.url == "/404.html" %}
+    {%- set pageUrl = site.url + page.url %}
     {%- if page.url == "/" %}
     <title>{{ site.title }}</title>
     {%- else %}
@@ -13,6 +15,16 @@
     <meta property="og:title" content="{{ title or site.title }}">
     <meta property="og:description" content="{{ pageDescription }}">
     <meta property="og:type" content="{{ 'article' if recipe else 'website' }}">
+    {%- if isNotFoundPage %}
+    <meta name="robots" content="noindex">
+    {%- else %}
+    <link rel="canonical" href="{{ pageUrl }}">
+    <meta property="og:url" content="{{ pageUrl }}">
+    {%- endif %}
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="generator" content="{{ eleventy.generator }}">
     <script>
       const darkScheme = matchMedia('(prefers-color-scheme: dark)');
       function matchColorScheme() {

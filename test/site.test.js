@@ -98,3 +98,18 @@ test("every search.json entry has the documented shape", () => {
     assert.ok(typeof entry.course === "string" || entry.course === null, entry.url);
   }
 });
+
+test('every page names its own address on the live site as canonical, except the 404', () => {
+  const htmlPages = builtPages.filter(page => page.outputPath.endsWith('.html'));
+  assert.ok(htmlPages.length > 0);
+
+  for (const page of htmlPages) {
+    const match = page.content.match(/<link rel="canonical" href="([^"]*)">/);
+    if (page.url === '/404.html') {
+      assert.equal(match, null, 'the 404 page has a canonical link');
+      continue;
+    }
+    assert.ok(match, `${page.url} has no canonical link`);
+    assert.equal(match[1], `https://cookbook.talbs.me${page.url}`);
+  }
+});
