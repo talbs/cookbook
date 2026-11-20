@@ -266,7 +266,8 @@ wa-page::part(skip-to-content):focus {
   wa-page::part(skip-to-content):focus {
     animation:
       skip-drop var(--settle) var(--ease-settle),
-      spring-from-press var(--settle) var(--ease-spring);
+      spring-from-press var(--settle) var(--ease-spring),
+      ring-settle var(--wa-transition-normal) var(--ease-settle);
   }
 }
 
@@ -274,6 +275,27 @@ wa-page::part(skip-to-content):focus {
   from {
     opacity: 0;
     translate: 0 calc(-100% - var(--header-inset));
+  }
+}
+
+/* A keyframe rather than a transition: a transition would need a resting transparent outline, which forced-colours mode paints on every control. */
+@media (prefers-reduced-motion: no-preference) {
+  :focus-visible,
+  wa-button::part(base):focus-visible,
+  wa-dialog::part(close-button__base):focus-visible,
+  wa-copy-button::part(button):focus-visible,
+  wa-input:focus-within::part(base),
+  wa-select:focus-within::part(combobox),
+  wa-checkbox:focus-within::part(control),
+  .step-note::part(header):focus-visible,
+  .timer-control:focus-visible .timer-square {
+    animation: ring-settle var(--wa-transition-normal) var(--ease-settle);
+  }
+}
+
+@keyframes ring-settle {
+  from {
+    outline-offset: 7px;
   }
 }
 
@@ -2448,6 +2470,13 @@ wa-progress-bar.wait-run::part(indicator) {
   wa-checkbox.is-touched:not(:state(checked)) .box-unchecked,
   .timer-square.is-springing {
     animation: spring-from-press var(--settle) var(--ease-spring);
+  }
+
+  /* Otherwise the focus ring's animation would replace the spring on a keyboard press. */
+  .timer-control:focus-visible .timer-square.is-springing {
+    animation:
+      spring-from-press var(--settle) var(--ease-spring),
+      ring-settle var(--wa-transition-normal) var(--ease-settle);
   }
 
   .timer-band:is([data-phase='running'], [data-phase='check']) wa-progress-bar.wait-run::part(indicator) {
