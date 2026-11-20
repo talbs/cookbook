@@ -2384,7 +2384,7 @@ wa-progress-bar.wait-run::part(indicator) {
   .wa-cloak:not(:has(:not(:defined))) wa-page,
   .is-revealed wa-page {
     animation:
-      mode-fade-in var(--fade-in) ease-out,
+      page-reveal-fade-in var(--fade-in) ease-out,
       mode-settle var(--settle) var(--ease-settle);
   }
 
@@ -2540,6 +2540,13 @@ wa-progress-bar.wait-run::part(indicator) {
 @keyframes mode-fade-in {
   from {
     opacity: 0;
+  }
+}
+
+/* Starts just above zero: Chrome ignores text it paints at opacity 0, so a fade from 0 left Lighthouse with no largest text to time. */
+@keyframes page-reveal-fade-in {
+  from {
+    opacity: 0.01;
   }
 }
 
