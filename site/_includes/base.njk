@@ -64,6 +64,7 @@
   <body>
     {#- One wa-page for every view. `header` fills its header slot; `content` is its main content, the default slot. #}
     <wa-page class="{% block pageClass %}{% endblock %}"{% block pageAttributes %}{% endblock %} mobile-breakpoint="48rem" disable-navigation-toggle>
+      <span slot="skip-to-content">Skip to Content</span>
       {%- block header %}{% endblock %}
       <main{% block mainAttributes %}{% endblock %}>
         {%- block content %}{{ content | safe }}{% endblock %}

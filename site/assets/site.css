@@ -230,6 +230,39 @@ a:focus-visible {
   border-radius: var(--wa-form-control-border-radius);
 }
 
+/* wa-page shows its skip link in the flow when focused, which pushes the page down; fixed, it floats over the header instead. */
+wa-page::part(skip-to-content):focus {
+  position: fixed;
+  inset-block-start: var(--wa-space-s);
+  inset-inline-start: var(--page-gutter);
+  z-index: 3;
+  padding: var(--wa-space-xs) var(--wa-space-m);
+  border-radius: var(--wa-border-radius-s);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: var(--wa-font-weight-bold);
+  text-decoration-line: none;
+  outline: var(--wa-focus-ring);
+  outline-offset: var(--wa-focus-ring-offset);
+}
+
+/* The link is clipped to a pixel until focused, which a transition can't run from, so its arrival is a keyframe.
+   It slides down and springs up to size as it lands, the same squish the checkboxes and timers have. */
+@media (prefers-reduced-motion: no-preference) {
+  wa-page::part(skip-to-content):focus {
+    animation:
+      skip-drop var(--settle) var(--ease-settle),
+      spring-from-press var(--settle) var(--ease-spring);
+  }
+}
+
+@keyframes skip-drop {
+  from {
+    opacity: 0;
+    translate: 0 calc(-100% - var(--wa-space-s));
+  }
+}
+
 /* wa-page pads its main slot and its header; these pages set their own gutters so everything lines up on one edge. */
 .recipe-page > main,
 .listing-page::part(main-content),
