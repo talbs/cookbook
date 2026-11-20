@@ -1782,11 +1782,14 @@ wa-button[appearance='outlined']:hover::part(base) {
   grid-row: 1;
 }
 
-.step-note {
-  --spacing: 0;
+.step-notes {
   grid-column: 1;
   grid-row: 2;
   margin-block-start: var(--wa-space-s);
+}
+
+.step-note {
+  --spacing: 0;
 }
 
 /* The toggle hugs its icon and label, so the focus ring wraps the words, not the whole row. */
@@ -1837,6 +1840,11 @@ wa-button[appearance='outlined']:hover::part(base) {
   padding-block-start: var(--wa-space-s);
 }
 
+/* An open note's body sits closer to its own title than to the next note's. */
+.step-note:has(~ .step-note:not(.note-print))::part(content) {
+  padding-block-end: var(--wa-space-s);
+}
+
 .note-icon {
   margin-inline-end: 0.5em;
   vertical-align: -0.1em;
@@ -1881,7 +1889,7 @@ wa-button[appearance='outlined']:hover::part(base) {
 }
 
 .method > .step-note {
-  margin-block-end: var(--wa-space-m);
+  margin-block: var(--wa-space-s) var(--wa-space-m);
 }
 
 /* After a step the cook walks away from, Cook draws a pause across the page: the switch's hatch, then how long. */
@@ -3156,7 +3164,7 @@ wa-page[view='desktop'] {
   }
 
   /* A step never parts from its note's title, but a long note may turn the page between its paragraphs. */
-  .step-text:has(+ .step-note) {
+  .step-text:has(+ .step-notes) {
     break-after: avoid;
   }
 

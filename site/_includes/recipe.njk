@@ -253,9 +253,13 @@
               {%- endif -%}
             {%- endfor -%}
           </p>
+          {%- if step.notes.length %}
+          <div class="step-notes wa-stack wa-gap-2xs">
           {%- for note in step.notes %}
           {{ noteDetails(note) }}
           {%- endfor %}
+          </div>
+          {%- endif %}
           {%- if step.ingredients.length %}
           <ul class="checklist step-needs wa-list-plain wa-stack wa-gap-xs" role="list">
             {%- for ingredient in step.ingredients %}
