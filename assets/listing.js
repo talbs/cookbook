@@ -237,4 +237,18 @@ if (searchInput) {
     loadSearchTextOnce();
   }
   showMatches({ isInstant: true });
+
+  // Dropping the hash lets the search icon work a second time and keeps a reload from grabbing focus again.
+  // The kit defines wa-input before it draws the inner field that focus() needs, so this waits for both.
+  async function focusSearchWhenAsked() {
+    if (location.hash !== '#search') return;
+    await customElements.whenDefined('wa-input');
+    await searchInput.updateComplete;
+    searchInput.scrollIntoView({ block: 'center' });
+    searchInput.focus();
+    history.replaceState(history.state, '', location.pathname + location.search);
+  }
+
+  focusSearchWhenAsked();
+  addEventListener('hashchange', focusSearchWhenAsked);
 }

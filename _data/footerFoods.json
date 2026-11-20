@@ -1,0 +1,13 @@
+[
+  {"icon": "heart", "label": "Love", "href": "/", "tooltip": "All recipes"},
+  {"icon": "mug-hot", "label": "Coffee", "href": "/tags/coffee/", "tooltip": "Recipes tagged coffee"},
+  {"icon": "bowl-chopsticks-noodles", "label": "Noodles", "href": "/tags/noodles/", "tooltip": "Recipes tagged noodles"},
+  {"icon": "pepper-hot", "label": "Hot sauce", "href": "/tags/hot-sauce/", "tooltip": "Recipes tagged hot sauce"},
+  {"icon": "cookie", "label": "Cookies", "href": "/tags/cookies/", "tooltip": "Recipes tagged cookies"},
+  {"icon": "bread-slice", "label": "Bread", "href": "/tags/bread/", "tooltip": "Recipes tagged bread"},
+  {"icon": "pancakes", "label": "Pancakes", "href": "/tags/pancakes/", "tooltip": "Recipes tagged pancakes"},
+  {"icon": "cake-candles", "label": "Cake", "href": "/tags/cake/", "tooltip": "Recipes tagged cake"},
+  {"icon": "jar", "label": "Pickles", "href": "/tags/pickles/", "tooltip": "Recipes tagged pickles"},
+  {"icon": "salad", "label": "Salad", "href": "/tags/salad/", "tooltip": "Recipes tagged salad"},
+  {"icon": "bowl-food", "label": "Pasta", "href": "/tags/pasta/", "tooltip": "Recipes tagged pasta"}
+]

@@ -40,6 +40,7 @@
       <main{% block mainAttributes %}{% endblock %}>
         {%- block content %}{{ content | safe }}{% endblock %}
       </main>
+      {% include "site-footer.njk" %}
     </wa-page>
     {%- block scripts %}{% endblock %}
   </body>

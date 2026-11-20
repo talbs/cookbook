@@ -1,0 +1,11 @@
+{%- set isHome = page.url == "/" -%}
+<div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l{% if isHome %} wa-justify-content-end{% endif %}">
+  {%- if not isHome %}
+  <a class="site-name" href="/">{{ site.title }}</a>
+  {%- endif %}
+  <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-l">
+    {% include "site-nav.njk" %}
+    <a class="shortcut wa-border-radius-s" id="site-search" href="/#search"><wa-icon name="magnifying-glass" variant="regular" label="Search Recipes"></wa-icon></a>
+    <wa-tooltip for="site-search" placement="bottom">Search Recipes</wa-tooltip>
+  </div>
+</div>

@@ -47,6 +47,12 @@ function measureLongestWord(words) {
   return Math.max(...words.map(word => word.letters.length));
 }
 
+function listMostCountedFirst(countsByName) {
+  return [...countsByName].sort(
+    ([firstName, firstCount], [secondName, secondCount]) => secondCount - firstCount || firstName.localeCompare(secondName)
+  );
+}
+
 // The tags that most often share a recipe with this one, most shared first.
 function listRelatedTags(recipes, tag) {
   const sharedCounts = new Map();
@@ -55,8 +61,7 @@ function listRelatedTags(recipes, tag) {
       if (otherTag !== tag) sharedCounts.set(otherTag, (sharedCounts.get(otherTag) ?? 0) + 1);
     }
   }
-  return [...sharedCounts]
-    .sort(([firstName, firstCount], [secondName, secondCount]) => secondCount - firstCount || firstName.localeCompare(secondName))
+  return listMostCountedFirst(sharedCounts)
     .slice(0, 3)
     .map(([name]) => name);
 }
@@ -120,6 +125,15 @@ function findRecipeNamed(recipes, recipeName) {
   return recipes.find(item => item.fileSlug === recipeName);
 }
 
+function countRecipeSources(recipes) {
+  const countsByName = new Map();
+  for (const item of recipes) {
+    const name = item.data.source?.name;
+    if (name) countsByName.set(name, (countsByName.get(name) ?? 0) + 1);
+  }
+  return listMostCountedFirst(countsByName).map(([name, count]) => ({ name, count }));
+}
+
 function listRecipesThatUse(recipes, recipeName) {
   return recipes.filter(item => item.data.linkedRecipeNames.includes(recipeName));
 }
@@ -159,6 +173,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('groupTagsByKind', groupTagsByKind);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
   eleventyConfig.addFilter('recipesThatUse', listRecipesThatUse);
+  eleventyConfig.addFilter('recipeSources', countRecipeSources);
 
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))

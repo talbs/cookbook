@@ -101,6 +101,7 @@ body {
   /* Sans words set inside serif text. Ingredient names also take weight 500, or they stop reading as ingredients. */
   --inline-sans-size: 0.875em;
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
+  --side-column: calc(4 / 11 * (100% - var(--column-gap)));
   --page-gutter: 1.25rem;
   --section-space: var(--wa-space-l);
   /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
@@ -121,6 +122,7 @@ body {
   /* The bar's switch: its button plus the switch's 3px padding and 1px border on each side. */
   --bar-switch-height: calc(var(--bar-control-height) + 8px);
   --shortcut-size: 2.5rem;
+  --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
      Jump targets and the sticky step ingredients both clear it from this one value. */
   --bar-height: calc(
@@ -201,6 +203,18 @@ a:focus-visible {
   padding: 0;
 }
 
+/* Every page's main runs down to the footer, so a short page's content area meets it instead of stopping early.
+   In a flex column, main's centring margins would shrink it to fit its content, so it keeps the full width explicitly. */
+wa-page::part(main-content) {
+  display: flex;
+  flex-direction: column;
+}
+
+wa-page > main {
+  flex: 1;
+  inline-size: 100%;
+}
+
 .listing-page::part(header) {
   border: 0;
   background: none;
@@ -209,7 +223,8 @@ a:focus-visible {
 .recipe,
 .listing,
 .recipe-nav,
-.site-header {
+.site-header,
+.site-footer {
   box-sizing: border-box;
   max-inline-size: 75rem;
   margin-inline: auto;
@@ -220,6 +235,22 @@ a:focus-visible {
 .recipe-nav,
 .site-header {
   padding-block: var(--wa-space-xl) 0;
+}
+
+.site-footer {
+  padding-block: 0 var(--wa-space-2xl);
+}
+
+.made-by {
+  margin: 0;
+  color: var(--note-ink);
+}
+
+/* The padding makes the icon a 32px tap target; the margin takes it back so the sentence doesn't move. */
+.made-with a {
+  margin: calc(-1 * var(--wa-space-xs));
+  padding: var(--wa-space-xs);
+  text-decoration-line: none;
 }
 
 .listing {
@@ -234,7 +265,8 @@ a:focus-visible {
 
 /* The padding makes each link a 40px tap target without moving the words. */
 .site-nav a,
-.course-links a {
+.course-links a,
+.site-name {
   padding-block: var(--wa-space-xs);
 }
 
@@ -243,13 +275,31 @@ a:focus-visible {
   text-decoration-line: none;
 }
 
+/* 18px keeps the wordmark's capitals only a little taller than the 16px nav's. */
+.site-name {
+  font-family: var(--wa-font-family-heading);
+  font-size: 1.125rem;
+  color: var(--ink);
+  text-decoration-line: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+.site-name:hover {
+  color: var(--accent);
+}
+
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
+.site-name,
+.recipe-head h1,
+.listing-head h1 {
+  font-weight: 800;
+  font-synthesis: none;
+}
+
 .recipe-head h1,
 .listing-head h1 {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
-  font-weight: 800;
-  font-synthesis: none;
   line-height: 0.92;
   text-transform: uppercase;
   text-box: trim-both cap alphabetic;
@@ -333,7 +383,8 @@ a:focus-visible {
 
 .description,
 .step-text,
-.recipe-note {
+.recipe-note,
+.about-prose p {
   font-family: var(--wa-font-family-longform);
   font-size: var(--step-size);
   line-height: 1.5;
@@ -395,13 +446,22 @@ a:focus-visible {
 
 /* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
    At rest only the line shows, in the divider's colour. */
-.recipe-icons wa-icon {
+.recipe-icons wa-icon,
+.made-with wa-icon {
   --primary-color: var(--divider-ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0;
   transition:
     --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
     --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+/* The footer's icon sits beside text, not dots, so its line rests in ink. Half a step up from the text,
+   it drops by half the extra size, past wa-icon's own 2px, so its middle stays on the text's middle. */
+.made-with wa-icon {
+  --primary-color: var(--ink);
+  font-size: calc((var(--wa-font-size-m) + var(--wa-font-size-l)) / 2);
+  vertical-align: calc((var(--wa-font-size-m) - 1em) / 2 - var(--wa-space-3xs));
 }
 
 /* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
@@ -411,6 +471,12 @@ a:focus-visible {
   .recipe-card:hover .recipe-icons wa-icon {
     --primary-color: var(--ink);
     --secondary-opacity: 0.16;
+  }
+
+  .made-with a:hover wa-icon {
+    --primary-color: var(--accent);
+    --secondary-color: var(--accent);
+    --secondary-opacity: 0.2;
   }
 }
 
@@ -556,17 +622,25 @@ a:focus-visible {
 }
 
 /* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
-.shortcuts {
+.shortcuts,
+.site-bar .shortcut {
   margin-inline-end: calc((1rem - var(--shortcut-size)) / 2);
+}
+
+.pinned-lead {
+  min-inline-size: 0;
+  margin-inline-start: calc((1rem - var(--shortcut-size)) / 2);
 }
 
 .shortcut {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
   inline-size: var(--shortcut-size);
   block-size: var(--shortcut-size);
   color: var(--note-ink);
   text-decoration: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .shortcut:hover {
@@ -843,7 +917,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .listing-detail,
 .card-time,
 .course-count,
-.untimed-note {
+.untimed-note,
+.stats dt {
   font-size: var(--note-size);
   color: var(--note-ink);
 }
@@ -1002,8 +1077,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   position: fixed;
   inset: auto var(--page-gutter) max(var(--wa-space-l), env(safe-area-inset-bottom)) auto;
   z-index: 2;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
+  inline-size: var(--to-top-size);
+  block-size: var(--to-top-size);
   border: 1px solid var(--control-edge);
   background: var(--paper);
   box-shadow: var(--wa-shadow-s);
@@ -1030,6 +1105,13 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 @media (min-width: 48rem) {
+  .colophon > div {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--wa-space-l);
+  }
+
   .listing-controls.can-stick {
     position: sticky;
     inset-block-start: 0;
@@ -1096,6 +1178,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     flex-basis: 100%;
     max-inline-size: none;
   }
+
+  /* The floating back-to-top arrow would cover the footer's last link, so the footer ends above it. */
+  .listing-page:has(.to-top) .site-footer {
+    padding-block-end: calc(var(--to-top-size) + var(--wa-space-l) + max(var(--wa-space-l), env(safe-area-inset-bottom)));
+  }
 }
 
 @media (width < 30rem) {
@@ -1143,13 +1230,23 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   mask: var(--divider);
 }
 
-.search-empty {
+.empty-state {
   position: relative;
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
+}
+
+/* With no matches, the results area and its panel run down to the footer, like the 404's. */
+.listing-results {
+  flex: 1;
+}
+
+.search-empty {
+  flex: 1;
+  justify-content: center;
   text-align: center;
 }
 
-.search-empty::before {
+.empty-state::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1158,11 +1255,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   opacity: 0.35;
 }
 
-.search-empty > * {
+.empty-state > * {
   position: relative;
 }
 
-.search-empty p {
+.empty-state p {
   margin: 0;
 }
 
@@ -1175,7 +1272,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   font-size: var(--wa-font-size-xl);
 }
 
-.empty-icons wa-icon {
+.empty-icons wa-icon,
+.not-found .stats wa-icon {
   --primary-color: var(--ink);
   --secondary-color: var(--ink);
   --secondary-opacity: 0.16;
@@ -1195,8 +1293,67 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-wrap: balance;
 }
 
-.empty-ways-out {
-  justify-content: center;
+/* Outlined buttons sit on the hatch, so they keep a solid paper fill. */
+wa-button[appearance='outlined']::part(base) {
+  background: var(--paper);
+  color: var(--ink);
+  transition:
+    color var(--wa-transition-normal) var(--wa-transition-easing),
+    border-color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button[appearance='outlined']:hover::part(base) {
+  background: var(--paper);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.not-found-page main,
+.listing:has(.search-empty:not([hidden])) {
+  padding-block-end: var(--wa-space-2xl);
+}
+
+.not-found {
+  --stat-size: clamp(7rem, 30vw, 18rem);
+  flex: 1;
+}
+
+.not-found .stats {
+  margin-block: auto;
+  text-align: center;
+}
+
+/* The egg stands in for the 0, so it matches a figure's height (about 0.7em in Free Lunch) and sits on the baseline.
+   The icon box is far wider than the egg, so negative margins pull the 4s in to the gap a real 0 would leave. */
+.not-found .stats wa-icon {
+  font-size: 0.7em;
+  vertical-align: baseline;
+  margin-inline: -0.19em;
+  transform-origin: 50% 100%;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .not-found .stats dd > span:hover wa-icon {
+    animation: egg-wobble calc(2 * var(--settle)) ease-out;
+  }
+}
+
+@keyframes egg-wobble {
+  20% {
+    rotate: -9deg;
+  }
+
+  45% {
+    rotate: 6deg;
+  }
+
+  70% {
+    rotate: -3deg;
+  }
+
+  88% {
+    rotate: 1deg;
+  }
 }
 
 /* A button that reads as a text link, for a suggestion that fills the search instead of going somewhere. */
@@ -1248,7 +1405,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .recipe-card:focus-visible,
 .listing-row:focus-visible,
-.site-nav a:focus-visible {
+.site-nav a:focus-visible,
+.site-name:focus-visible {
   outline-offset: var(--wa-space-xs);
 }
 
@@ -1329,6 +1487,36 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .listing-rows {
     column-count: 2;
   }
+}
+
+/* The number reads first, so it sits above its label; the markup keeps the label first for screen readers. */
+.stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--wa-space-2xs);
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--wa-font-family-heading);
+  font-size: var(--stat-size, var(--wa-font-size-4xl));
+  font-weight: 800;
+  font-synthesis: none;
+  line-height: 1;
+}
+
+/* At this size the site's hover underline lands on the label below, so the number takes the accent instead. */
+.stats dd a {
+  text-decoration-line: none;
+}
+
+.stats dd a:hover {
+  color: var(--accent);
+}
+
+/* About's sources sit in a side column, too narrow for two columns of rows. */
+.about-body .listing-rows {
+  column-count: 1;
 }
 
 /* The link carries the row's spacing, so rows touch and the whole 40px strip is the tap target. */
@@ -1646,7 +1834,7 @@ wa-progress-bar.wait-run::part(indicator) {
   margin: 0;
 }
 
-:is(.facts, .attribution) dt {
+:is(.facts, .attribution, .colophon) dt {
   margin-block-end: var(--wa-space-xs);
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
@@ -1656,7 +1844,8 @@ wa-progress-bar.wait-run::part(indicator) {
   font-size: var(--note-size);
 }
 
-.attribution dd {
+.attribution dd,
+.colophon dd {
   margin: 0;
   font-size: var(--list-size);
   line-height: 1.5;
@@ -1712,7 +1901,8 @@ wa-progress-bar.wait-run::part(indicator) {
   }
 
   /* Credits and tags lead away from the recipe; Cook ends on the dotted line. */
-  [data-mode='cook'] .attribution :is(.credit, .connections) {
+  [data-mode='cook'] .attribution :is(.credit, .connections),
+  [data-mode='cook'] .site-footer {
     display: none;
   }
 
@@ -1746,13 +1936,39 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: translate var(--settle) var(--ease-slide);
   }
 
-  .mode-switch {
-    transition: scale var(--press) ease-out;
+  /* Dip fast on press, spring back on release. */
+  .mode-switch,
+  wa-button[appearance='outlined'],
+  .time-select::part(combobox),
+  .shortcut wa-icon {
+    transition: scale var(--settle) var(--ease-spring);
+  }
+
+  @media (hover: hover) {
+    .shortcut:hover wa-icon {
+      scale: 1.15;
+    }
   }
 
   .mode-switch:active,
-  .print-control:active {
+  wa-button[appearance='outlined']:active,
+  .time-select:active::part(combobox) {
     scale: 0.97;
+    transition: scale var(--press) ease-out;
+  }
+
+  .shortcut:active wa-icon {
+    scale: 0.8;
+    transition: scale var(--press) ease-out;
+  }
+
+  /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
+  .mode-rest .print-control:active {
+    scale: 0.97;
+  }
+
+  .mode-rest .print-control wa-icon {
+    scale: none;
   }
 
   .mode-bar {
@@ -2019,16 +2235,25 @@ wa-progress-bar.wait-run::part(indicator) {
   /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
   .recipe {
     display: grid;
-    grid-template-columns: calc(4 / 11 * (100% - var(--column-gap))) minmax(
-        0,
-        1fr
-      ) 15rem;
+    grid-template-columns: var(--side-column) minmax(0, 1fr) 15rem;
     gap: var(--wa-space-l) var(--column-gap);
     align-items: start;
   }
 
   .recipe > * {
     grid-column: 1 / -1;
+  }
+
+  /* About borrows the recipe's columns: the dotted list takes the ingredients' place on the left, the prose the steps'. */
+  .about-body {
+    display: grid;
+    grid-template-columns: var(--side-column) minmax(0, 1fr);
+    column-gap: var(--column-gap);
+    align-items: start;
+  }
+
+  .about-data {
+    grid-area: 1 / 1;
   }
 
   /* Lets the title, description, facts and switch sit on the page grid as one row of cells. */
@@ -2230,6 +2455,8 @@ wa-page[view='desktop'] {
 
   .mode-bar,
   .recipe-nav,
+  .site-header,
+  .site-footer,
   .mode-rest,
   wa-tooltip,
   wa-details.step-note,
