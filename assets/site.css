@@ -270,23 +270,36 @@ wa-page > main {
   padding-block: var(--wa-space-xs);
 }
 
-.site-nav a[aria-current],
-.site-name {
+.site-nav a[aria-current] {
   font-weight: var(--wa-font-weight-bold);
   text-decoration-line: none;
 }
 
+/* 18px keeps the wordmark's capitals only a little taller than the 16px nav's. */
+.site-name {
+  font-family: var(--wa-font-family-heading);
+  font-size: 1.125rem;
+  color: var(--ink);
+  text-decoration-line: none;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
 .site-name:hover {
-  text-decoration-line: underline;
+  color: var(--accent);
 }
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
+.site-name,
+.recipe-head h1,
+.listing-head h1 {
+  font-weight: 800;
+  font-synthesis: none;
+}
+
 .recipe-head h1,
 .listing-head h1 {
   --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
   font-size: var(--title-size);
-  font-weight: 800;
-  font-synthesis: none;
   line-height: 0.92;
   text-transform: uppercase;
   text-box: trim-both cap alphabetic;
