@@ -12,6 +12,7 @@ test('the ingredient list adds up every mention of an ingredient', () => {
       '1 tbsp plus 1 tsp sugar',
       '3 eggs',
       '360 ml milk',
+      '1/3 cup plus 2 tsp honey',
       '1 1/4 lb butter',
       '6 oz cheddar (shredded)',
       '1 1/2 kg potatoes',
