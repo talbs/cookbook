@@ -11,6 +11,7 @@ Each recipe is one plain text file written in [Cooklang](https://cooklang.org). 
 - [How it works](#how-it-works)
 - [Project layout](#project-layout)
 - [Tests and CI](#tests-and-ci)
+- [Deploy](#deploy)
 - [Add a recipe](#add-a-recipe)
 - [Bringing one in from somewhere else](#bringing-one-in-from-somewhere-else)
 - [When the build fails](#when-the-build-fails)
@@ -113,7 +114,24 @@ eleventy.config.js    The .cook extension, filters, the recipes collection, dev 
 - `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page. Each recipe's `.cook` file must be published unchanged, and `llms.txt` must list every recipe.
 - `test/timer-phase.test.js` covers the timer math.
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request and on every push to `main`. It doesn't deploy anything.
+GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request. It doesn't deploy anything.
+
+## Deploy
+
+Every push to `main` publishes the site to https://cookbook.talbs.me through GitHub Pages (`.github/workflows/deploy.yml`). It runs the tests, adds the title font, builds, and publishes `_site/`. It can also be run by hand from the Actions tab, from `main` only.
+
+The title font isn't in the repo, so the deploy reads it from a repository secret named `TITLE_FONT_WOFF2_BASE64`. If the secret is missing, cut off, or isn't a web font, the deploy stops and the live site stays as it was. To set or replace it, run `npm run font`, then:
+
+```bash
+base64 -i site/assets/fonts/FreeLunch-Regular.woff2 | gh secret set TITLE_FONT_WOFF2_BASE64
+```
+
+One-time setup, before the first push to `main`:
+
+1. Add a DNS record: `cookbook` as a `CNAME` pointing to `talbs.github.io`.
+2. Set the font secret with the command above.
+3. In the repo's Pages settings, set the source to "GitHub Actions" and the custom domain to `cookbook.talbs.me`.
+4. Turn on "Enforce HTTPS" there once GitHub has issued the certificate.
 
 ## Add a recipe
 
