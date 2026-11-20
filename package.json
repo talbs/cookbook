@@ -4,11 +4,11 @@
   "description": "Personally approved collection of recipes culled from books, shows, and the Internet.",
   "scripts": {
     "build": "rm -rf _site && eleventy",
-    "start": "rm -rf _site && eleventy --serve",
+    "start": "rm -rf _site && node --watch --watch-preserve-output node_modules/@11ty/eleventy/cmd.cjs --serve --quiet",
     "test": "node --test \"test/*.test.js\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Brian Talbot",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "devDependencies": {

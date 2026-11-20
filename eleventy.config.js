@@ -140,11 +140,10 @@ function listRecipesThatUse(recipes, recipeName) {
 
 export default function (eleventyConfig) {
   eleventyConfig.setTemplateFormats(['njk', '11ty.js', 'cook']);
-  eleventyConfig.ignores.add('.claude/**');
   eleventyConfig.ignores.add('test/**');
   eleventyConfig.addPassthroughCopy('assets');
   // The dev server would otherwise patch an open page in place, which resets what the page's scripts have set without running them again.
-  eleventyConfig.setServerOptions({ domDiff: false });
+  eleventyConfig.setServerOptions({ domDiff: false, port: 4186 });
 
   eleventyConfig.addExtension('cook', {
     // Cooklang reads the front matter; letting 11ty read it too gave two YAML readers that disagreed on dates.
