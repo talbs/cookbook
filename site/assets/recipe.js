@@ -43,6 +43,7 @@ function showMode(mode) {
     modeSwitch.value = mode;
   }
   writeModeToUrl(mode);
+  timers.keepScreenAwakeWhileNeeded();
 }
 
 function switchMode(mode) {
@@ -59,7 +60,12 @@ function restoreChecks(checkedIds) {
 }
 
 const savedState = readSavedState();
-const timers = startTimers({ root: recipe, savedStarts: savedState.timers ?? {}, onChange: saveState });
+const timers = startTimers({
+  root: recipe,
+  savedStarts: savedState.timers ?? {},
+  onChange: saveState,
+  isCooking: () => page.dataset.mode === 'cook',
+});
 const linkedMode = new URLSearchParams(location.search).get('mode');
 if (isMode(linkedMode)) showMode(linkedMode);
 else if (isMode(savedState.mode)) showMode(savedState.mode);

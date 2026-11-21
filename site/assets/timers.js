@@ -185,7 +185,7 @@ function letScreenSleep() {
   wakeLock = null;
 }
 
-export function startTimers({ root, savedStarts, onChange }) {
+export function startTimers({ root, savedStarts, onChange, isCooking }) {
   const timers = [...root.querySelectorAll('.timer-band')].map((band) =>
     readBand(band, savedStarts)
   );
@@ -198,6 +198,7 @@ export function startTimers({ root, savedStarts, onChange }) {
   }
 
   function isScreenNeeded() {
+    if (isCooking()) return true;
     return timers.some((timer) => isTicking(timer) && !timer.isLong);
   }
 
@@ -286,8 +287,11 @@ export function startTimers({ root, savedStarts, onChange }) {
   }
   keepClockRunningWhileNeeded();
   document.addEventListener('visibilitychange', keepScreenAwakeWhileNeeded);
+  // A browser can refuse the lock until the reader has touched the page, so each touch asks again; it does nothing once the lock is held.
+  document.addEventListener('pointerdown', keepScreenAwakeWhileNeeded);
 
   return {
+    keepScreenAwakeWhileNeeded,
     readStarts() {
       const starts = {};
       for (const timer of timers) {
