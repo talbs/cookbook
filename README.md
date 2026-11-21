@@ -219,6 +219,8 @@ A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple g
 - A second unit or a count goes in the note: `@egg yolks{110%g}(4 oz, about 7)`.
 - `@./other-recipe{}` uses another recipe as an ingredient. Write the other recipe's file name. The page shows its title as a link, and the other recipe's page says where it's used. `@?./other-recipe{}` marks it optional.
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
+- Use sections only when a recipe has parts you make separately, or phases with a wait between them. Name a part with a noun (`Sauce`) and a phase with one verb (`Marinate`).
+- Don't label a part inside a step (`Make the dressing:`). Give it a section, or write it as a sentence.
 - A note after a step folds under that step. Start it with a bold title and a dash, `> **Storing** — Keeps for 2 weeks.`, and the title is what shows when it's folded. With no title, the first sentence is the title, so a one-sentence note needs one.
 - A note before the first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
 - Type `1/2`, not `½`.
