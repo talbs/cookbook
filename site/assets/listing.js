@@ -39,6 +39,11 @@ if (stickyToolbar) {
 
   addEventListener('scroll', markWhetherStuck, { passive: true });
   markWhetherStuck();
+
+  const footerWatcher = new IntersectionObserver(([entry]) => {
+    stickyToolbar.classList.toggle('is-at-footer', entry.isIntersecting);
+  });
+  footerWatcher.observe(document.querySelector('.site-footer'));
 }
 
 const searchInput = document.querySelector('.recipe-search');

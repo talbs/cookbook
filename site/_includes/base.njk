@@ -60,6 +60,9 @@
         }
       }
       document.addEventListener('wa-discovery-complete', keepRevealRunning, { once: true });
+
+      // iOS Safari only applies :active while a touch listener exists, and cards, checkboxes and switches answer a press on :active.
+      document.addEventListener('touchstart', () => {}, { passive: true });
     </script>
     <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
     <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">

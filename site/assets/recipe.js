@@ -43,6 +43,7 @@ function showMode(mode) {
     modeSwitch.value = mode;
   }
   writeModeToUrl(mode);
+  timers.keepScreenAwakeWhileNeeded();
 }
 
 function switchMode(mode) {
@@ -59,7 +60,12 @@ function restoreChecks(checkedIds) {
 }
 
 const savedState = readSavedState();
-const timers = startTimers({ root: recipe, savedStarts: savedState.timers ?? {}, onChange: saveState });
+const timers = startTimers({
+  root: recipe,
+  savedStarts: savedState.timers ?? {},
+  onChange: saveState,
+  isCooking: () => page.dataset.mode === 'cook',
+});
 const linkedMode = new URLSearchParams(location.search).get('mode');
 if (isMode(linkedMode)) showMode(linkedMode);
 else if (isMode(savedState.mode)) showMode(savedState.mode);
@@ -93,9 +99,6 @@ document.head.append(printAddressStyle);
 for (const printControl of page.querySelectorAll('.print-control')) {
   printControl.addEventListener('click', () => window.print());
 }
-
-// iOS Safari only applies :active while a touch listener exists, and the checkboxes and switch squish on :active.
-document.addEventListener('touchstart', () => {}, { passive: true });
 
 for (const checkbox of checkboxes) {
   checkbox.addEventListener('change', () => {
