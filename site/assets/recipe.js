@@ -100,9 +100,6 @@ for (const printControl of page.querySelectorAll('.print-control')) {
   printControl.addEventListener('click', () => window.print());
 }
 
-// iOS Safari only applies :active while a touch listener exists, and the checkboxes and switch squish on :active.
-document.addEventListener('touchstart', () => {}, { passive: true });
-
 for (const checkbox of checkboxes) {
   checkbox.addEventListener('change', () => {
     checkbox.classList.add('is-touched');

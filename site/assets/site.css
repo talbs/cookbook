@@ -348,13 +348,24 @@ wa-page > main {
   padding-block: var(--header-inset) 0;
 }
 
+/* One quiet line of text needs less room than a page's opening, so the footer's dots sit closer to it than the header's do,
+   and the page ends the same distance under it. */
 .site-footer {
-  padding-block: 0 var(--wa-space-2xl);
+  --rule-gap: 1.75rem;
+  padding-block: 0 var(--rule-gap);
 }
 
-/* A recipe already ends on its own dotted line, a few rows up; a second one would box the credits in. */
-.recipe-page .site-footer .header-rule {
-  display: none;
+/* A recipe already ends on its own dotted line, a few rows up; beside the credits' columns a second one would box them in.
+   On a phone the credits stack, and without the line the site's credit reads as one more row of them, so it stays. */
+@media (min-width: 48rem) {
+  .recipe-page .site-footer .header-rule {
+    display: none;
+  }
+
+  /* The footer's arrow stands in for the floating one, which only phones have. */
+  .site-footer .footer-top {
+    display: none;
+  }
 }
 
 .made-by {
@@ -644,8 +655,8 @@ wa-scroller:has(.course-links) {
   }
 }
 
-/* A keyboard gets the same inked icons on a focused card, on any device, so this sits outside the hover query. */
-.recipe-card:focus-visible .recipe-icons wa-icon {
+/* A keyboard gets the same inked icons on a focused card, and a finger gets them while it presses, so this sits outside the hover query. */
+.recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon {
   --primary-color: var(--ink);
   --secondary-opacity: 0.16;
 }
@@ -669,15 +680,15 @@ wa-scroller:has(.course-links) {
     transition-delay: 90ms;
   }
 
-  .recipe-card:focus-visible .recipe-icons wa-icon {
+  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon {
     scale: 1.2;
   }
 
-  .recipe-card:focus-visible .recipe-icons wa-icon:nth-child(odd) {
+  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(odd) {
     rotate: -8deg;
   }
 
-  .recipe-card:focus-visible .recipe-icons wa-icon:nth-child(even) {
+  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(even) {
     rotate: 8deg;
   }
 
@@ -762,6 +773,14 @@ wa-scroller:has(.course-links) {
   visibility: visible;
 }
 
+/* Firefox for iOS shows the page through its status bar, above the top of the window. Paper above the bar covers it. */
+.mode-bar::before {
+  content: '';
+  position: absolute;
+  inset: -100vh 0 100%;
+  background: inherit;
+}
+
 /* The switch is a wa-radio-group of button radios. The group draws the frame; the radios lose their own fill and border. */
 .mode-switch {
   --switch-inset: 3px;
@@ -811,6 +830,11 @@ wa-scroller:has(.course-links) {
 /* In the site bar the inset comes off both sides, so the gaps between icons measure the same as the gaps between nav words. */
 .site-bar .shortcut {
   margin-inline: var(--shortcut-inset);
+}
+
+/* The footer's arrow gives its whole tap box back, so the row stays as tall as its words. */
+.footer-top {
+  margin: var(--shortcut-inset);
 }
 
 /* Below 360px the bar's wa-gap-l no longer fits on one line, so the nav would wrap; a step tighter keeps it whole down to 320px. */
@@ -1312,12 +1336,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   visibility: hidden;
   opacity: 0;
   translate: 0 0.5rem;
+  scale: 0.8;
 }
 
 .is-stuck .to-top {
   visibility: visible;
   opacity: 1;
   translate: 0 0;
+  scale: 1;
 }
 
 .untimed-note {
@@ -1329,6 +1355,19 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .empty-ways-out .link-button,
 .empty-random {
   padding-block: var(--wa-space-xs);
+}
+
+/* In a flex row that padding does add height, so the margin takes it back and gaps are measured from the words.
+   It goes on the tags' row, not the tags, because wa-random-content sets its own margins on the ones it shows. */
+.site-footer .site-nav,
+.empty-suggestions,
+.empty-random {
+  margin-block: calc(-1 * var(--wa-space-xs));
+}
+
+/* Tags that wrap stay one group: their tap areas touch, so the words sit closer than the lines around them. */
+.empty-suggestions {
+  row-gap: 0;
 }
 
 @media (min-width: 48rem) {
@@ -1405,9 +1444,29 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     max-inline-size: none;
   }
 
-  /* The floating back-to-top arrow would cover the footer's last link, so the footer ends above it. */
-  .listing-page:has(.to-top) .site-footer {
-    padding-block-end: calc(var(--to-top-size) + var(--wa-space-l) + max(var(--wa-space-l), env(safe-area-inset-bottom)));
+  /* The floating back-to-top arrow would cover the footer's last link, so it leaves once the footer shows. */
+  .is-at-footer .to-top {
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 0.5rem;
+    scale: 0.8;
+  }
+
+  /* The footer's dotted line expects a 24px gap above it. On a phone the page ends on exactly that,
+     so the dots sit as far from the page's last line as from the credit under them. */
+  .listing,
+  .recipe {
+    padding-block-end: var(--wa-space-l);
+  }
+
+  /* Stacked, the credit and the links read as one pair. */
+  .site-footer .wa-split {
+    row-gap: var(--wa-space-xs);
+  }
+
+  /* Each way out takes its own centred line, however long the suggested tags run. */
+  .search-empty .empty-ways-out {
+    flex-direction: column;
   }
 }
 
@@ -1419,6 +1478,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   /* Beside the switch there is only room for the words, so the clock goes. */
   .time-select wa-icon {
     display: none;
+  }
+
+  /* A column this narrow holds too few words per line to even out, so balanced and pretty wrapping
+     leave lines well short of the edge. Ledes and running text fill each line instead; headings stay balanced. */
+  main :is(p, li, dd),
+  .wa-text-balance,
+  .wa-text-pretty {
+    text-wrap: wrap;
   }
 }
 
@@ -1527,9 +1594,11 @@ wa-button[appearance='outlined']:hover::part(base) {
   color: var(--accent);
 }
 
-.not-found-page main,
-.listing:has(.search-empty:not([hidden])) {
-  padding-block-end: var(--wa-space-2xl);
+@media (min-width: 48rem) {
+  .not-found-page main,
+  .listing:has(.search-empty:not([hidden])) {
+    padding-block-end: var(--wa-space-2xl);
+  }
 }
 
 .not-found {
@@ -1669,9 +1738,17 @@ wa-button[appearance='outlined']:hover::part(base) {
   text-underline-offset: 0.25em;
 }
 
-.recipe-card:hover .card-title {
+.recipe-card:active .card-title {
   text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
+}
+
+/* Hover-only for the same reason as the icons: a card brushed on a phone doesn't stay underlined. */
+@media (hover: hover) {
+  .recipe-card:hover .card-title {
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+  }
 }
 
 .card-time {
@@ -2045,10 +2122,12 @@ wa-progress-bar.wait-run::part(indicator) {
   font-weight: var(--wa-font-weight-bold);
 }
 
+/* The dotted line's margin expects a 16px gap above it and the page's stack gives 24px, so this takes the difference back
+   and the dots sit --rule-gap from the last step, as they do from the credits. */
 .attribution {
   display: grid;
   gap: var(--wa-space-m);
-  margin-block-start: var(--wa-space-2xl);
+  margin-block-start: calc(var(--wa-space-m) - var(--wa-space-l));
 }
 
 /* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
@@ -2497,10 +2576,12 @@ wa-progress-bar.wait-run::part(indicator) {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
   }
 
+  /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
   .to-top {
     transition:
       opacity var(--wa-transition-slow) var(--wa-transition-easing),
       translate var(--settle) var(--ease-settle),
+      scale var(--settle) var(--ease-spring),
       visibility var(--wa-transition-slow);
   }
 
