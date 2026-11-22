@@ -15,8 +15,10 @@ const COURSE_HEADINGS = {
 };
 // Tags that say how a recipe is cooked. Seasons come from the validator's list; every other tag names a kind of dish.
 const METHOD_TAGS = [
+  'air-fryer',
   'baking',
   'canning',
+  'griddle',
   'grill',
   'make-ahead',
   'one-pan',
