@@ -98,7 +98,7 @@ if (searchInput) {
   function showPick(container, pick) {
     container.querySelector('wa-format-date').date = pick.now;
     container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
-    container.querySelector('.pick-season').textContent = pick.isInSeason ? ` · ${writeInTitleCase(pick.season)}` : '';
+    container.querySelector('.pick-season').textContent = pick.isInSeason ? writeInTitleCase(pick.season) : '';
     const link = container.querySelector('.pick-link');
     link.href = pick.entry.url;
     link.querySelector('.pick-title').textContent = pick.entry.title;
@@ -265,11 +265,14 @@ if (searchInput) {
 
       // The new title is laid out at its final width from the start, so it never rewraps while the panel grows.
       dish.style.inlineSize = `${newWidth}px`;
+      // The settle easing dips past its target, and a panel narrower than its foot would wrap the occasion line.
+      panel.style.minInlineSize = `${Math.min(oldWidth, newWidth)}px`;
       panel.style.overflow = 'clip';
       const growing = panel.animate([{ inlineSize: `${oldWidth}px` }, { inlineSize: `${newWidth}px` }], { duration: settle, easing: easeSettle });
       const arriving = dish.animate([{ translate: '1.5rem 0', opacity: 0 }, { translate: '0', opacity: 1 }], { duration: settle, easing: easeSettle });
       await Promise.all([growing.finished, arriving.finished]);
       dish.style.inlineSize = '';
+      panel.style.minInlineSize = '';
       panel.style.overflow = '';
     }
 
