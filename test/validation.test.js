@@ -21,6 +21,7 @@ const malformedRecipes = [
   ['author-map.cook', /author must be text/],
   ['diet-number.cook', /diet must be text or a list of text/],
   ['adapted-text.cook', /adapted must be true or false/],
+  ['adapted-without-note.cook', /adapted needs a What's Changed note/],
   ['wrong-unit-case.cook', /unit "Tbsp" in step 1 isn't one Cooklang knows: write tbsp/],
   ['alias-key.cook', /write servings, not serves/],
   ['text-yield.cook', /yield "24 bars" must be an amount and unit/],
