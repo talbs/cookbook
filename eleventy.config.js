@@ -1,9 +1,10 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
 import { loadRecipe } from './lib/recipe.js';
+import { CARD_HEIGHT, CARD_WIDTH, describeShareCard, nameShareCard, writeShareCards } from './lib/share-card.js';
 import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
-import { COURSES, RESERVED_TAGS, SEASON_NAMES, YEAR_ROUND_TAG } from './lib/validate-recipe.js';
+import { COURSES, SEASON_NAMES, YEAR_ROUND_TAG, labelCourse, listTagNames } from './lib/validate-recipe.js';
+import site from './site/_data/site.json' with { type: 'json' };
 
-const COURSE_LABELS = { main: 'Main course', side: 'Side dish' };
 const COURSE_HEADINGS = {
   main: 'Mains',
   side: 'Sides',
@@ -26,10 +27,6 @@ const METHOD_TAGS = [
   'stir-fry',
 ];
 const RECIPE_PATH_PATTERN = /^\.\/recipes\/[^/]+\.cook$/;
-
-function labelCourse(course) {
-  return COURSE_LABELS[course] ?? course.charAt(0).toUpperCase() + course.slice(1);
-}
 
 // A title as words of single letters, so each letter can move on its own without a word ever breaking in two.
 // A hyphen ends a word with no space after it, which lets a long compound still wrap at its hyphen.
@@ -84,12 +81,6 @@ function groupByCourse(recipes) {
     }
   }
   return groups;
-}
-
-function listTagNames(collections) {
-  return Object.keys(collections)
-    .filter(name => !RESERVED_TAGS.includes(name))
-    .sort();
 }
 
 function listSeasonTags(tags) {
@@ -183,6 +174,23 @@ export default function (eleventyConfig) {
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))
   );
+
+  // Each page's layout asks for its card's address, which is how the build learns which cards to draw once the pages are written.
+  const shareCardsByFileName = new Map();
+  eleventyConfig.addGlobalData('shareCardSize', { width: CARD_WIDTH, height: CARD_HEIGHT });
+  eleventyConfig.addShortcode('shareCardAddress', function () {
+    const card = describeShareCard(this.ctx);
+    const fileName = nameShareCard(card);
+    shareCardsByFileName.set(fileName, card);
+    return `${site.url}/share/${fileName}`;
+  });
+  eleventyConfig.on('eleventy.before', () => shareCardsByFileName.clear());
+  eleventyConfig.on('eleventy.after', async ({ directories, outputMode }) => {
+    const isWritingFiles = outputMode === 'fs';
+    if (isWritingFiles) {
+      await writeShareCards(shareCardsByFileName, `${directories.output}share`, { kitCode: site.iconKitCode, siteUrl: site.url });
+    }
+  });
 
   return { dir: { includes: 'site/_includes', data: 'site/_data' } };
 }
