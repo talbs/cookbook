@@ -741,17 +741,16 @@ wa-scroller:has(.course-links) {
   flex: 1;
 }
 
-/* The bar only shows after scrolling, so the print control also rests here, ahead of the switch as it is in the bar.
-   It wears the switch's frame at the switch's height, so the two read as one set of controls. */
-.mode-rest .print-control {
-  flex: none;
+/* The bar only shows after scrolling, so print and share also rest here, ahead of the switch as they are in the bar.
+   They wear the switch's frame at the switch's height, so the row reads as one set of controls. */
+.mode-rest .page-action {
   inline-size: var(--rest-switch-height);
   block-size: var(--rest-switch-height);
   border: 1px solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
 }
 
-.mode-rest .print-control:hover {
+.mode-rest .page-action:hover {
   border-color: var(--accent);
 }
 
@@ -2080,7 +2079,8 @@ wa-progress-bar.wait-run::part(progress-bar) {
   cursor: pointer;
 }
 
-.timer-control[hidden] {
+.timer-control[hidden],
+.share-control[hidden] {
   display: none;
 }
 
@@ -2767,8 +2767,8 @@ wa-input::part(clear-button):hover {
       translate var(--press) ease-in;
   }
 
-  /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
-  .mode-rest .print-control:active {
+  /* Resting beside the switch, print and share wear its frame, so they dip like the switch instead of like a shortcut. */
+  .mode-rest .page-action:active {
     scale: 0.97;
     transition:
       color var(--wa-transition-fast) var(--wa-transition-easing),
@@ -2776,7 +2776,7 @@ wa-input::part(clear-button):hover {
       scale var(--press) ease-out;
   }
 
-  .mode-rest .print-control wa-icon {
+  .mode-rest .page-action wa-icon {
     scale: none;
   }
 
@@ -2790,7 +2790,7 @@ wa-input::part(clear-button):hover {
     transition: color var(--wa-transition-fast) var(--wa-transition-easing);
   }
 
-  .print-control {
+  .page-action {
     transition:
       color var(--wa-transition-fast) var(--wa-transition-easing),
       border-color var(--wa-transition-fast) var(--wa-transition-easing),
@@ -3158,7 +3158,7 @@ wa-input::part(clear-button):hover {
   }
 
   /* Outside the switch's column, so the switch keeps its full width. */
-  .mode-rest .print-control {
+  .mode-rest .rest-actions {
     position: absolute;
     inset-block: 0;
     inset-inline-end: calc(100% + var(--wa-space-m));

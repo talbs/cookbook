@@ -21,8 +21,13 @@
 {%- endmacro %}
 
 {% macro printControl(id) %}
-    <button class="shortcut print-control wa-border-radius-s" id="{{ id }}" type="button"><wa-icon name="print" variant="regular" label="Print or Save as PDF"></wa-icon></button>
+    <button class="shortcut print-control page-action wa-border-radius-s" id="{{ id }}" type="button"><wa-icon name="print" variant="regular" label="Print or Save as PDF"></wa-icon></button>
     <wa-tooltip for="{{ id }}" placement="bottom">Print or Save as PDF</wa-tooltip>
+{%- endmacro %}
+
+{% macro shareControl(id) %}
+    <button class="shortcut share-control page-action wa-border-radius-s" id="{{ id }}" type="button" hidden><wa-icon name="arrow-up-from-bracket" variant="regular" label="Share Recipe"></wa-icon></button>
+    <wa-tooltip for="{{ id }}" placement="bottom">Share Recipe</wa-tooltip>
 {%- endmacro %}
 
 {% macro ingredientName(ingredient, recipes) %}
@@ -86,6 +91,7 @@
         <a class="shortcut wa-border-radius-s" id="shortcut-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to Top"></wa-icon></a>
         <wa-tooltip for="shortcut-top" placement="bottom">Back to Top</wa-tooltip>
         {{ printControl("shortcut-print") }}
+        {{ shareControl("shortcut-share") }}
       </nav>
     </div>
     {{ modeSwitch() }}
@@ -146,7 +152,10 @@
   </header>
 
   <div class="mode-rest" hidden>
-    {{ printControl("resting-print") }}
+    <div class="rest-actions wa-cluster wa-flex-nowrap wa-gap-xs">
+      {{ printControl("resting-print") }}
+      {{ shareControl("resting-share") }}
+    </div>
     {{ modeSwitch() }}
   </div>
 
