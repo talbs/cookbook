@@ -260,8 +260,7 @@ wa-page::part(skip-to-content):focus {
   outline-offset: var(--wa-focus-ring-offset);
 }
 
-/* The site's heaviest accent: paper words on solid ink. A class can't reach inside wa-page, so the skip link shares the rule by selector. */
-.ink-button,
+/* The skip link wears the site's heaviest accent: paper words on solid ink. */
 wa-page::part(skip-to-content):focus {
   padding: var(--wa-space-xs) var(--wa-space-m);
   border: 0;
@@ -1078,12 +1077,7 @@ button.shortcut {
   inset-block-start: 0.125rem;
   inset-inline-start: 0;
   font-size: var(--wa-form-control-toggle-size);
-  color: var(--ink);
-}
-
-/* A box sits back from the text beside it, ticked or not; --control-edge still clears a control's 3:1. */
-.box-unchecked,
-.box-checked {
+  /* A box sits back from the text beside it, ticked or not; --control-edge still clears a control's 3:1. */
   color: var(--control-edge);
 }
 
@@ -1443,7 +1437,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .search-field {
   flex: 1 1 14rem;
   max-inline-size: 24rem;
-  border-radius: var(--wa-border-radius-m);
   box-shadow: var(--wa-shadow-s);
 }
 
@@ -1535,14 +1528,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* With no matches, the results area and its panel run down to the footer, like the 404's. */
-.listing-results {
-  flex: 1;
-}
-
+.listing-results,
 .search-empty {
   flex: 1;
-  justify-content: center;
-  text-align: center;
 }
 
 .empty-state::before {
@@ -2115,6 +2103,7 @@ wa-progress-bar.wait-run::part(progress-bar) {
 
 .timer-readout {
   justify-content: flex-end;
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .timer-words:empty {
@@ -2128,10 +2117,6 @@ wa-progress-bar.wait-run::part(progress-bar) {
 /* WA eases every change on the indicator; the fill moves only as the motion rules below say, and jumps under reduced motion. */
 wa-progress-bar.wait-run::part(indicator) {
   transition: none;
-}
-
-.timer-readout {
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .timer-square.is-flashing {
@@ -2434,7 +2419,6 @@ wa-popover::part(popup__popup) {
   font-size: var(--wa-font-size-xs);
   font-weight: var(--wa-font-weight-normal);
   color: var(--note-ink);
-  white-space: nowrap;
 }
 
 .source-note a {
@@ -2797,24 +2781,22 @@ wa-input::part(clear-button):hover {
     view-transition-name: mode-bar;
   }
 
-  ::view-transition-old(mode-bar) {
-    display: none;
-  }
-
-  ::view-transition-new(mode-bar) {
-    animation: none;
-  }
-
   /* The resting switch stays live too, so its hatch slides the same way when it is the one being used. */
   .mode-rest {
     view-transition-name: mode-rest;
   }
 
-  ::view-transition-old(mode-rest) {
+  ::view-transition-old(mode-bar),
+  ::view-transition-old(mode-rest),
+  ::view-transition-old(scheme-toggle),
+  ::view-transition-old(search-field) {
     display: none;
   }
 
-  ::view-transition-new(mode-rest) {
+  ::view-transition-new(mode-bar),
+  ::view-transition-new(mode-rest),
+  ::view-transition-new(scheme-toggle),
+  ::view-transition-new(search-field) {
     animation: none;
   }
 
@@ -2870,14 +2852,6 @@ wa-input::part(clear-button):hover {
     view-transition-name: scheme-toggle;
   }
 
-  ::view-transition-old(scheme-toggle) {
-    display: none;
-  }
-
-  ::view-transition-new(scheme-toggle) {
-    animation: none;
-  }
-
   .listing-controls.can-stick::before {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
   }
@@ -2908,14 +2882,6 @@ wa-input::part(clear-button):hover {
 
   .search-field {
     view-transition-name: search-field;
-  }
-
-  ::view-transition-old(search-field) {
-    display: none;
-  }
-
-  ::view-transition-new(search-field) {
-    animation: none;
   }
 
   .empty-icons wa-icon,
@@ -3086,10 +3052,6 @@ wa-input::part(clear-button):hover {
 
 /* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
 @media screen and (min-width: 64rem) {
-  .recipe {
-    padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
-  }
-
   :root {
     --header-inset: var(--wa-space-xl);
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
@@ -3098,6 +3060,7 @@ wa-input::part(clear-button):hover {
 
   /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
   .recipe {
+    padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
     display: grid;
     grid-template-columns: var(--side-column) minmax(0, 1fr) 15rem;
     gap: var(--wa-space-l) var(--column-gap);

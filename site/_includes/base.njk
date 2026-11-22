@@ -64,10 +64,11 @@
       // iOS Safari only applies :active while a touch listener exists, and cards, checkboxes and switches answer a press on :active.
       document.addEventListener('touchstart', () => {}, { passive: true });
     </script>
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/themes/default.css">
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/utilities.css">
-    <link rel="stylesheet" href="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/styles/native.css">
-    <script type="module" src="https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.loader.js" data-fa-kit-code="62a22b24d5"></script>
+    <link rel="stylesheet" href="{{ site.kit }}/styles/themes/default.css">
+    <link rel="stylesheet" href="{{ site.kit }}/styles/utilities.css">
+    <link rel="stylesheet" href="{{ site.kit }}/styles/native.css">
+    <script type="importmap">{ "imports": { "webawesome": "{{ site.kit }}/webawesome.js" } }</script>
+    <script type="module" src="{{ site.kit }}/webawesome.loader.js" data-fa-kit-code="62a22b24d5"></script>
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/open-fonts/HankenGrotesk.woff2">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/FreeLunch-Regular.woff2">
     <link rel="stylesheet" href="/assets/site.css">

@@ -24,7 +24,7 @@ eleventyComputed:
 
 {% block toolbar %}
     <div class="listing-controls can-stick wa-cluster wa-gap-m">
-      <div class="search-field" hidden>
+      <div class="search-field wa-border-radius-m" hidden>
         <wa-input class="recipe-search wa-visually-hidden-label" type="search" label="Search recipes" placeholder="Name, ingredient or tag" autocomplete="off" with-clear>
           <wa-icon slot="start" name="magnifying-glass" variant="regular"></wa-icon>
         </wa-input>
@@ -63,7 +63,7 @@ eleventyComputed:
   {{ recipeRows(group.recipes, true) }}
 </section>
 {%- endfor %}
-<div class="search-empty empty-state wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
+<div class="search-empty empty-state wa-justify-content-center wa-text-center wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
   <wa-random-content class="empty-jokes" animation="fade-up">
     {%- for joke in searchJokes %}
     <div class="wa-stack wa-gap-l wa-align-items-center">

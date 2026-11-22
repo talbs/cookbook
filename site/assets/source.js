@@ -1,4 +1,4 @@
-import { registerCodeGrammar } from 'https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0/webawesome.js';
+import { registerCodeGrammar } from 'webawesome';
 
 const dialog = document.querySelector('.source-dialog');
 const highlighter = dialog.querySelector('wa-code-highlighter');

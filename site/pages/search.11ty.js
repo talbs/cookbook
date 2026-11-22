@@ -15,5 +15,5 @@ export function render({ collections }) {
     course: item.data.course,
     ingredients: listIngredientNames(item.data.recipe),
   }));
-  return JSON.stringify(entries, null, 2);
+  return JSON.stringify(entries);
 }
