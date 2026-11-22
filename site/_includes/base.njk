@@ -20,10 +20,17 @@
     {%- else %}
     <link rel="canonical" href="{{ pageUrl }}">
     <meta property="og:url" content="{{ pageUrl }}">
+    {%- set shareCardUrl %}{% shareCardAddress %}{% endset %}
+    <meta property="og:image" content="{{ shareCardUrl }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="{{ shareCardSize.width }}">
+    <meta property="og:image:height" content="{{ shareCardSize.height }}">
+    <meta property="og:image:alt" content="{{ title or site.title }}. {{ pageDescription }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ shareCardUrl }}">
     {%- endif %}
     <meta property="og:site_name" content="{{ site.title }}">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
     <meta name="generator" content="{{ eleventy.generator }}">
     <meta name="theme-color" content="#fefefc">
     <script>
@@ -68,7 +75,7 @@
     <link rel="stylesheet" href="{{ site.kit }}/styles/utilities.css">
     <link rel="stylesheet" href="{{ site.kit }}/styles/native.css">
     <script type="importmap">{ "imports": { "webawesome": "{{ site.kit }}/webawesome.js" } }</script>
-    <script type="module" src="{{ site.kit }}/webawesome.loader.js" data-fa-kit-code="62a22b24d5"></script>
+    <script type="module" src="{{ site.kit }}/webawesome.loader.js" data-fa-kit-code="{{ site.iconKitCode }}"></script>
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/open-fonts/HankenGrotesk.woff2">
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/FreeLunch-Regular.woff2">
     <link rel="stylesheet" href="/assets/site.css">

@@ -1,7 +1,9 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
 import { loadRecipe } from './lib/recipe.js';
+import { CARD_HEIGHT, CARD_WIDTH, describeShareCard, nameShareCard, writeShareCards } from './lib/share-card.js';
 import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
 import { COURSES, SEASON_NAMES, YEAR_ROUND_TAG, labelCourse, listTagNames } from './lib/validate-recipe.js';
+import site from './site/_data/site.json' with { type: 'json' };
 
 const COURSE_HEADINGS = {
   main: 'Mains',
@@ -172,6 +174,23 @@ export default function (eleventyConfig) {
   eleventyConfig.addCollection('recipes', collectionApi =>
     sortByTitle(collectionApi.getFilteredByGlob('recipes/*.cook'))
   );
+
+  // Each page's layout asks for its card's address, which is how the build learns which cards to draw once the pages are written.
+  const shareCardsByFileName = new Map();
+  eleventyConfig.addGlobalData('shareCardSize', { width: CARD_WIDTH, height: CARD_HEIGHT });
+  eleventyConfig.addShortcode('shareCardAddress', function () {
+    const card = describeShareCard(this.ctx);
+    const fileName = nameShareCard(card);
+    shareCardsByFileName.set(fileName, card);
+    return `${site.url}/share/${fileName}`;
+  });
+  eleventyConfig.on('eleventy.before', () => shareCardsByFileName.clear());
+  eleventyConfig.on('eleventy.after', async ({ directories, outputMode }) => {
+    const isWritingFiles = outputMode === 'fs';
+    if (isWritingFiles) {
+      await writeShareCards(shareCardsByFileName, `${directories.output}share`, { kitCode: site.iconKitCode, siteUrl: site.url });
+    }
+  });
 
   return { dir: { includes: 'site/_includes', data: 'site/_data' } };
 }

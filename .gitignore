@@ -2,6 +2,9 @@
 node_modules/
 _site/
 
+# Share card images and icons kept between builds
+.cache/
+
 # The title font isn't in the repo; each machine brings its own copy
 site/assets/fonts/
 

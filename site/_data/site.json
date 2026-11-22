@@ -3,5 +3,6 @@
   "description": "Recipes, personally approved. Culled from books, shows, and the Internet, then changed until we liked them better.",
   "source": "https://github.com/talbs/cookbook",
   "url": "https://cookbook.talbs.me",
-  "kit": "https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0"
+  "kit": "https://ka-p.webawesome.com/kit/62ebb3c856194bf8/webawesome@3.15.0",
+  "iconKitCode": "62a22b24d5"
 }
