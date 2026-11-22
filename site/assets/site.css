@@ -62,6 +62,8 @@ body {
   --accent: #c8361c;
   /* The accent two steps down in lightness, same hue, for timers named in the steps. */
   --timer-ink: #9e1800;
+  /* How strongly a duotone icon's fill shows, in ink. Dark needs double: a pale tint on a dark paper beside a bright line reads far fainter than the same share of dark ink on a light one. */
+  --icon-fill: 0.16;
 }
 
 /* site.css is unlayered, so the light surface above would beat WA's layered dark one; dark sets its own, a step above neutral-05.
@@ -72,6 +74,7 @@ body {
     --wa-color-text-normal: #e8e7e5;
     --accent: #ff9079;
     --timer-ink: #e17460;
+    --icon-fill: 0.32;
   }
 }
 
@@ -643,13 +646,13 @@ wa-scroller:has(.course-links) {
   vertical-align: calc((var(--wa-font-size-m) - 1em) / 2 - var(--wa-space-3xs));
 }
 
-/* Hover-only, so icons tapped on a phone don't stay inked. The fill sits a little under the divider's 22%,
+/* Hover-only, so icons tapped on a phone don't stay inked. On light paper the fill sits a little under the divider's 22%,
    because a solid shape reads darker than a row of dots at the same value. */
 @media (hover: hover) {
   .recipe-icons:hover wa-icon,
   .recipe-card:hover .recipe-icons wa-icon {
     --primary-color: var(--ink);
-    --secondary-opacity: 0.16;
+    --secondary-opacity: var(--icon-fill);
   }
 
   .made-with a:hover wa-icon {
@@ -662,7 +665,7 @@ wa-scroller:has(.course-links) {
 /* A keyboard gets the same inked icons on a focused card, and a finger gets them while it presses, so this sits outside the hover query. */
 .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon {
   --primary-color: var(--ink);
-  --secondary-opacity: 0.16;
+  --secondary-opacity: var(--icon-fill);
 }
 
 /* The curve overshoots and settles, which reads as a little bounce. */
@@ -1566,7 +1569,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .not-found .stats wa-icon {
   --primary-color: var(--ink);
   --secondary-color: var(--ink);
-  --secondary-opacity: 0.16;
+  --secondary-opacity: var(--icon-fill);
 }
 
 .empty-joke {
