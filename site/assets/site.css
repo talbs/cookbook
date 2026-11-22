@@ -903,7 +903,7 @@ button.shortcut {
   translate: 0 100%;
 }
 
-/* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
+/* A note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
 @media screen {
   .note-print,
   .print-fact,
@@ -1971,27 +1971,6 @@ wa-details {
 .note-icon {
   margin-inline-end: 0.5em;
   vertical-align: -0.1em;
-}
-
-/* The print copy of a note's title row: same face, size and ink as the folded row, just without the toggle. */
-.note-static {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5em;
-  font-family: var(--wa-font-family-body);
-  font-size: var(--list-size);
-  line-height: 1.5;
-  color: var(--note-ink);
-}
-
-.note-static .note-icon {
-  flex: none;
-  margin: 0;
-  translate: 0 0.1em;
-}
-
-.note-static p {
-  margin: 0;
 }
 
 /* The open note hangs under the summary text, past the icon, so the icon stays the row's only marker. */
@@ -3306,12 +3285,27 @@ wa-page[view='desktop'] {
     display: none;
   }
 
-  /* A note is an aside to its step, and its title is often a whole sentence: at full bold it outweighed the step above it. */
+  /* A note's title row on paper: the folded row's face without the toggle, at semibold so it sits under the step above it. */
   .note-print > .note-static {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-family: var(--wa-font-family-body);
+    font-size: var(--list-size);
     font-weight: var(--wa-font-weight-semibold);
     line-height: 1.35;
     color: var(--ink);
     break-after: avoid;
+  }
+
+  .note-static .note-icon {
+    flex: none;
+    margin: 0;
+    translate: 0 0.1em;
+  }
+
+  .note-static p {
+    margin: 0;
   }
 
   .note-print > .recipe-note {
