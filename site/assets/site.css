@@ -1612,7 +1612,7 @@ wa-button.special:hover::part(base) {
   block-size: var(--shortcut-size);
   border: 1px solid transparent;
   border-radius: var(--wa-border-radius-m);
-  background: var(--hatch);
+  background: var(--hatch) border-box;
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
   transition: border-color var(--wa-transition-normal) var(--wa-transition-easing);
