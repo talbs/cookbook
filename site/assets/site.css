@@ -2143,7 +2143,7 @@ wa-progress-bar.wait-run::part(indicator) {
   margin-block-start: var(--wa-space-xs);
 }
 
-/* A list inside a note takes run-in letters, so it never reads as recipe steps. */
+/* A numbered list inside a note takes run-in letters, so it never reads as recipe steps. A bullet list keeps plain bullets. */
 .recipe-note ol {
   display: grid;
   gap: var(--wa-space-xs);
@@ -2152,17 +2152,17 @@ wa-progress-bar.wait-run::part(indicator) {
   counter-reset: note-step;
 }
 
-.recipe-note li {
+.recipe-note ol > li {
   margin: 0;
   counter-increment: note-step;
 }
 
-.recipe-note li > p {
+.recipe-note ol > li > p {
   display: inline;
   margin: 0;
 }
 
-.recipe-note li::before {
+.recipe-note ol > li::before {
   content: counter(note-step, lower-alpha) '.';
   margin-inline-end: 0.3em;
   font-weight: var(--wa-font-weight-bold);
