@@ -84,7 +84,7 @@ source: The Food Lab
 ## Copy rules
 
 - Ingredient and cookware names are lowercase, except proper nouns (`Parmesan cheese`, `Dutch oven`).
-- A size or a stand-in for a piece of cookware goes in its note: `#biscuit cutter{}(4-inch)`, `#jar lifter{}(or tongs)`. The note shows in the Equipment list and not in the step. If the step doesn't make sense without it, say it in the step too.
+- A piece of cookware's size goes in the step, right before the mark: `9-by-13-inch #baking dish{}`. Cook mode hides the Equipment list, so the step is where the cook reads it. A stand-in goes in the note, which shows in the Equipment list: `#jar lifter{}(or tongs)`.
 - An ingredient's name agrees with the recipe's total, because it's spelled the same at every mention. One clove in the whole recipe is `garlic clove`. One clove now and two later is `garlic cloves` both times.
 - Name an ingredient as specifically as the source does (`unsalted butter`, `large eggs`), never less.
 - Use American spelling. `chile` is the pepper. `chili` is the dish and the powder.
