@@ -56,7 +56,7 @@ Two things to know on a fresh clone:
 3. `lib/validate-recipe.js` checks the recipe against this site's rules. One bad recipe stops the build with exit code 1 and names the file. [When the build fails](#when-the-build-fails) lists each message.
 4. `site/_includes/recipe.njk` lays the recipe out as a page at `/recipes/<file name>/`. It also writes [schema.org Recipe](https://schema.org/Recipe) data into the page for search engines.
 5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search box reads.
-6. The build also publishes each recipe's `.cook` file as plain text at `/recipes/<file name>.txt` and writes `/llms.txt`, a list of every recipe for AI agents. On a recipe page, the File link in the footer shows the file.
+6. The build also publishes each recipe's `.cook` file as plain text at `/recipes/<file name>.txt` and writes `/llms.txt`, a list of every recipe for AI agents. `/sitemap.xml` lists every page for search engines, and `/robots.txt` points them to it. On a recipe page, the File link in the footer shows the file.
 
 No bundler, no framework. The scripts in `site/assets/` are plain ES modules, and the browser loads them as written.
 
@@ -75,6 +75,8 @@ site/                 Everything that turns recipes into a website
     search.11ty.js    /search.json, what the search box reads
     raw-recipe.11ty.js /recipes/<file name>.txt, each recipe's .cook file as plain text
     llms.11ty.js      /llms.txt, every recipe's file, grouped by course
+    sitemap.11ty.js   /sitemap.xml, every page's address for search engines
+    robots.11ty.js    /robots.txt, which points crawlers to the sitemap
   _includes/          Layouts and partials
     base.njk          The HTML shell, CDN links, font preloads and color scheme
     recipe.njk        The recipe page
@@ -115,7 +117,7 @@ eleventy.config.js    The .cook extension, filters, the recipes collection, dev 
 
 - `test/validation.test.js` loads each broken recipe in `test/fixtures/` and expects the build to refuse it and name the file.
 - `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers, ingredient totals and the search engine data.
-- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page. Each recipe's `.cook` file must be published unchanged, and `llms.txt` must list every recipe.
+- `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page. Each recipe's `.cook` file must be published unchanged, `llms.txt` must list every recipe, and `sitemap.xml` every page.
 - `test/timer-phase.test.js` covers the timer math.
 - `test/pick.test.js` covers how Chef's Pick chooses a recipe by hour and season.
 

@@ -142,6 +142,17 @@ test('llms.txt lists every recipe once, each at the address of a file the build 
   }
 });
 
+test('sitemap.xml lists every page the build wrote that has a canonical address, and nothing else', () => {
+  const sitemapPage = builtPages.find(page => page.url === '/sitemap.xml');
+  assert.ok(sitemapPage, 'no /sitemap.xml');
+
+  const listedAddresses = [...sitemapPage.content.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+  const pageAddresses = listHtmlPages()
+    .filter(page => page.url !== '/404.html')
+    .map(page => `https://cookbook.talbs.me${page.url}`);
+  assert.deepEqual([...listedAddresses].sort(), [...pageAddresses].sort());
+});
+
 test('a recipe whose time is a range tells search engines the long end', () => {
   const expectedTotalTimes = [
     ['/recipes/chocolate-pot-de-creme/', 'PT18H'],
