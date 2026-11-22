@@ -59,15 +59,19 @@ function markScreenToastShown() {
   } catch {}
 }
 
+// A running view transition paints the page's snapshots over the top layer, toast included.
+// The second one is the transition a recipe opened from another page arrives inside.
+async function waitForViewTransitions() {
+  await runningTransition?.finished;
+  await document.activeViewTransition?.finished;
+}
+
 async function showScreenToastOnce() {
   if (isScreenToastShown) return;
   markScreenToastShown();
   await customElements.whenDefined('wa-toast');
   await waitForPageReveal();
-  // A running view transition paints the page's snapshots over the top layer, toast included.
-  // The second one is the transition a recipe opened from another page arrives inside.
-  await runningTransition?.finished;
-  await document.activeViewTransition?.finished;
+  await waitForViewTransitions();
   const toastItem = await screenToast.create('Screen stays on while you cook.', {
     size: 'm',
     duration: 3000,
@@ -110,6 +114,64 @@ function restoreChecks(checkedIds) {
   }
 }
 
+const recipeAddress = document.querySelector('link[rel="canonical"]')?.href;
+const recipeTitle = document.querySelector('meta[property="og:title"]')?.content;
+const hasShareSheet = typeof navigator.share === 'function';
+const isTouchFirst = window.matchMedia('(pointer: coarse)').matches;
+const hasClipboard = Boolean(navigator.clipboard);
+let linkCopiedToast = null;
+let isLinkCopiedToastQueued = false;
+
+async function showLinkCopiedToast() {
+  if (isLinkCopiedToastQueued || linkCopiedToast?.isConnected) return;
+  isLinkCopiedToastQueued = true;
+  try {
+    await customElements.whenDefined('wa-toast');
+    await waitForViewTransitions();
+    linkCopiedToast = await screenToast.create('Link Copied', {
+      size: 'm',
+      duration: 2000,
+      icon: { name: 'check', variant: 'regular' },
+    });
+  } finally {
+    isLinkCopiedToastQueued = false;
+  }
+}
+
+async function copyRecipeAddress() {
+  try {
+    await navigator.clipboard.writeText(recipeAddress);
+  } catch {
+    return;
+  }
+  await showLinkCopiedToast();
+}
+
+async function shareRecipe() {
+  try {
+    await navigator.share({ title: recipeTitle, url: recipeAddress });
+  } catch (error) {
+    if (error.name === 'AbortError') return;
+    await copyRecipeAddress();
+  }
+}
+
+function chooseShareAction() {
+  if (hasShareSheet && isTouchFirst) return shareRecipe;
+  if (hasClipboard) return copyRecipeAddress;
+  return null;
+}
+
+function revealShareControls() {
+  const shareOnClick = chooseShareAction();
+  if (!shareOnClick) return;
+
+  for (const shareControl of page.querySelectorAll('.share-control')) {
+    shareControl.addEventListener('click', shareOnClick);
+    shareControl.hidden = false;
+  }
+}
+
 const savedState = readSavedState();
 const timers = startTimers({
   root: recipe,
@@ -123,6 +185,7 @@ if (isMode(linkedMode)) showMode(linkedMode);
 else if (isMode(savedState.mode)) showMode(savedState.mode);
 if (Array.isArray(savedState.checked)) restoreChecks(savedState.checked);
 if (isMode(linkedMode)) saveState();
+revealShareControls();
 modeRest.hidden = false;
 
 // The switch rests in the page; once it starts scrolling off the top, wa-page's sticky header bar slides in with its own copy.
