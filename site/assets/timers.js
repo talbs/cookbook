@@ -168,7 +168,7 @@ let wakeLock = null;
 let isRequestingWakeLock = false;
 
 async function holdScreenAwake() {
-  if (!navigator.wakeLock || wakeLock || isRequestingWakeLock) return;
+  if (!navigator.wakeLock || wakeLock || isRequestingWakeLock) return false;
   isRequestingWakeLock = true;
   try {
     const lock = await navigator.wakeLock.request('screen');
@@ -176,8 +176,12 @@ async function holdScreenAwake() {
     lock.addEventListener('release', () => {
       if (wakeLock === lock) wakeLock = null;
     });
-  } catch {}
-  isRequestingWakeLock = false;
+    return true;
+  } catch {
+    return false;
+  } finally {
+    isRequestingWakeLock = false;
+  }
 }
 
 function letScreenSleep() {
@@ -185,7 +189,7 @@ function letScreenSleep() {
   wakeLock = null;
 }
 
-export function startTimers({ root, savedStarts, onChange, isCooking }) {
+export function startTimers({ root, savedStarts, onChange, isCooking, onScreenHeld }) {
   const timers = [...root.querySelectorAll('.timer-band')].map((band) =>
     readBand(band, savedStarts)
   );
@@ -244,8 +248,10 @@ export function startTimers({ root, savedStarts, onChange, isCooking }) {
   }
 
   async function keepScreenAwakeWhileNeeded() {
-    if (isScreenNeeded() && document.visibilityState === 'visible')
-      await holdScreenAwake();
+    if (isScreenNeeded() && document.visibilityState === 'visible') {
+      const isNewlyHeld = await holdScreenAwake();
+      if (isNewlyHeld) onScreenHeld?.();
+    }
     if (!isScreenNeeded()) letScreenSleep();
   }
 
