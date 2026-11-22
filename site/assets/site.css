@@ -137,6 +137,10 @@ body {
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --side-column: calc(4 / 11 * (100% - var(--column-gap)));
   --page-gutter: 1.25rem;
+  /* Where the page's text starts: the gutter, or the side of the centred 75rem column on wide screens. */
+  --text-edge: max(var(--page-gutter), calc((100% - 75rem) / 2 + var(--page-gutter)));
+  /* How far things that float above the page sit off its bottom edge, clear of the iPhone home bar. */
+  --float-gap: max(var(--wa-space-l), env(safe-area-inset-bottom));
   --header-inset: var(--wa-space-xs);
   --section-space: var(--wa-space-l);
   /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
@@ -1326,7 +1330,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* On a phone the toolbar scrolls away, so the arrow floats in the bottom corner instead, at a full 44px for a thumb. */
 .to-top {
   position: fixed;
-  inset: auto var(--page-gutter) max(var(--wa-space-l), env(safe-area-inset-bottom)) auto;
+  inset: auto var(--page-gutter) var(--float-gap) auto;
   z-index: 2;
   inline-size: var(--to-top-size);
   block-size: var(--to-top-size);
@@ -2178,12 +2182,21 @@ wa-progress-bar.wait-run::part(indicator) {
   font-size: 0.9em;
 }
 
+.source-dialog,
+.screen-toast wa-toast-item {
+  --hide-duration: 160ms;
+}
+
+/* The pop goes up and comes back down, so it gets half again as long as a settle. */
+.screen-toast wa-toast-item {
+  --show-duration: calc(var(--settle) * 1.5);
+}
+
 /* The site derives these at :root, where they resolve to light values. */
 .source-dialog {
   --width: 46rem;
   --spacing: var(--wa-space-l);
   --show-duration: var(--settle);
-  --hide-duration: 160ms;
   --ink: var(--wa-color-text-normal);
   --paper: var(--wa-color-neutral-05);
   --note-ink: var(--wa-color-text-quiet);
@@ -2328,10 +2341,101 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .source-dialog {
+  .source-dialog,
+  .screen-toast wa-toast-item {
     --show-duration: 0ms;
     --hide-duration: 0ms;
   }
+}
+
+/* Gutter to gutter on a phone; on wider screens it sits on the page's text edge.
+   The bottom edge is the toaster's slot: the toast rises out of it and sinks back in. */
+.screen-toast {
+  --width: 100%;
+  padding-block: 0 var(--float-gap);
+  padding-inline: var(--page-gutter);
+  overflow: hidden;
+}
+
+/* The stack spans the full width; only the toast itself should take taps. */
+.screen-toast::part(stack) {
+  pointer-events: none;
+}
+
+@media (width >= 48rem) {
+  .screen-toast {
+    padding-inline: var(--text-edge);
+  }
+
+  .screen-toast::part(stack) {
+    align-items: start;
+  }
+}
+
+.screen-toast wa-toast-item::part(toast-item) {
+  border: 1px solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+  background: var(--paper);
+  box-shadow: var(--wa-shadow-s);
+  color: var(--ink);
+  animation-name: toast-pop;
+}
+
+/* The kit runs one part for arriving and leaving, so recipe.js marks the leave. */
+.screen-toast wa-toast-item.is-leaving::part(toast-item) {
+  animation-name: toast-sink;
+  animation-timing-function: ease-in;
+}
+
+/* Out of the slot past its spot, a beat at the top, then down onto its spot with one small bounce. */
+@keyframes toast-pop {
+  0% {
+    translate: 0 calc(100% + var(--float-gap));
+    animation-timing-function: var(--ease-swift);
+  }
+  35% {
+    translate: 0 -55%;
+    animation-timing-function: ease-out;
+  }
+  50% {
+    translate: 0 -60%;
+    animation-timing-function: ease-in;
+  }
+  78% {
+    translate: 0 0;
+    animation-timing-function: ease-out;
+  }
+  88% {
+    translate: 0 -8%;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes toast-sink {
+  to {
+    translate: 0 calc(100% + var(--float-gap));
+  }
+}
+
+.screen-toast wa-toast-item::part(icon) {
+  color: var(--note-ink);
+}
+
+/* Once the toast has landed, the slice flips over once, like toast tossed in a pan. */
+.screen-toast wa-icon {
+  --flip-x: 1;
+  --flip-y: 0;
+  --animation-iteration-count: 1;
+  --animation-delay: var(--show-duration);
+}
+
+.screen-toast wa-toast-item::part(close-button),
+.screen-toast wa-toast-item::part(progress-ring),
+.screen-toast wa-toast-item::part(accent) {
+  display: none;
 }
 
 /* Overview and Cook are two ways to read the screen. Paper gets one layout, set in the print rules at the end. */
@@ -2874,10 +2978,7 @@ wa-page[view='desktop'] {
     align-items: center;
     column-gap: var(--wa-space-xl);
     padding-block: var(--wa-space-m);
-    padding-inline: max(
-      var(--page-gutter),
-      calc((100% - 75rem) / 2 + var(--page-gutter))
-    );
+    padding-inline: var(--text-edge);
   }
 
   & .shortcuts {

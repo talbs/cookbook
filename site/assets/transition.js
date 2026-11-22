@@ -5,12 +5,9 @@ export function changeWithTransition(change, types = []) {
   const canAnimate = document.startViewTransition && document.visibilityState === 'visible' && document.hasFocus();
   if (!canAnimate || prefersReducedMotion.matches) {
     change();
-    return;
+    return null;
   }
   // Browsers that only know the callback form throw on the options form, so that one is kept for typed transitions.
-  if (types.length === 0) {
-    document.startViewTransition(change);
-    return;
-  }
-  document.startViewTransition({ update: change, types });
+  if (types.length === 0) return document.startViewTransition(change);
+  return document.startViewTransition({ update: change, types });
 }
