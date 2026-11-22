@@ -605,7 +605,7 @@ wa-scroller:has(.course-links) {
 /* On one column the title sits 16px above the description, and the wide layout's 36px either side of the dots reads as a hole next to that. */
 @media screen and (width < 48rem) {
   .recipe-head {
-    --rule-gap: 1.5rem;
+    --rule-gap: var(--wa-space-l);
   }
 }
 
@@ -749,7 +749,7 @@ wa-scroller:has(.course-links) {
 .mode-rest .page-action {
   inline-size: var(--rest-switch-height);
   block-size: var(--rest-switch-height);
-  border: 1px solid var(--control-edge);
+  border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
 }
 
@@ -768,7 +768,7 @@ wa-scroller:has(.course-links) {
   justify-content: normal;
   gap: var(--wa-space-s);
   padding: var(--wa-space-m) var(--page-gutter);
-  border-block-end: 1px solid var(--wa-color-surface-border);
+  border-block-end: var(--wa-border-width-s) solid var(--wa-color-surface-border);
   background: var(--paper);
   /* A shorter switch than the one resting in the page, so it has room inside the bar. */
   --wa-form-control-height: var(--bar-control-height);
@@ -795,7 +795,7 @@ wa-scroller:has(.course-links) {
   position: relative;
   isolation: isolate;
   padding: var(--switch-inset);
-  border: 1px solid var(--control-edge);
+  border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
   /* Inner radius is the outer one minus the inset and the 1px border, so the corners stay concentric. */
   --wa-form-control-border-radius: calc(var(--wa-border-radius-m) - var(--switch-inset) - 1px);
@@ -969,7 +969,7 @@ button.shortcut {
   font-family: var(--wa-font-family-body);
   font-size: var(--section-head-size);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: var(--wa-line-height-condensed);
   letter-spacing: -0.015em;
   margin-block: 0 var(--wa-space-s);
 }
@@ -1336,7 +1336,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   z-index: 2;
   inline-size: var(--to-top-size);
   block-size: var(--to-top-size);
-  border: 1px solid var(--control-edge);
+  border: var(--wa-border-width-s) solid var(--control-edge);
   background: var(--paper);
   box-shadow: var(--wa-shadow-s);
   visibility: hidden;
@@ -1410,7 +1410,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     position: absolute;
     z-index: -1;
     inset: 0 calc(50% - 50vw);
-    border-block-end: 1px solid transparent;
+    border-block-end: var(--wa-border-width-s) solid transparent;
     background: var(--paper);
   }
 
@@ -1615,7 +1615,7 @@ wa-button[appearance='plain']:hover::part(base) {
 wa-button.special::part(base),
 wa-button.special:hover::part(base) {
   block-size: var(--shortcut-size);
-  border: 1px solid transparent;
+  border: var(--wa-border-width-s) solid transparent;
   border-radius: var(--wa-border-radius-m);
   background: var(--hatch) border-box;
   font-weight: var(--wa-font-weight-bold);
@@ -2040,7 +2040,7 @@ wa-details {
 /* After a step the cook walks away from, Cook draws a pause across the page: the switch's hatch, then how long. */
 .wait-mark {
   font-size: var(--note-size);
-  line-height: 1.2;
+  line-height: var(--wa-line-height-condensed);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
 }
@@ -2091,7 +2091,7 @@ wa-progress-bar.wait-run::part(progress-bar) {
   box-sizing: border-box;
   inline-size: 1.75rem;
   block-size: 1.75rem;
-  border: 1px solid var(--control-edge);
+  border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
   font-size: 0.75rem;
   color: var(--note-ink);
@@ -2292,7 +2292,7 @@ wa-popover::part(popup__popup) {
 /* Floating surfaces wear the time select's field: paper, its edge and a soft shadow. */
 .pick-popover::part(body),
 .screen-toast wa-toast-item::part(toast-item) {
-  border: 1px solid var(--control-edge);
+  border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
   background: var(--paper);
   box-shadow: var(--wa-shadow-s);
@@ -2342,7 +2342,7 @@ wa-popover::part(popup__popup) {
 .pick-popover .pick-link {
   font-size: var(--wa-font-size-l);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: var(--wa-line-height-condensed);
   text-wrap: balance;
   text-underline-offset: 0.25em;
 }
@@ -2367,7 +2367,7 @@ wa-popover::part(popup__popup) {
 }
 
 .source-dialog::part(dialog) {
-  border: 1px solid var(--wa-color-neutral-30);
+  border: var(--wa-border-width-s) solid var(--wa-color-neutral-30);
   border-radius: var(--wa-border-radius-l);
   background: var(--paper);
   box-shadow: 0 var(--wa-space-s) var(--wa-space-2xl) color-mix(in oklab, var(--wa-color-neutral-05) 22%, transparent);
