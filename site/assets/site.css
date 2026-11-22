@@ -36,6 +36,11 @@
   descent-override: 22%;
 }
 
+/* Kit utilities and component hosts set display, which would otherwise beat the hidden attribute. */
+[hidden]:not([hidden='until-found']) {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -728,15 +733,6 @@ wa-scroller:has(.course-links) {
   padding-block: var(--wa-space-m);
 }
 
-/* Not wa-cluster: its display would beat the hidden attribute this row carries until the script is ready. */
-@media screen {
-  .mode-rest:not([hidden]) {
-    display: flex;
-    align-items: center;
-    gap: var(--wa-space-m);
-  }
-}
-
 .mode-rest .mode-switch {
   flex: 1;
 }
@@ -1306,11 +1302,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-decoration-color: transparent;
 }
 
-/* The layout utilities set display, which would otherwise beat the hidden attribute the search and switch rely on. */
-.listing [hidden] {
-  display: none;
-}
-
 .view-rest {
   --wa-form-control-height: var(--bar-control-height);
   margin-inline-start: auto;
@@ -1647,11 +1638,6 @@ wa-button.special:hover::part(base) {
   .special-tip {
     display: none;
   }
-}
-
-/* The button waits for its script, and the kit's host display would otherwise beat the hidden attribute. */
-.special[hidden] {
-  display: none;
 }
 
 @media (min-width: 48rem) {
@@ -2077,11 +2063,6 @@ wa-progress-bar.wait-run::part(progress-bar) {
   margin-block: -0.5rem;
   margin-inline-start: -1rem;
   cursor: pointer;
-}
-
-.timer-control[hidden],
-.share-control[hidden] {
-  display: none;
 }
 
 .timer-control:focus-visible .timer-square {
