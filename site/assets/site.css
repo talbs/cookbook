@@ -1522,7 +1522,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .tag-group + .tag-group::before {
   content: '';
   block-size: var(--band);
-  margin-block-end: var(--wa-space-m);
+  margin-block-end: var(--wa-space-xl);
   background: var(--divider-ink);
   mask: var(--divider);
 }
