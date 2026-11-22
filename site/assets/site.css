@@ -1437,7 +1437,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .search-field {
   flex: 1 1 14rem;
   max-inline-size: 24rem;
-  border-radius: var(--wa-border-radius-m);
   box-shadow: var(--wa-shadow-s);
 }
 
@@ -1529,14 +1528,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* With no matches, the results area and its panel run down to the footer, like the 404's. */
-.listing-results {
-  flex: 1;
-}
-
+.listing-results,
 .search-empty {
   flex: 1;
-  justify-content: center;
-  text-align: center;
 }
 
 .empty-state::before {
@@ -2425,7 +2419,6 @@ wa-popover::part(popup__popup) {
   font-size: var(--wa-font-size-xs);
   font-weight: var(--wa-font-weight-normal);
   color: var(--note-ink);
-  white-space: nowrap;
 }
 
 .source-note a {

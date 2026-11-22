@@ -323,7 +323,7 @@
 <wa-dialog class="source-dialog wa-dark" label="{{ page.fileSlug }}.cook" light-dismiss>
   <span slot="label" class="source-title">
     <span class="source-name wa-text-truncate"><span class="source-prompt" aria-hidden="true">$ cat </span>{{ page.fileSlug }}.cook</span>
-    <span class="source-note">-- <a href="https://cooklang.org/docs/spec/">cooklang</a>, {{ sourceLineCount }} lines</span>
+    <span class="source-note wa-text-nowrap">-- <a href="https://cooklang.org/docs/spec/">cooklang</a>, {{ sourceLineCount }} lines</span>
   </span>
   <wa-copy-button slot="header-actions" class="source-copy" from="source-code.code" copy-label="Copy" success-label="Copied" tooltip-placement="bottom">
     <wa-icon slot="copy-icon" name="copy" variant="regular"></wa-icon>
