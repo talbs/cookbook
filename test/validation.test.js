@@ -16,6 +16,7 @@ const malformedRecipes = [
   ['Bad Name.cook', /file name must be lowercase words joined by hyphens/],
   ['glyph-fraction.cook', /write 1\/2, not ½/],
   ['unnamed-timer.cook', /timer in step 1 has no name/],
+  ['two-word-timer.cook', /timer "Rest Time" in step 1 must be one lowercase word, like bake or pressure-cook/],
   ['repeat-without-reference.cook', /"eggs" in step 2 is mentioned again: write @&eggs/],
   ['title-list.cook', /title must be text/],
   ['author-map.cook', /author must be text/],
