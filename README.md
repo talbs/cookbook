@@ -221,7 +221,7 @@ A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple g
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
 - Use sections only when a recipe has parts you make separately, or phases with a wait between them. Name a part with a noun (`Sauce`) and a phase with one verb (`Marinate`).
 - Don't label a part inside a step (`Make the dressing:`). Give it a section, or write it as a sentence.
-- A note after a step folds under that step. It needs a bold title and a dash, then at least one sentence: `> **Storing** — Keeps for 2 weeks.` Use Storing, Making ahead, Serving, Swaps or Extras when one fits. One idea per note. If skipping the note would make the step go wrong, write it into the step instead.
+- A note after a step folds under that step. It needs a bold title in title case and a dash, then at least one sentence: `> **Storing** — Keeps for 2 weeks.` Use Storing, Making Ahead, Serving, Swaps or Extras when one fits. One idea per note. If skipping the note would make the step go wrong, write it into the step instead.
 - A note before the first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
 - Type `1/2`, not `½`.
 - Temperatures go in the step text as `350°F (175°C)`.

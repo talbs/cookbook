@@ -159,7 +159,7 @@ test("a step's note reaches search engines as a plain-text tip on that step", ()
   assert.equal(step.itemListElement[0].text, step.text);
 
   const tip = step.itemListElement[1].text;
-  assert.ok(tip.startsWith('Fingertip tight'), tip);
+  assert.ok(tip.startsWith('Fingertip Tight'), tip);
   assert.ok(tip.includes('Turn one-quarter more then stop.'), tip);
   assert.doesNotMatch(tip, /[<>*]|&\w+;/);
 });
