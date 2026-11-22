@@ -1973,7 +1973,7 @@ wa-details {
   vertical-align: -0.1em;
 }
 
-/* Same face, size and ink as a folded note's row, just without the toggle. */
+/* The print copy of a note's title row: same face, size and ink as the folded row, just without the toggle. */
 .note-static {
   display: flex;
   align-items: baseline;
