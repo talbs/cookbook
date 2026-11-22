@@ -122,6 +122,10 @@ function findLandingFor(mode) {
   return beforeStart ?? recipe.querySelector('.method');
 }
 
+function isRestingSwitchInView() {
+  return modeRest.getBoundingClientRect().top >= modeBar.offsetHeight;
+}
+
 function switchMode(mode) {
   const isBarShowing = modeBar.classList.contains('is-pinned');
   const heldStep = isBarShowing ? findStepBeingRead() : null;
@@ -131,7 +135,8 @@ function switchMode(mode) {
     showMode(mode);
     if (heldStep) {
       window.scrollBy({ top: heldStep.getBoundingClientRect().top - heldStepTop, behavior: 'instant' });
-    } else if (isBarShowing) {
+    }
+    if (isBarShowing && (!heldStep || isRestingSwitchInView())) {
       findLandingFor(mode)?.scrollIntoView({ block: 'start', behavior: 'instant' });
     }
     saveState();
@@ -214,14 +219,21 @@ if (isMode(linkedMode)) saveState();
 revealShareControls();
 modeRest.hidden = false;
 
-// The switch rests in the page; once it starts scrolling off the top, wa-page's sticky header bar slides in with its own copy.
+// The switch rests in the page; once it starts sliding under the bar's bottom edge, wa-page's sticky header bar slides in with its own copy.
 // The hidden bar can't be reached, and the resting switch goes inert while the bar shows, so there is only ever one switch to meet.
-const restingSwitchWatcher = new IntersectionObserver(([entry]) => {
-  const isPinned = entry.boundingClientRect.top < 0;
-  modeBar.classList.toggle('is-pinned', isPinned);
-  modeRest.inert = isPinned;
-}, { threshold: 1 });
-restingSwitchWatcher.observe(modeRest);
+let restingSwitchWatcher = null;
+
+function watchRestingSwitch() {
+  restingSwitchWatcher?.disconnect();
+  restingSwitchWatcher = new IntersectionObserver(([entry]) => {
+    const isPinned = entry.boundingClientRect.top < entry.rootBounds.top;
+    modeBar.classList.toggle('is-pinned', isPinned);
+    modeRest.inert = isPinned;
+  }, { threshold: 1, rootMargin: `-${modeBar.offsetHeight}px 0px 0px 0px` });
+  restingSwitchWatcher.observe(modeRest);
+}
+
+new ResizeObserver(watchRestingSwitch).observe(modeBar);
 
 for (const modeSwitch of modeSwitches) {
   modeSwitch.addEventListener('change', () => {
