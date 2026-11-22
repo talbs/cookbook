@@ -1,4 +1,5 @@
-import { changeWithTransition } from './transition.js';
+import { choosePick } from './pick.js';
+import { changeWithTransition, prefersReducedMotion } from './transition.js';
 
 const viewRest = document.querySelector('.view-rest');
 const viewSwitch = viewRest.querySelector('.view-switch');
@@ -66,14 +67,45 @@ if (searchInput) {
     return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
   }
 
-  function pickRandom(list) {
-    return list[Math.floor(Math.random() * list.length)];
-  }
-
   // Until search.json arrives, or if it never does, a recipe matches on the words in its own card. They are read once, here.
+  const pickEntries = [];
   for (const item of recipeItems) {
     urlByItem.set(item, item.querySelector('a').getAttribute('href'));
     searchTextByItem.set(item, simplify(item.textContent));
+    if (!item.parentElement.classList.contains('recipe-cards')) continue;
+    pickEntries.push({
+      url: urlByItem.get(item),
+      title: item.querySelector('.card-title').textContent.trim(),
+      course: item.closest('.course').dataset.course,
+      seasons: item.dataset.seasons.split(' ').filter(Boolean),
+      icons: [...item.querySelectorAll('.recipe-icons wa-icon')],
+    });
+  }
+
+  function choosePickForNow(excludedUrl = null) {
+    const now = new Date();
+    const pick = choosePick({ entries: pickEntries, hour: now.getHours(), monthIndex: now.getMonth(), excludedUrl });
+    return pick && { ...pick, now };
+  }
+
+  // Season names are tag slugs, so "early-summer" has to become "Early Summer".
+  function writeInTitleCase(slug) {
+    const words = [];
+    for (const word of slug.split('-')) words.push(word[0].toUpperCase() + word.slice(1));
+    return words.join(' ');
+  }
+
+  function showPick(container, pick) {
+    container.querySelector('wa-format-date').date = pick.now;
+    container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
+    container.querySelector('.pick-season').textContent = pick.isInSeason ? ` · ${writeInTitleCase(pick.season)}` : '';
+    const link = container.querySelector('.pick-link');
+    link.href = pick.entry.url;
+    link.querySelector('.pick-title').textContent = pick.entry.title;
+
+    const icons = [];
+    for (const icon of pick.entry.icons) icons.push(icon.cloneNode());
+    container.querySelector('.pick-icons').replaceChildren(...icons);
   }
 
   async function loadSearchText() {
@@ -142,7 +174,6 @@ if (searchInput) {
   function tellNewJoke() {
     emptyNote.querySelector('.empty-jokes').randomize?.();
     emptyNote.querySelector('.empty-tags').randomize?.();
-    emptyNote.querySelector('.empty-random').href = urlByItem.get(pickRandom(recipeItems));
   }
 
   function showMatches({ isInstant = false } = {}) {
@@ -204,6 +235,64 @@ if (searchInput) {
     viewRest.hidden = !hasMatch;
     courseLinks.hidden = !hasMatch;
   }
+
+  function servePicksFrom(popover) {
+    const panel = popover.querySelector('.pick');
+    const dish = popover.querySelector('.pick-link');
+    let shownPick = null;
+    let isSendingBack = false;
+
+    function showPickInPopover(pick) {
+      shownPick = pick;
+      showPick(popover, pick);
+    }
+
+    // The panel fits its title, so its width glides between the two instead of jumping.
+    async function slideInPick(pick) {
+      const tokens = getComputedStyle(document.documentElement);
+      const settle = parseFloat(tokens.getPropertyValue('--settle'));
+      const easeSettle = tokens.getPropertyValue('--ease-settle').trim();
+      const leaving = dish.animate(
+        [{ translate: '0', opacity: 1 }, { translate: '-1.5rem 0', opacity: 0 }],
+        { duration: parseFloat(tokens.getPropertyValue('--press')), easing: 'ease-in', fill: 'forwards' }
+      );
+      await leaving.finished;
+
+      const oldWidth = panel.getBoundingClientRect().width;
+      showPickInPopover(pick);
+      const newWidth = panel.getBoundingClientRect().width;
+      leaving.cancel();
+
+      // The new title is laid out at its final width from the start, so it never rewraps while the panel grows.
+      dish.style.inlineSize = `${newWidth}px`;
+      panel.style.overflow = 'clip';
+      const growing = panel.animate([{ inlineSize: `${oldWidth}px` }, { inlineSize: `${newWidth}px` }], { duration: settle, easing: easeSettle });
+      const arriving = dish.animate([{ translate: '1.5rem 0', opacity: 0 }, { translate: '0', opacity: 1 }], { duration: settle, easing: easeSettle });
+      await Promise.all([growing.finished, arriving.finished]);
+      dish.style.inlineSize = '';
+      panel.style.overflow = '';
+    }
+
+    async function sendBack() {
+      const pick = choosePickForNow(shownPick?.entry.url ?? null);
+      if (!pick || isSendingBack) return;
+      isSendingBack = true;
+      if (prefersReducedMotion.matches) showPickInPopover(pick);
+      else await slideInPick(pick);
+      popover.querySelector('.pick-status').textContent = pick.entry.title;
+      isSendingBack = false;
+    }
+
+    // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
+    popover.addEventListener('wa-show', () => {
+      const pick = choosePickForNow();
+      if (pick) showPickInPopover(pick);
+    });
+    popover.querySelector('.pick-again').addEventListener('click', sendBack);
+  }
+
+  for (const popover of document.querySelectorAll('.pick-popover')) servePicksFrom(popover);
+  document.querySelector('#site-pick').hidden = false;
 
   searchInput.closest('.search-field').hidden = false;
   timeSelect.hidden = false;

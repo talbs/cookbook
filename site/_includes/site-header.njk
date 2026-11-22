@@ -1,6 +1,11 @@
+{%- from "pick-popover.njk" import pickPopover -%}
 {%- set isHome = page.url == "/" -%}
-<div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l{% if isHome %} wa-justify-content-end{% endif %}">
-  {%- if not isHome %}
+<div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l">
+  {%- if isHome %}
+  <button class="shortcut wa-border-radius-s" id="site-pick" type="button" hidden><wa-icon name="bell-concierge" variant="regular" label="Chef’s Pick"></wa-icon></button>
+  <wa-tooltip for="site-pick" placement="bottom">Chef’s Pick</wa-tooltip>
+  {{ pickPopover("site-pick", "bottom-start") }}
+  {%- else %}
   <a class="site-name" href="/">{{ site.title }}</a>
   {%- endif %}
   <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-l">
