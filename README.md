@@ -67,7 +67,7 @@ recipes/              One .cook file per recipe. The file name is the URL
   recipes.json        Gives every recipe the recipe.njk layout
 site/                 Everything that turns recipes into a website
   pages/              Every page that isn't a recipe
-    index.njk         Home: all recipes, with search, a time filter and a cards/list switch
+    index.njk         Home: all recipes, with Chef's Pick, search, a time filter and a cards/list switch
     tags.njk          /tags/, every tag grouped as dishes, methods and seasons
     tag.njk           /tags/<tag>/, one page per tag
     about.njk         /about/
@@ -79,16 +79,20 @@ site/                 Everything that turns recipes into a website
     base.njk          The HTML shell, CDN links, font preloads and color scheme
     recipe.njk        The recipe page
     listing.njk       The shell shared by index, tag and About pages
+    pick-popover.njk  The Chef's Pick panel
     recipe-list.njk   Recipe cards
     site-header.njk, site-nav.njk, site-footer.njk
   _data/              Site-wide data: the site title, footer links, the jokes shown when a search finds nothing
   assets/             Sent to the browser as written, served from /assets/
     site.css          All the site's own styles
     listing.js        Search, the time filter and the cards/list switch
+    pick.js           Chooses the Chef's Pick, shared with the tests
     recipe.js         Overview and Cook modes, checked-off steps, print
+    scheme.js         The light/dark toggle
     source.js         The recipe's .cook file in a dialog, with Cooklang colors
     timers.js         Countdown timers in Cook mode
     timer-phase.js    Timer math, shared with the tests
+    transition.js     View transitions and the panel open/close marks
     open-fonts/       The two text fonts and their licenses
 lib/                  Build-time code (Node)
   recipe.js           Parses a .cook file and shapes it for the templates
@@ -107,12 +111,13 @@ eleventy.config.js    The .cook extension, filters, the recipes collection, dev 
 
 ## Tests and CI
 
-`npm test` runs four files with Node's built-in test runner. Nothing else to install.
+`npm test` runs five files with Node's built-in test runner. Nothing else to install.
 
 - `test/validation.test.js` loads each broken recipe in `test/fixtures/` and expects the build to refuse it and name the file.
 - `test/recipe.test.js` covers how a recipe is shaped: notes, timing totals, timers, ingredient totals and the search engine data.
 - `test/site.test.js` builds the whole site in memory. It checks that every recipe has a page and the home page links to all of them. It also checks `search.json`, that each recipe page carries search engine data, and that every link on the site leads to a page. Each recipe's `.cook` file must be published unchanged, and `llms.txt` must list every recipe.
 - `test/timer-phase.test.js` covers the timer math.
+- `test/pick.test.js` covers how Chef's Pick chooses a recipe by hour and season.
 
 GitHub Actions (`.github/workflows/ci.yml`) runs `npm ci`, `npm test` and `npm run build` on every pull request. It doesn't deploy anything.
 
@@ -188,7 +193,7 @@ These are [Cooklang's canonical keys](https://cooklang.org/docs/conventions/), s
 | `diet`        | no       | `vegetarian`, or a list. Not used yet                                                                                                                                                                                                                                                |
 | `difficulty`  | no       | `easy`, or leave it off. Easy means few steps and little hands-on work. Gear like a food processor or pressure cooker is fine. Shows with the recipe's other facts                                                                                                                   |
 | `locale`      | no       | `en_GB`. Not used yet                                                                                                                                                                                                                                                                |
-| `why`         | no       | Why the method works, as a list of sentences. Shows under "Why it works" in Overview only                                                                                                                                                                                            |
+| `why`         | no       | Why the method works, as a list of sentences. Shows under "Why It Works" in Overview only. This one is ours, not Cooklang's                                                                                                                                                          |
 | `icons`       | yes      | Three Font Awesome icon names, most defining first: `[pepper-hot, garlic, bowl-hot]`. Shown on the recipe's card and on the rule above its credits. New names go in `lib/icon-names.js` first. This one is ours, not Cooklang's                                                      |
 
 Cooklang also accepts other names for some keys (`serves`, `category`, `introduction`, `time required`, `duration`, `images`, `picture`, `pictures`). The build asks for the names above so every page reads the same key. Any other key stops the build.
@@ -222,7 +227,7 @@ A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple g
 - Use sections only when a recipe has parts you make separately, or phases with a wait between them. Name a part with a noun (`Sauce`) and a phase with one verb (`Marinate`).
 - Don't label a part inside a step (`Make the dressing:`). Give it a section, or write it as a sentence.
 - A note after a step folds under it. Give it a bold title in title case, a dash, and at least one sentence: `> **Storing** — Keeps for 2 weeks.` Reach for Storing, Making Ahead, Serving, Swaps or Extras first. One idea per note. If skipping it breaks the step, it isn't a note. Put it in the step.
-- A note before the recipe's first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
+- A note before the recipe's first step shows under "Before You Start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
 - Type `1/2`, not `½`.
 - Temperatures go in the step text as `350°F (175°C)`.
 
