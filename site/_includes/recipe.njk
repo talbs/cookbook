@@ -181,7 +181,7 @@
           <h3 class="needs-subhead" id="equipment-heading">Equipment</h3>
           <ul class="wa-list-plain wa-grid wa-gap-xs" role="list">
             {%- for item in recipe.cookware %}
-            <li>{{ item.text | typeset | safe }}</li>
+            <li>{% if item.amount %}{{ item.amount | typeset | safe }} {% endif %}{{ item.name }}{% if item.note %} <span class="note">({{ item.note | typeset | safe }})</span>{% endif %}</li>
             {%- endfor %}
           </ul>
         </section>
