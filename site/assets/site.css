@@ -1908,7 +1908,7 @@ wa-button[appearance='plain']:hover::part(base) {
   color: var(--note-ink);
 }
 
-/* An open note keeps its first sentence as its title, in full and in the page's ink. */
+/* An open note shows its title in full and in the page's ink. */
 .step-note[open]::part(header) {
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);

@@ -43,10 +43,6 @@
   {%- endif -%}
 {% endmacro %}
 
-{% macro noteTitleRow(note, classes) -%}
-<div class="{{ classes }}"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
-{%- endmacro %}
-
 {% macro noteDetails(note) %}
           <wa-details class="step-note" appearance="plain" icon-placement="start">
             <wa-icon slot="expand-icon" class="note-icon" name="note-sticky" variant="regular"></wa-icon>
@@ -55,7 +51,7 @@
             <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </wa-details>
           <div class="step-note note-print">
-            {{ noteTitleRow(note, "note-static") }}
+            <div class="note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
             <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </div>
 {%- endmacro %}
