@@ -2217,12 +2217,18 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 /* Floating panels come and go the way the page's other pieces do: the fade is quick and only the movement springs.
-   A popover pops out of its anchor like the icons and buttons do (transition.js aims it); a dialog springs up into place.
+   A popover pops out of its anchor like the icons and buttons do (transition.js aims it); a dialog pops gently from its centre as it rises.
+   Each shrinks back to the size and spot it grew from on the way out.
    The kit waits for every animation on the part, and its backdrop fades on these durations too. */
 wa-popover,
 wa-dialog {
   --show-duration: var(--fade-in);
   --hide-duration: var(--press);
+}
+
+wa-dialog {
+  --panel-drop-from: 0.75rem;
+  --panel-grow-from: 0.96;
 }
 
 wa-popover::part(popup__popup) {
@@ -2239,12 +2245,12 @@ wa-popover::part(popup__popup) {
   wa-dialog::part(dialog) {
     animation:
       mode-fade-in var(--press) ease-out,
-      mode-settle var(--settle) var(--ease-spring);
+      panel-drop var(--settle) var(--ease-spring);
   }
 
   wa-popover.is-closing::part(popup__popup),
   wa-dialog.is-closing::part(dialog) {
-    animation: mode-out var(--press) ease-in both;
+    animation: panel-lift var(--press) ease-in both;
   }
 }
 
@@ -2970,7 +2976,14 @@ wa-input::part(clear-button):hover {
 @keyframes panel-drop {
   from {
     translate: 0 var(--panel-drop-from, -0.5rem);
-    scale: 0.9;
+    scale: var(--panel-grow-from, 0.9);
+  }
+}
+
+@keyframes panel-lift {
+  to {
+    opacity: 0;
+    scale: var(--panel-grow-from, 0.9);
   }
 }
 
