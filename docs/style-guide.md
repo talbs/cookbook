@@ -17,7 +17,7 @@ One sentence, about 70 to 105 characters. It shows on the recipe's card, at the 
 - Tell the reader something the title doesn't.
 - Use adjectives you could see or feel (charred, thin, crisp). Skip verdicts like "delicious". Two at most.
 - Pick, don't list. Three named ingredients is the ceiling.
-- No colon followed by a space. It breaks the front matter, and the build reports a missing title.
+- No colon followed by a space. It breaks the front matter, and the build stops with `front matter didn't parse`.
 - Most descriptions run "dish with a thing, done a certain way". Break that shape now and then so the list of recipes doesn't read like a template.
 - Read the steps for the hook. Never invent a use or a fact.
 - Keep the dish's own words for itself. Smash burgers are double-stacked, not "two thin patties".

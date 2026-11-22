@@ -6,6 +6,7 @@ const malformedRecipes = [
   ['parser-error.cook', /parser error/],
   ['missing-title.cook', /missing title/],
   ['empty-description.cook', /missing description/],
+  ['colon-in-description.cook', /front matter didn't parse: look for a colon followed by a space in a value/],
   ['unknown-key.cook', /unknown front matter key "nutrition"/],
   ['no-steps.cook', /no steps/],
   ['no-ingredients.cook', /no ingredients/],
