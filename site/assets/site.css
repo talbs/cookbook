@@ -3104,6 +3104,11 @@ wa-input::part(clear-button):hover {
     grid-area: 1 / 1;
   }
 
+  /* Other listings split their rows down the middle, so the lede starts there. About has no middle column, so its lede starts on the prose's edge. */
+  .listing:has(.about-body) .listing-head .description {
+    flex-basis: calc(100% - var(--side-column) - var(--column-gap));
+  }
+
   /* Lets the title, description, facts and switch sit on the page grid as one row of cells. */
   .recipe-head,
   .recipe-intro {
