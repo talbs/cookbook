@@ -35,10 +35,13 @@ description: Who’s cooking, where it came from, and what’s under the hood. (
   <div class="about-data wa-stack wa-gap-3xl">
     <section class="wa-stack wa-gap-m">
       <h2 class="section-head">By the Numbers</h2>
+      {%- macro statTicker(count) -%}
+        <wa-number-ticker value="{{ count }}" duration="1260" delay="200" easing="cubic-bezier(0.2, 0.6, 0.2, 1)" style="--digits: {{ count | string | length }}">{{ count }}</wa-number-ticker>
+      {%- endmacro %}
       <dl class="stats wa-cluster wa-gap-2xl">
-        <div><dt>Recipes</dt><dd><a href="/">{{ recipes.length }}</a></dd></div>
-        <div><dt>Tags</dt><dd><a href="/tags/">{{ (collections | tagNames).length }}</a></dd></div>
-        <div><dt>Sources</dt><dd><a href="#sources-heading">{{ sources.length }}</a></dd></div>
+        <div><dt>Recipes</dt><dd><a href="/">{{ statTicker(recipes.length) }}</a></dd></div>
+        <div><dt>Tags</dt><dd><a href="/tags/">{{ statTicker((collections | tagNames).length) }}</a></dd></div>
+        <div><dt>Sources</dt><dd><a href="#sources-heading">{{ statTicker(sources.length) }}</a></dd></div>
       </dl>
     </section>
     <section class="wa-stack wa-gap-m">

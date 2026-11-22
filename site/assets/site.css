@@ -1793,12 +1793,19 @@ wa-button[appearance='outlined']:hover::part(base) {
   font-size: var(--stat-size, var(--wa-font-size-4xl));
   font-weight: 800;
   font-synthesis: none;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
 /* At this size the site's hover underline lands on the label below, so the number takes the accent instead. */
 .stats dd a {
   text-decoration-line: none;
+}
+
+/* Holds the final number's width while it counts up from fewer digits, so the labels beside it stay put. */
+.stats wa-number-ticker {
+  display: inline-block;
+  min-inline-size: calc(var(--digits) * 1ch);
 }
 
 .stats dd a:hover {
