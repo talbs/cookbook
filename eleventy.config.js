@@ -1,9 +1,8 @@
 import { minutesToIsoDuration } from './lib/json-ld.js';
 import { loadRecipe } from './lib/recipe.js';
 import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
-import { COURSES, RESERVED_TAGS, SEASON_NAMES, YEAR_ROUND_TAG } from './lib/validate-recipe.js';
+import { COURSES, SEASON_NAMES, YEAR_ROUND_TAG, labelCourse, listTagNames } from './lib/validate-recipe.js';
 
-const COURSE_LABELS = { main: 'Main course', side: 'Side dish' };
 const COURSE_HEADINGS = {
   main: 'Mains',
   side: 'Sides',
@@ -26,10 +25,6 @@ const METHOD_TAGS = [
   'stir-fry',
 ];
 const RECIPE_PATH_PATTERN = /^\.\/recipes\/[^/]+\.cook$/;
-
-function labelCourse(course) {
-  return COURSE_LABELS[course] ?? course.charAt(0).toUpperCase() + course.slice(1);
-}
 
 // A title as words of single letters, so each letter can move on its own without a word ever breaking in two.
 // A hyphen ends a word with no space after it, which lets a long compound still wrap at its hyphen.
@@ -84,12 +79,6 @@ function groupByCourse(recipes) {
     }
   }
   return groups;
-}
-
-function listTagNames(collections) {
-  return Object.keys(collections)
-    .filter(name => !RESERVED_TAGS.includes(name))
-    .sort();
 }
 
 function listSeasonTags(tags) {
