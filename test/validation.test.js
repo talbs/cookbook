@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { loadRecipe } from '../lib/recipe.js';
+import { ALLOWED_KEYS } from '../lib/validate-recipe.js';
 
 const malformedRecipes = [
   ['parser-error.cook', /parser error/],
@@ -59,5 +61,12 @@ test('a malformed recipe fails to load and names its file', () => {
 
   for (const fileName of ['good.cook', 'canonical-keys.cook']) {
     assert.doesNotThrow(() => loadRecipe(`test/fixtures/${fileName}`), fileName);
+  }
+});
+
+test('docs/recipe-format.md names every front matter key the build accepts', () => {
+  const recipeFormat = readFileSync('docs/recipe-format.md', 'utf8');
+  for (const key of ALLOWED_KEYS) {
+    assert.ok(recipeFormat.includes(`\`${key}\``), `docs/recipe-format.md doesn't mention \`${key}\``);
   }
 });
