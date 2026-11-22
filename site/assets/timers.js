@@ -17,6 +17,10 @@ function capitalize(words) {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+function titleCase(words) {
+  return words.split(' ').map(capitalize).join(' ');
+}
+
 function isSameDay(first, second) {
   return first.toDateString() === second.toDateString();
 }
@@ -67,6 +71,7 @@ function readBand(band, savedStarts) {
     readout: band.querySelector('.timer-readout'),
     hourglass: band.querySelector('.timer-hourglass'),
     glyph: band.querySelector('.timer-control wa-icon'),
+    tooltip: band.querySelector('wa-tooltip'),
   };
 }
 
@@ -130,11 +135,10 @@ function showTime(timer, { phase, targetAt }) {
 
 function showPhase(timer, state) {
   timer.band.dataset.phase = state.phase;
+  const label = `${ACTIONS[state.phase]} ${titleCase(timer.name)} Timer`;
   timer.glyph.name = GLYPHS[state.phase];
-  timer.control.setAttribute(
-    'aria-label',
-    `${ACTIONS[state.phase]} ${timer.name} timer`
-  );
+  timer.control.setAttribute('aria-label', label);
+  timer.tooltip.textContent = label;
   showTime(timer, state);
 }
 
