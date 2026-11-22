@@ -181,7 +181,7 @@
           <h3 class="needs-subhead" id="equipment-heading">Equipment</h3>
           <ul class="wa-list-plain wa-grid wa-gap-xs" role="list">
             {%- for item in recipe.cookware %}
-            <li>{{ item.name }}</li>
+            <li>{{ item.text | typeset | safe }}</li>
             {%- endfor %}
           </ul>
         </section>
