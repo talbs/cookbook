@@ -2,7 +2,7 @@ import { minutesToIsoDuration } from './lib/json-ld.js';
 import { loadRecipe } from './lib/recipe.js';
 import { CARD_HEIGHT, CARD_WIDTH, describeShareCard, nameShareCard, writeShareCards } from './lib/share-card.js';
 import { showPlainLetters, keepHyphenatedWordsWhole, keepLastWordsTogether, typesetText } from './lib/typeset.js';
-import { COURSES, SEASON_NAMES, YEAR_ROUND_TAG, labelCourse, listTagNames } from './lib/validate-recipe.js';
+import { COURSES, SEASON_NAMES, labelCourse, listTagNames } from './lib/validate-recipe.js';
 import site from './site/_data/site.json' with { type: 'json' };
 
 const COURSE_HEADINGS = {
@@ -15,8 +15,10 @@ const COURSE_HEADINGS = {
 };
 // Tags that say how a recipe is cooked. Seasons come from the validator's list; every other tag names a kind of dish.
 const METHOD_TAGS = [
+  'air-fryer',
   'baking',
   'canning',
+  'griddle',
   'grill',
   'make-ahead',
   'one-pan',
@@ -88,7 +90,7 @@ function listSeasonTags(tags) {
 }
 
 function nameTagKind(tag) {
-  if (SEASON_NAMES.includes(tag) || tag === YEAR_ROUND_TAG) return 'Seasons';
+  if (SEASON_NAMES.includes(tag)) return 'Seasons';
   if (METHOD_TAGS.includes(tag)) return 'Methods';
   return 'Dishes';
 }

@@ -34,6 +34,7 @@ const malformedRecipes = [
   ['bad-course.cook', /course "brunch" must be one of main, side, dessert, breakfast, drink, condiment/],
   ['bad-difficulty.cook', /difficulty "medium" must be easy, or left off/],
   ['wrong-season-word.cook', /tag "summer" isn't a season here: write early-summer, midsummer or late-summer/],
+  ['year-round-tag.cook', /tag "year-round" isn't a season here: leave the season off \(no season tag means any time\)/],
   ['too-few-icons.cook', /icons must list exactly three names/],
   ['icons-text.cook', /icons must list exactly three names/],
   ['unknown-icon.cook', /icon "galric" isn't in lib\/icon-names\.js/],
