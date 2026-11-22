@@ -602,6 +602,13 @@ wa-scroller:has(.course-links) {
   --parent-gap: var(--wa-space-l);
 }
 
+/* On one column the title sits 16px above the description, and the wide layout's 36px either side of the dots reads as a hole next to that. */
+@media screen and (width < 48rem) {
+  .recipe-head {
+    --rule-gap: 1.5rem;
+  }
+}
+
 .footer-rule {
   --parent-gap: var(--wa-space-m);
 }
@@ -965,6 +972,13 @@ button.shortcut {
   line-height: 1.2;
   letter-spacing: -0.015em;
   margin-block: 0 var(--wa-space-s);
+}
+
+/* These stacks' 16px gap already parts a head from what it names. With the head's 12px on top it sat further from its first step than the steps sit from each other (24px). */
+@media screen {
+  :is(.needs, .before-start, .method) > .section-head {
+    margin-block-end: 0;
+  }
 }
 
 .method > .phase {
