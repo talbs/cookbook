@@ -3233,13 +3233,17 @@ wa-page[view='desktop'] {
 }
 
 /* 0.4in at the sides clears every common printer's unprintable edge. No size, so Letter and A4 both work.
-   The head leaves room for the browser's own date and title line, when the reader keeps it on.
    The foot is deeper, for a running line: recipe.njk sets the left text and recipe.js the address, which only the browser knows.
-   Chrome draws these in the margin; a browser that can't leaves them out. */
+   Chrome draws these in the margin and drops its own lines from any edge that has one, so the empty box at the head
+   is what removes Chrome's date and title. Firefox and Safari draw none of this and keep their own lines, which the head leaves room for. */
 @page {
   margin: 0.55in 0.4in 0.65in;
 
   font: 8.25pt 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  @top-left {
+    content: '';
+  }
 
   @bottom-left {
     vertical-align: bottom;
