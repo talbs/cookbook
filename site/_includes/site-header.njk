@@ -2,20 +2,22 @@
 {%- set isHome = page.url == "/" -%}
 <div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l">
   {%- if isHome %}
-  <button class="shortcut wa-border-radius-s" id="site-pick" type="button" hidden><wa-icon name="bell-concierge" variant="regular" label="Chef’s Pick"></wa-icon></button>
-  <wa-tooltip for="site-pick" placement="bottom">Chef’s Pick</wa-tooltip>
+  <wa-button class="special" id="site-pick" appearance="plain" hidden><wa-icon slot="start" name="bell-concierge" variant="regular" aria-hidden="true"></wa-icon><span class="special-label">Today’s Special!</span></wa-button>
+  <wa-tooltip class="special-tip" for="site-pick" placement="bottom">Today’s Special!</wa-tooltip>
   {{ pickPopover("site-pick", "bottom-start") }}
   {%- else %}
   <a class="site-name" href="/">{{ site.title }}</a>
   {%- endif %}
-  <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-l">
+  <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-2xl">
     {% include "site-nav.njk" %}
-    <a class="shortcut wa-border-radius-s" id="site-search" href="/#search"><wa-icon name="magnifying-glass" variant="regular" label="Search Recipes"></wa-icon></a>
-    <wa-tooltip for="site-search" placement="bottom">Search Recipes</wa-tooltip>
-    <button class="shortcut wa-border-radius-s" id="site-scheme" type="button" aria-label="Switch to dark mode">
-      <wa-icon class="to-dark" name="moon" variant="regular"></wa-icon>
-      <wa-icon class="to-light" name="sun-bright" variant="regular"></wa-icon>
-    </button>
-    <wa-tooltip for="site-scheme" placement="bottom">Night Shift</wa-tooltip>
+    <div class="wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-l">
+      <a class="shortcut wa-border-radius-s" id="site-search" href="/#search"><wa-icon name="magnifying-glass" variant="regular" label="Search Recipes"></wa-icon></a>
+      <wa-tooltip for="site-search" placement="bottom">Search Recipes</wa-tooltip>
+      <button class="shortcut wa-border-radius-s" id="site-scheme" type="button" aria-label="Switch to dark mode">
+        <wa-icon class="to-dark" name="moon" variant="regular"></wa-icon>
+        <wa-icon class="to-light" name="sun-bright" variant="regular"></wa-icon>
+      </button>
+      <wa-tooltip for="site-scheme" placement="bottom">Night Shift</wa-tooltip>
+    </div>
   </div>
 </div>

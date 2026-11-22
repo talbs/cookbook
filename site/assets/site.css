@@ -1612,6 +1612,55 @@ wa-button[appearance='plain']:hover::part(base) {
   color: var(--accent);
 }
 
+/* The chosen radio's hatch on a button of its own; the switch's frame only shows on hover. */
+wa-button.special::part(base),
+wa-button.special:hover::part(base) {
+  block-size: var(--shortcut-size);
+  border: 1px solid transparent;
+  border-radius: var(--wa-border-radius-m);
+  background: var(--hatch);
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--ink);
+  transition: border-color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button.special:hover::part(base) {
+  border-color: var(--control-edge);
+}
+
+/* Below 480px the words no longer fit beside the nav, so the button folds to its bell and keeps the words for screen readers. */
+@media (width < 30rem) {
+  wa-button.special::part(base) {
+    inline-size: var(--shortcut-size);
+    padding-inline: 0;
+  }
+
+  .special wa-icon {
+    margin-inline-end: 0;
+  }
+
+  .special-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* The tooltip only stands in for the words the phone layout hides. */
+@media (width >= 30rem) {
+  .special-tip {
+    display: none;
+  }
+}
+
+/* The button waits for its script, and the kit's host display would otherwise beat the hidden attribute. */
+.special[hidden] {
+  display: none;
+}
+
 @media (min-width: 48rem) {
   .not-found-page main,
   .listing:has(.search-empty:not([hidden])) {
