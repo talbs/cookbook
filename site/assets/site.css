@@ -605,7 +605,7 @@ wa-scroller:has(.course-links) {
 /* On one column the title sits 16px above the description, and the wide layout's 36px either side of the dots reads as a hole next to that. */
 @media screen and (width < 48rem) {
   .recipe-head {
-    --rule-gap: 1.5rem;
+    --rule-gap: var(--wa-space-l);
   }
 }
 
