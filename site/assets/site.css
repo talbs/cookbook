@@ -1367,7 +1367,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* In a flex row that padding does add height, so the margin takes it back and gaps are measured from the words.
    It goes on the tags' row, not the tags, because wa-random-content sets its own margins on the ones it shows. */
 .site-footer .site-nav,
-.empty-suggestions,
+.empty-state .empty-suggestions,
 .pick-foot .pick-again {
   margin-block: calc(-1 * var(--wa-space-xs));
 }
@@ -1375,6 +1375,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* Tags that wrap stay one group: their tap areas touch, so the words sit closer than the lines around them. */
 .empty-suggestions {
   row-gap: 0;
+}
+
+/* The sentence's commas and full stop sit outside the links' underlines; an inline-block doesn't inherit the line. */
+.empty-tags > :not([hidden])::after,
+.empty-special .link-button::after {
+  display: inline-block;
+  content: ',';
+}
+
+.empty-special .link-button::after {
+  content: '.';
 }
 
 @media (min-width: 48rem) {
@@ -1469,11 +1480,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   /* Stacked, the credit and the links read as one pair. */
   .site-footer .wa-split {
     row-gap: var(--wa-space-xs);
-  }
-
-  /* Each way out takes its own centred line, however long the suggested tags run. */
-  .search-empty .empty-ways-out {
-    flex-direction: column;
   }
 }
 

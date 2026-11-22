@@ -303,13 +303,11 @@ if (searchInput) {
     showMatches();
   });
   timeSelect.addEventListener('change', () => showMatches());
-  emptyNote.querySelector('.empty-clear').addEventListener('click', () => {
-    timeSelect.value = 'any';
-    search('');
-  });
   emptyNote.querySelector('.empty-tags').addEventListener('click', event => {
     const suggestion = event.target.closest('[data-search]');
-    if (suggestion) search(suggestion.dataset.search);
+    if (!suggestion) return;
+    timeSelect.value = 'any';
+    search(suggestion.dataset.search);
   });
 
   // A search or time limit that arrives in the address is applied before anything shows, without the settle.
