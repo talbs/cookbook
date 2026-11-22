@@ -2314,8 +2314,29 @@ wa-popover::part(popup__popup) {
 }
 
 .pick-label {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.85em;
   margin: 0;
+  overflow-x: clip;
   color: var(--note-ink);
+}
+
+.pick-season {
+  position: relative;
+}
+
+.pick-season:empty {
+  display: none;
+}
+
+/* The dot hangs in the gap before the season. When the season wraps to its own line, the dot lands outside the label and is clipped. */
+.pick-season::before {
+  position: absolute;
+  inset-inline-end: 100%;
+  inline-size: 0.85em;
+  content: '·';
+  text-align: center;
 }
 
 .pick-icons {
