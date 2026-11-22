@@ -234,7 +234,7 @@
     </section>
     {%- endif %}
     <section class="method wa-stack wa-gap-m" aria-labelledby="preparation-heading">
-      <h2 class="section-head{% if recipe.sections[0].name %} wa-visually-hidden{% endif %}" id="preparation-heading">Preparation</h2>
+      <h2 class="section-head{% if recipe.hasNamedOpeningSection %} wa-visually-hidden{% endif %}" id="preparation-heading">Preparation</h2>
       {%- for section in recipe.sections %}
       {%- if section.name %}
       <h3 class="phase section-head">{{ section.name }}</h3>
