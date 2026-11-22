@@ -92,6 +92,10 @@ function listTagNames(collections) {
     .sort();
 }
 
+function listSeasonTags(tags) {
+  return tags.filter(tag => SEASON_NAMES.includes(tag));
+}
+
 function nameTagKind(tag) {
   if (SEASON_NAMES.includes(tag) || tag === YEAR_ROUND_TAG) return 'Seasons';
   if (METHOD_TAGS.includes(tag)) return 'Methods';
@@ -170,6 +174,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('relatedTags', listRelatedTags);
   eleventyConfig.addFilter('groupByCourse', groupByCourse);
   eleventyConfig.addFilter('tagNames', listTagNames);
+  eleventyConfig.addFilter('seasonTags', listSeasonTags);
   eleventyConfig.addFilter('groupTagsByKind', groupTagsByKind);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
   eleventyConfig.addFilter('recipesThatUse', listRecipesThatUse);

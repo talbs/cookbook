@@ -5,6 +5,7 @@ eleventyComputed:
 ---
 {% extends "listing.njk" %}
 {% from "recipe-list.njk" import recipeCards, recipeRows %}
+{% from "pick-popover.njk" import pickPopover %}
 {% set courses = collections.recipes | groupByCourse %}
 
 {% block head %}
@@ -88,7 +89,8 @@ eleventyComputed:
         {%- endfor %}
       </wa-random-content>
     </span>
-    <a class="empty-random" href="/">Surprise Me</a>
+    <wa-button id="empty-pick" appearance="plain"><wa-icon slot="start" name="bell-concierge" variant="regular" aria-hidden="true"></wa-icon>Chef’s Pick</wa-button>
+    {{ pickPopover("empty-pick", "bottom") }}
   </div>
 </div>
 {% endblock %}

@@ -650,7 +650,7 @@ wa-scroller:has(.course-links) {
    because a solid shape reads darker than a row of dots at the same value. */
 @media (hover: hover) {
   .recipe-icons:hover wa-icon,
-  .recipe-card:hover .recipe-icons wa-icon {
+  :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon {
     --primary-color: var(--ink);
     --secondary-opacity: var(--icon-fill);
   }
@@ -663,7 +663,7 @@ wa-scroller:has(.course-links) {
 }
 
 /* A keyboard gets the same inked icons on a focused card, and a finger gets them while it presses, so this sits outside the hover query. */
-.recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon {
+:is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon {
   --primary-color: var(--ink);
   --secondary-opacity: var(--icon-fill);
 }
@@ -687,31 +687,31 @@ wa-scroller:has(.course-links) {
     transition-delay: 90ms;
   }
 
-  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon {
+  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon {
     scale: 1.2;
   }
 
-  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(odd) {
+  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(odd) {
     rotate: -8deg;
   }
 
-  .recipe-card:is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(even) {
+  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(even) {
     rotate: 8deg;
   }
 
   @media (hover: hover) {
     .recipe-icons:hover wa-icon,
-    .recipe-card:hover .recipe-icons wa-icon {
+    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon {
       scale: 1.2;
     }
 
     .recipe-icons:hover wa-icon:nth-child(odd),
-    .recipe-card:hover .recipe-icons wa-icon:nth-child(odd) {
+    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon:nth-child(odd) {
       rotate: -8deg;
     }
 
     .recipe-icons:hover wa-icon:nth-child(even),
-    .recipe-card:hover .recipe-icons wa-icon:nth-child(even) {
+    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon:nth-child(even) {
       rotate: 8deg;
     }
   }
@@ -1357,10 +1357,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin: 0;
 }
 
-/* Links inside running text and the no-results choices get taller tap areas without moving the words. */
+/* Links inside running text, the no-results choices and Send back get taller tap areas without moving the words. */
 .listing-head .description a,
 .empty-ways-out .link-button,
-.empty-random {
+.pick-foot .pick-again {
   padding-block: var(--wa-space-xs);
 }
 
@@ -1368,7 +1368,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
    It goes on the tags' row, not the tags, because wa-random-content sets its own margins on the ones it shows. */
 .site-footer .site-nav,
 .empty-suggestions,
-.empty-random {
+.pick-foot .pick-again {
   margin-block: calc(-1 * var(--wa-space-xs));
 }
 
@@ -1598,6 +1598,17 @@ wa-button[appearance='outlined']::part(base) {
 wa-button[appearance='outlined']:hover::part(base) {
   background: var(--paper);
   border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
+wa-button[appearance='plain']::part(base) {
+  color: var(--note-ink);
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button[appearance='plain']:hover::part(base) {
+  background: transparent;
   color: var(--accent);
 }
 
@@ -1916,6 +1927,20 @@ wa-button[appearance='outlined']:hover::part(base) {
   outline-offset: var(--wa-focus-ring-offset);
 }
 
+/* A note opens over a settle and folds on a press. The easing is crisp with no overshoot, so the steps below never bounce. */
+wa-details {
+  --show-duration: var(--settle);
+  --hide-duration: var(--press);
+  --wa-transition-easing: var(--ease-swift);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  wa-details {
+    --show-duration: 0ms;
+    --hide-duration: 0ms;
+  }
+}
+
 /* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, filled when open.
    WA turns its chevron a quarter turn on open and greys it; a note icon should do neither. */
 .step-note::part(icon) {
@@ -2185,21 +2210,104 @@ wa-progress-bar.wait-run::part(indicator) {
   font-size: 0.9em;
 }
 
-.source-dialog,
-.screen-toast wa-toast-item {
-  --hide-duration: 160ms;
-}
-
 /* The pop goes up and comes back down, so it gets half again as long as a settle. */
 .screen-toast wa-toast-item {
   --show-duration: calc(var(--settle) * 1.5);
+  --hide-duration: var(--press);
+}
+
+/* Floating panels come and go the way the page's other pieces do: the fade is quick and only the movement springs.
+   A popover pops out of its anchor like the icons and buttons do (transition.js aims it); a dialog springs up into place.
+   The kit waits for every animation on the part, and its backdrop fades on these durations too. */
+wa-popover,
+wa-dialog {
+  --show-duration: var(--fade-in);
+  --hide-duration: var(--press);
+}
+
+wa-popover::part(popup__popup) {
+  transform-origin: var(--panel-origin, top center);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  wa-popover::part(popup__popup) {
+    animation:
+      mode-fade-in var(--press) ease-out,
+      panel-drop var(--settle) var(--ease-spring);
+  }
+
+  wa-dialog::part(dialog) {
+    animation:
+      mode-fade-in var(--press) ease-out,
+      mode-settle var(--settle) var(--ease-spring);
+  }
+
+  wa-popover.is-closing::part(popup__popup),
+  wa-dialog.is-closing::part(dialog) {
+    animation: mode-out var(--press) ease-in both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  wa-popover,
+  wa-dialog {
+    --show-duration: 0ms;
+    --hide-duration: 0ms;
+  }
+}
+
+/* Wide enough that all but the longest titles stay on one line. */
+.pick-popover {
+  --max-width: min(28rem, 100vw - 2 * var(--wa-space-l));
+}
+
+/* Floating surfaces wear the time select's field: paper, its edge and a soft shadow. */
+.pick-popover::part(body),
+.screen-toast wa-toast-item::part(toast-item) {
+  border: 1px solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+  background: var(--paper);
+  box-shadow: var(--wa-shadow-s);
+  color: var(--ink);
+}
+
+.pick-popover::part(body) {
+  padding: var(--wa-space-l);
+}
+
+/* The arrow's edge is an inset shadow in the kit's own border colour, so it is repainted to match the panel. */
+.pick-popover::part(popup__arrow) {
+  background-color: var(--paper);
+  box-shadow: inset -1px -1px 0 0 var(--control-edge);
+}
+
+.pick-label {
+  margin: 0;
+  color: var(--note-ink);
+}
+
+.pick-icons {
+  margin-inline: 0;
+}
+
+.pick-popover .pick-link {
+  font-size: var(--wa-font-size-l);
+  font-weight: 800;
+  line-height: 1.2;
+  text-wrap: balance;
+  text-underline-offset: 0.25em;
+}
+
+/* The extra space keeps the title's underline from reading as a rule above the foot. */
+.pick-foot {
+  margin-block-start: var(--wa-space-xs);
+  font-size: var(--wa-font-size-s);
 }
 
 /* The site derives these at :root, where they resolve to light values. */
 .source-dialog {
   --width: 46rem;
   --spacing: var(--wa-space-l);
-  --show-duration: var(--settle);
   --ink: var(--wa-color-text-normal);
   --paper: var(--wa-color-neutral-05);
   --note-ink: var(--wa-color-text-quiet);
@@ -2214,7 +2322,6 @@ wa-progress-bar.wait-run::part(indicator) {
   border-radius: var(--wa-border-radius-l);
   background: var(--paper);
   box-shadow: 0 var(--wa-space-s) var(--wa-space-2xl) color-mix(in oklab, var(--wa-color-neutral-05) 22%, transparent);
-  animation-timing-function: var(--ease-settle);
 }
 
 .source-dialog::part(dialog)::backdrop {
@@ -2299,11 +2406,21 @@ wa-progress-bar.wait-run::part(indicator) {
   color: var(--note-ink);
   font-size: 1rem;
   cursor: pointer;
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
 .source-dialog::part(close-button__button):hover,
 .source-copy::part(button):hover {
+  color: var(--accent);
+}
+
+/* The small icon buttons inside kit parts turn the accent on hover like the shortcut icons, and dip like them where motion is allowed. */
+wa-input::part(clear-button),
+wa-dialog::part(close-button__button),
+wa-copy-button::part(button) {
+  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-input::part(clear-button):hover {
   color: var(--accent);
 }
 
@@ -2344,7 +2461,6 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .source-dialog,
   .screen-toast wa-toast-item {
     --show-duration: 0ms;
     --hide-duration: 0ms;
@@ -2376,16 +2492,11 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 .screen-toast wa-toast-item::part(toast-item) {
-  border: 1px solid var(--control-edge);
-  border-radius: var(--wa-border-radius-m);
-  background: var(--paper);
-  box-shadow: var(--wa-shadow-s);
-  color: var(--ink);
   animation-name: toast-pop;
 }
 
-/* The kit runs one part for arriving and leaving, so recipe.js marks the leave. */
-.screen-toast wa-toast-item.is-leaving::part(toast-item) {
+/* The kit runs one part for arriving and leaving, so transition.js marks the leave. */
+.screen-toast wa-toast-item.is-closing::part(toast-item) {
   animation-name: toast-sink;
   animation-timing-function: ease-in;
 }
@@ -2526,9 +2637,10 @@ wa-progress-bar.wait-run::part(indicator) {
   }
 
   /* Dip fast on press, spring back on release. */
+  /* A select dips on its host, so the kit's own fades on the field inside stay untouched. */
   .mode-switch,
-  wa-button[appearance='outlined'],
-  .time-select::part(combobox),
+  wa-button,
+  wa-select,
   .shortcut wa-icon {
     transition: scale var(--settle) var(--ease-spring);
   }
@@ -2540,8 +2652,8 @@ wa-progress-bar.wait-run::part(indicator) {
   }
 
   .mode-switch:active,
-  wa-button[appearance='outlined']:active,
-  .time-select:active::part(combobox) {
+  wa-button:active,
+  wa-select:active {
     scale: 0.97;
     transition: scale var(--press) ease-out;
   }
@@ -2549,6 +2661,35 @@ wa-progress-bar.wait-run::part(indicator) {
   .shortcut:active wa-icon {
     scale: 0.8;
     transition: scale var(--press) ease-out;
+  }
+
+  wa-input::part(clear-button),
+  wa-dialog::part(close-button__button),
+  wa-copy-button::part(button) {
+    transition:
+      color var(--wa-transition-normal) var(--wa-transition-easing),
+      scale var(--settle) var(--ease-spring);
+  }
+
+  wa-input::part(clear-button):active,
+  wa-dialog::part(close-button__button):active,
+  wa-copy-button::part(button):active {
+    scale: 0.8;
+    transition:
+      color var(--wa-transition-normal) var(--wa-transition-easing),
+      scale var(--press) ease-out;
+  }
+
+  wa-select::part(expand-icon) {
+    transition: rotate var(--settle) var(--ease-settle);
+  }
+
+  /* Shuffled content arrives like the page's other pieces. Showing the item starts it, because the kit drops its own animation mark
+     as soon as the first animation ends, which would cut the settle short. */
+  wa-random-content:not([animation='none']) > :not([hidden]) {
+    animation:
+      mode-fade-in var(--fade-in) ease-out,
+      mode-settle var(--settle) var(--ease-settle);
   }
 
   /* Switching scheme, the old icon sets down out of the button and the new one rises into its place, timed like a mode's body. */
@@ -2577,6 +2718,10 @@ wa-progress-bar.wait-run::part(indicator) {
   /* Resting beside the switch, the print control wears its frame, so it dips like the switch instead of like a shortcut. */
   .mode-rest .print-control:active {
     scale: 0.97;
+    transition:
+      color var(--wa-transition-fast) var(--wa-transition-easing),
+      border-color var(--wa-transition-fast) var(--wa-transition-easing),
+      scale var(--press) ease-out;
   }
 
   .mode-rest .print-control wa-icon {
@@ -2597,7 +2742,7 @@ wa-progress-bar.wait-run::part(indicator) {
     transition:
       color var(--wa-transition-fast) var(--wa-transition-easing),
       border-color var(--wa-transition-fast) var(--wa-transition-easing),
-      scale var(--press) ease-out;
+      scale var(--settle) var(--ease-spring);
   }
 
   /* The bar stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
@@ -2726,15 +2871,18 @@ wa-progress-bar.wait-run::part(indicator) {
     animation: none;
   }
 
-  .empty-icons wa-icon {
+  .empty-icons wa-icon,
+  .pick-icons wa-icon {
     animation: spring-from-press var(--settle) var(--ease-spring) both;
   }
 
-  .empty-icons wa-icon:nth-child(2) {
+  .empty-icons wa-icon:nth-child(2),
+  .pick-icons wa-icon:nth-child(2) {
     animation-delay: 45ms;
   }
 
-  .empty-icons wa-icon:nth-child(3) {
+  .empty-icons wa-icon:nth-child(3),
+  .pick-icons wa-icon:nth-child(3) {
     animation-delay: 90ms;
   }
 
@@ -2816,6 +2964,13 @@ wa-progress-bar.wait-run::part(indicator) {
 @keyframes page-reveal-fade-in {
   from {
     opacity: 0.01;
+  }
+}
+
+@keyframes panel-drop {
+  from {
+    translate: 0 var(--panel-drop-from, -0.5rem);
+    scale: 0.9;
   }
 }
 

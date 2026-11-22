@@ -74,7 +74,6 @@ async function showScreenToastOnce() {
     icon: { name: 'bread-slice', variant: 'regular' },
   });
   toastItem.querySelector('wa-icon')?.setAttribute('animation', 'flip-360');
-  toastItem.addEventListener('wa-hide', () => toastItem.classList.add('is-leaving'));
 }
 
 function isMode(value) {

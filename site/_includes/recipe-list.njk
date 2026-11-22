@@ -3,7 +3,7 @@
 <ul class="recipe-cards wa-list-plain wa-grid wa-gap-2xl" role="list">
   {%- for item in items %}
   {%- set hasTime = item.data.totalMinutes != null %}
-  <li data-minutes="{{ item.data.totalMinutes if hasTime }}">
+  <li data-minutes="{{ item.data.totalMinutes if hasTime }}" data-seasons="{{ item.data.tags | seasonTags | join(' ') }}">
     <a class="recipe-card" href="{{ item.url }}" aria-labelledby="card-title-{{ item.fileSlug }}{% if hasTime %} card-time-{{ item.fileSlug }}{% endif %}">
       <wa-card appearance="plain" with-header with-footer>
         <{{ headingTag }} slot="header" class="card-title" id="card-title-{{ item.fileSlug }}">{{ item.data.title }}</{{ headingTag }}>
