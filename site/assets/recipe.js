@@ -66,18 +66,23 @@ async function waitForViewTransitions() {
   await document.activeViewTransition?.finished;
 }
 
+async function showToast(message, duration) {
+  const toastItem = await screenToast.create(message, {
+    size: 'm',
+    duration,
+    icon: { name: 'bread-slice', variant: 'regular' },
+  });
+  toastItem.querySelector('wa-icon')?.setAttribute('animation', 'flip-360');
+  return toastItem;
+}
+
 async function showScreenToastOnce() {
   if (isScreenToastShown) return;
   markScreenToastShown();
   await customElements.whenDefined('wa-toast');
   await waitForPageReveal();
   await waitForViewTransitions();
-  const toastItem = await screenToast.create('Screen stays on while you cook.', {
-    size: 'm',
-    duration: 3000,
-    icon: { name: 'bread-slice', variant: 'regular' },
-  });
-  toastItem.querySelector('wa-icon')?.setAttribute('animation', 'flip-360');
+  await showToast('Screen stays on while you cook.', 3000);
 }
 
 function isMode(value) {
@@ -153,11 +158,7 @@ async function showLinkCopiedToast() {
   try {
     await customElements.whenDefined('wa-toast');
     await waitForViewTransitions();
-    linkCopiedToast = await screenToast.create('Link Copied', {
-      size: 'm',
-      duration: 2000,
-      icon: { name: 'check', variant: 'regular' },
-    });
+    linkCopiedToast = await showToast('Link Copied', 2000);
   } finally {
     isLinkCopiedToastQueued = false;
   }
