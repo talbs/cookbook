@@ -21,8 +21,8 @@
 {%- endmacro %}
 
 {% macro printControl(id) %}
-    <button class="shortcut print-control wa-border-radius-s" id="{{ id }}" type="button"><wa-icon name="print" variant="regular" label="Print or save as PDF"></wa-icon></button>
-    <wa-tooltip for="{{ id }}" placement="bottom">Print or save as PDF</wa-tooltip>
+    <button class="shortcut print-control wa-border-radius-s" id="{{ id }}" type="button"><wa-icon name="print" variant="regular" label="Print or Save as PDF"></wa-icon></button>
+    <wa-tooltip for="{{ id }}" placement="bottom">Print or Save as PDF</wa-tooltip>
 {%- endmacro %}
 
 {% macro ingredientName(ingredient, recipes) %}
@@ -330,8 +330,8 @@
     <wa-icon slot="copy-icon" name="copy" variant="regular"></wa-icon>
     <wa-icon slot="success-icon" name="check" variant="regular"></wa-icon>
   </wa-copy-button>
-  <a slot="header-actions" class="shortcut wa-border-radius-s" id="source-plain" href="/recipes/{{ page.fileSlug }}.txt"><wa-icon name="file-lines" variant="regular" label="Open as plain text"></wa-icon></a>
-  <wa-tooltip for="source-plain" placement="bottom">Open as plain text</wa-tooltip>
+  <a slot="header-actions" class="shortcut wa-border-radius-s" id="source-plain" href="/recipes/{{ page.fileSlug }}.txt"><wa-icon name="file-lines" variant="regular" label="Open as Plain Text"></wa-icon></a>
+  <wa-tooltip for="source-plain" placement="bottom">Open as Plain Text</wa-tooltip>
   <wa-code-highlighter id="source-code" without-copy wrap label="Cooklang source for this recipe"></wa-code-highlighter>
 </wa-dialog>
 <script type="module" src="/assets/source.js"></script>
