@@ -101,9 +101,34 @@ function showMode(mode) {
   timers.keepScreenAwakeWhileNeeded();
 }
 
+function findStepBeingRead() {
+  const barBottom = modeBar.getBoundingClientRect().bottom;
+  for (const step of recipe.querySelectorAll('.step')) {
+    const { top, bottom } = step.getBoundingClientRect();
+    if (bottom > barBottom && top < window.innerHeight) return step;
+  }
+  return null;
+}
+
+function findLandingFor(mode) {
+  const beforeStart = mode === 'cook'
+    ? recipe.querySelector('.before-start')
+    : recipe.querySelector('.lead-notes:has(#lead-notes-heading)');
+  return beforeStart ?? recipe.querySelector('.method');
+}
+
 function switchMode(mode) {
+  const isBarShowing = modeBar.classList.contains('is-pinned');
+  const heldStep = isBarShowing ? findStepBeingRead() : null;
+  const heldStepTop = heldStep?.getBoundingClientRect().top;
+
   runningTransition = changeWithTransition(() => {
     showMode(mode);
+    if (heldStep) {
+      window.scrollBy({ top: heldStep.getBoundingClientRect().top - heldStepTop, behavior: 'instant' });
+    } else if (isBarShowing) {
+      findLandingFor(mode)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
     saveState();
   });
 }
