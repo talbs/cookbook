@@ -1,11 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { loadRecipe } from '../lib/recipe.js';
+import { ALLOWED_KEYS } from '../lib/validate-recipe.js';
 
 const malformedRecipes = [
   ['parser-error.cook', /parser error/],
   ['missing-title.cook', /missing title/],
   ['empty-description.cook', /missing description/],
+  ['colon-in-description.cook', /front matter didn't parse: look for a colon followed by a space in a value/],
   ['unknown-key.cook', /unknown front matter key "nutrition"/],
   ['no-steps.cook', /no steps/],
   ['no-ingredients.cook', /no ingredients/],
@@ -16,11 +19,13 @@ const malformedRecipes = [
   ['Bad Name.cook', /file name must be lowercase words joined by hyphens/],
   ['glyph-fraction.cook', /write 1\/2, not ½/],
   ['unnamed-timer.cook', /timer in step 1 has no name/],
+  ['two-word-timer.cook', /timer "Rest Time" in step 1 must be one lowercase word, like bake or pressure-cook/],
   ['repeat-without-reference.cook', /"eggs" in step 2 is mentioned again: write @&eggs/],
   ['title-list.cook', /title must be text/],
   ['author-map.cook', /author must be text/],
   ['diet-number.cook', /diet must be text or a list of text/],
   ['adapted-text.cook', /adapted must be true or false/],
+  ['adapted-without-note.cook', /adapted needs a What's Changed note/],
   ['wrong-unit-case.cook', /unit "Tbsp" in step 1 isn't one Cooklang knows: write tbsp/],
   ['alias-key.cook', /write servings, not serves/],
   ['text-yield.cook', /yield "24 bars" must be an amount and unit/],
@@ -56,5 +61,12 @@ test('a malformed recipe fails to load and names its file', () => {
 
   for (const fileName of ['good.cook', 'canonical-keys.cook']) {
     assert.doesNotThrow(() => loadRecipe(`test/fixtures/${fileName}`), fileName);
+  }
+});
+
+test('docs/recipe-format.md names every front matter key the build accepts', () => {
+  const recipeFormat = readFileSync('docs/recipe-format.md', 'utf8');
+  for (const key of ALLOWED_KEYS) {
+    assert.ok(recipeFormat.includes(`\`${key}\``), `docs/recipe-format.md doesn't mention \`${key}\``);
   }
 });
