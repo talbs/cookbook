@@ -1160,6 +1160,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .ingredient .note,
+.equipment .note,
 .timing-step,
 .listing-detail,
 .card-time,
@@ -3503,6 +3504,7 @@ wa-page[view='desktop'] {
 
   /* The smallest size on the sheet opens up a little, so 8pt sans doesn't clog in print. */
   .ingredient .note,
+  .equipment .note,
   .timing-step,
   .timing-section,
   .facts dt {

@@ -67,7 +67,7 @@ Cooklang also accepts other names for some keys (`serves`, `category`, `introduc
 - **Mentioning an ingredient again? Write `@&name`.** The `&` is what adds the amounts together on the ingredient list (`@&sugar{50%g}`). A repeat can't have its own note in parentheses.
 - Names with more than one word need braces even with no amount: `@&egg yolks{}`.
 - Keep the name identical every time, or the list splits it into two lines.
-- `#name{}` for cookware. This builds the Equipment list. Repeats work the same way: `#&bowl{}`.
+- `#name{}` for cookware. This builds the Equipment list. A count and a note in parentheses show there too: `#canning jars{5}(8 oz, with lids)`. Repeats work the same way: `#&bowl{}`.
 - Every timer gets a one-word name: `~bake{20%minutes}`, `~chill{24-36%hours}`. Timers know seconds, minutes, hours and days. Write longer waits as plain words ("at least 1 week").
 - A second unit or a count goes in the note: `@egg yolks{110%g}(4 oz, about 7)`.
 - `@./other-recipe{}` uses another recipe as an ingredient. Write the other recipe's file name. The page shows its title as a link, and the other recipe's page says where it's used. `@?./other-recipe{}` marks it optional.
