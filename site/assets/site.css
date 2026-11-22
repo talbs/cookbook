@@ -2582,6 +2582,11 @@ wa-input::part(clear-button):hover {
   }
 }
 
+.screen-toast wa-toast-item::part(icon),
+.screen-toast wa-toast-item::part(content) {
+  padding-block: var(--wa-space-s);
+}
+
 .screen-toast wa-toast-item::part(icon) {
   color: var(--note-ink);
 }
