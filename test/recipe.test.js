@@ -35,16 +35,15 @@ test('a timing total whose ends round to one figure reads as about that figure',
   }
 });
 
-test("a note's title and body together carry the whole note, with nothing said twice", () => {
+test("a note's bold title splits from its body, and a note without one has no title", () => {
   const rows = [
-    ['Rest the batter. It thickens as it sits.', 'Rest the batter.', 'It thickens as it sits.'],
-    ['Rest the batter.', 'Rest the batter.', ''],
-    ['Hold at 350°F (175°C). Serve warm.', 'Hold at 350°F (175°C).', 'Serve warm.'],
-    ['Do this in order\n\n1. Mix.\n\n2. Rest.', 'Do this in order', '1. Mix.\n\n2. Rest.'],
-    ['**Fingertip tight** — Turn until snug.', 'Fingertip tight', 'Turn until snug.'],
+    ['**Fingertip tight** — Turn until snug.', { title: 'Fingertip tight', rest: 'Turn until snug.' }],
+    ['**Dialing it in**\n\n- Grind finer.\n\n- Grind coarser.', { title: 'Dialing it in', rest: '- Grind finer.\n\n- Grind coarser.' }],
+    ['**Storing**', { title: 'Storing', rest: '' }],
+    ['Rest the batter. It thickens as it sits.', null],
   ];
-  for (const [note, title, rest] of rows) {
-    assert.deepEqual(splitNoteTitle(note), { title, rest }, `note: ${note}`);
+  for (const [note, expected] of rows) {
+    assert.deepEqual(splitNoteTitle(note), expected, `note: ${note}`);
   }
 });
 

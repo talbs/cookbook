@@ -221,8 +221,8 @@ A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple g
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
 - Use sections only when a recipe has parts you make separately, or phases with a wait between them. Name a part with a noun (`Sauce`) and a phase with one verb (`Marinate`).
 - Don't label a part inside a step (`Make the dressing:`). Give it a section, or write it as a sentence.
-- A note after a step folds under that step. Start it with a bold title and a dash, `> **Storing** — Keeps for 2 weeks.`, and the title is what shows when it's folded. With no title, the first sentence is the title, so a one-sentence note needs one.
-- A note before the first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
+- A note after a step folds under it. Give it a bold title in title case, a dash, and at least one sentence: `> **Storing** — Keeps for 2 weeks.` Reach for Storing, Making Ahead, Serving, Swaps or Extras first. One idea per note. If skipping it breaks the step, it isn't a note. Put it in the step.
+- A note before the recipe's first step shows under "Before you start", in both modes. Keep it to things the cook does first (wear gloves, get a pressure cooker). Reasons the method works go in `why` instead.
 - Type `1/2`, not `½`.
 - Temperatures go in the step text as `350°F (175°C)`.
 
@@ -260,7 +260,7 @@ The build names the file and says what's wrong. What each message means:
 | `file name must be lowercase words joined by hyphens` | Rename the file: `Mom's Chili.cook` becomes `moms-chili.cook`                                                                       |
 | `parser error: ...`                                   | A Cooklang mistake. The message quotes the line. Common ones: a repeat with a note, a `@&` with no earlier mention, a timer in cups |
 | `parser error: unreachable`                           | The parser crashed. Look for a mark with no amount, like `~rest` or `@{1%cup}`                                                      |
-| `note "..." is one sentence, so give it a title`      | Start the note with a bold title and a dash: `> **Storing** — Keeps for 2 weeks.`                                                   |
+| `note "..." needs a title and a body`                 | Start the note with a bold title and a dash: `> **Storing** — Keeps for 2 weeks.`                                                   |
 | `missing title` / `missing description`               | Add the key. If both appear, the front matter's YAML is probably broken                                                             |
 | `missing course`                                      | Add `course:` with one of the six courses in the table above                                                                        |
 | `course "..." must be one of ...`                     | Pick one of the six the message lists: `brunch` becomes `breakfast`                                                                 |

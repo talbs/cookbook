@@ -39,7 +39,8 @@ const malformedRecipes = [
   ['unknown-icon.cook', /icon "galric" isn't in lib\/icon-names\.js/],
   ['repeated-icon.cook', /icon "garlic" is listed twice/],
   ['missing-icons.cook', /missing icons/],
-  ['untitled-note.cook', /note "Soft butter means it dents when pressed\." is one sentence, so give it a title/],
+  ['untitled-note.cook', /note "Soft butter means it dents when pressed\." needs a title and a body/],
+  ['untitled-note-beside-titled.cook', /note "Soft butter dents when pressed\. Cold butter cracks\." needs a title and a body/],
 ];
 
 test('a malformed recipe fails to load and names its file', () => {

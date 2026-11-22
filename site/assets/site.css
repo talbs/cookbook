@@ -903,7 +903,7 @@ button.shortcut {
   translate: 0 100%;
 }
 
-/* A long note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
+/* A note's title and body again, outside its folded wa-details, whose closed body no stylesheet can reach. Paper shows this copy. */
 @media screen {
   .note-print,
   .print-fact,
@@ -1908,7 +1908,7 @@ wa-button[appearance='plain']:hover::part(base) {
   color: var(--note-ink);
 }
 
-/* An open note keeps its first sentence as its title, in full and in the page's ink. */
+/* An open note shows its title in full and in the page's ink. */
 .step-note[open]::part(header) {
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
@@ -1941,7 +1941,7 @@ wa-details {
   }
 }
 
-/* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, filled when open.
+/* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, tinted when open.
    WA turns its chevron a quarter turn on open and greys it; a note icon should do neither. */
 .step-note::part(icon) {
   rotate: none;
@@ -1950,6 +1950,13 @@ wa-details {
 
 .step-note > .note-icon {
   margin: 0;
+}
+
+/* The open note's icon takes the fill the recipe's icons get on hover. Both layers follow the title's colour, so a hovered note tints whole. */
+.step-note > .note-icon[slot='collapse-icon'] {
+  --primary-color: currentColor;
+  --secondary-color: currentColor;
+  --secondary-opacity: var(--icon-fill);
 }
 
 .step-note::part(content) {
@@ -1964,27 +1971,6 @@ wa-details {
 .note-icon {
   margin-inline-end: 0.5em;
   vertical-align: -0.1em;
-}
-
-/* Same face, size and ink as a folded note's row, just without the toggle. */
-.note-static {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5em;
-  font-family: var(--wa-font-family-body);
-  font-size: var(--list-size);
-  line-height: 1.5;
-  color: var(--note-ink);
-}
-
-.note-static .note-icon {
-  flex: none;
-  margin: 0;
-  translate: 0 0.1em;
-}
-
-.note-static p {
-  margin: 0;
 }
 
 /* The open note hangs under the summary text, past the icon, so the icon stays the row's only marker. */
@@ -2136,7 +2122,7 @@ wa-progress-bar.wait-run::part(indicator) {
   margin-block-start: var(--wa-space-xs);
 }
 
-/* A list inside a note takes run-in letters, so it never reads as recipe steps. */
+/* A numbered list inside a note takes run-in letters, so it never reads as recipe steps. A bullet list keeps plain bullets. */
 .recipe-note ol {
   display: grid;
   gap: var(--wa-space-xs);
@@ -2145,17 +2131,17 @@ wa-progress-bar.wait-run::part(indicator) {
   counter-reset: note-step;
 }
 
-.recipe-note li {
+.recipe-note ol > li {
   margin: 0;
   counter-increment: note-step;
 }
 
-.recipe-note li > p {
+.recipe-note ol > li > p {
   display: inline;
   margin: 0;
 }
 
-.recipe-note li::before {
+.recipe-note ol > li::before {
   content: counter(note-step, lower-alpha) '.';
   margin-inline-end: 0.3em;
   font-weight: var(--wa-font-weight-bold);
@@ -3299,12 +3285,27 @@ wa-page[view='desktop'] {
     display: none;
   }
 
-  /* A note is an aside to its step, and its title is often a whole sentence: at full bold it outweighed the step above it. */
+  /* A note's title row on paper: the folded row's face without the toggle, at semibold so it sits under the step above it. */
   .note-print > .note-static {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-family: var(--wa-font-family-body);
+    font-size: var(--list-size);
     font-weight: var(--wa-font-weight-semibold);
     line-height: 1.35;
     color: var(--ink);
     break-after: avoid;
+  }
+
+  .note-static .note-icon {
+    flex: none;
+    margin: 0;
+    translate: 0 0.1em;
+  }
+
+  .note-static p {
+    margin: 0;
   }
 
   .note-print > .recipe-note {

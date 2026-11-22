@@ -43,25 +43,17 @@
   {%- endif -%}
 {% endmacro %}
 
-{% macro noteTitleRow(note, classes) -%}
-<div class="{{ classes }}"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
-{%- endmacro %}
-
 {% macro noteDetails(note) %}
-          {%- if note.isShort %}
-          {{ noteTitleRow(note, "step-note note-static") }}
-          {%- else %}
           <wa-details class="step-note" appearance="plain" icon-placement="start">
             <wa-icon slot="expand-icon" class="note-icon" name="note-sticky" variant="regular"></wa-icon>
-            <wa-icon slot="collapse-icon" class="note-icon" name="note-sticky" variant="solid"></wa-icon>
+            <wa-icon slot="collapse-icon" class="note-icon" name="note-sticky" family="duotone" variant="regular"></wa-icon>
             <span slot="summary" class="note-title wa-text-truncate">{{ note.titleHtml | safe }}</span>
             <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </wa-details>
           <div class="step-note note-print">
-            {{ noteTitleRow(note, "note-static") }}
+            <div class="note-static"><wa-icon class="note-icon" name="note-sticky" variant="regular"></wa-icon><p>{{ note.titleHtml | safe }}</p></div>
             <div class="recipe-note">{{ note.bodyHtml | safe }}</div>
           </div>
-          {%- endif %}
 {%- endmacro %}
 
 {% macro checklistLine(ingredient, checkId, recipes, note) %}
