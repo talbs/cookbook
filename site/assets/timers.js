@@ -111,7 +111,7 @@ async function measureReadout(timer, fillTime, words = '') {
   return widths;
 }
 
-// The label and the countdown differ in width, so each band holds the wider of the two and starting a timer doesn't shift the bar. "Check now" is wider still, and the band only makes room for it while it shows.
+// A running countdown loses width as its digits drop away, so each phase holds its widest readout and the bar stays still while the clock runs. The bar only changes length when the phase does.
 async function reserveReadoutWidth(timer) {
   const fontSize = parseFloat(getComputedStyle(timer.readout).fontSize);
   const inEms = (width) => `${width / fontSize}em`;
@@ -119,15 +119,13 @@ async function reserveReadoutWidth(timer) {
     timer,
     (time) => (time.innerHTML = timer.labelHtml)
   );
-  let restingPx = label.readout;
-  let checkPx = restingPx;
+  const heldWidths = { idle: inEms(label.readout) };
   if (!timer.isLong) {
     const countdownProbe = { name: timer.name, startedAt: 0 };
     const countdown = await measureReadout(timer, (time) =>
       time.replaceChildren(buildCounter(countdownProbe, timer.lowMs))
     );
-    restingPx = Math.max(restingPx, countdown.readout);
-    checkPx = restingPx;
+    heldWidths.running = inEms(countdown.readout);
     if (timer.lowMs < timer.highMs) {
       const check = await measureReadout(
         timer,
@@ -135,20 +133,18 @@ async function reserveReadoutWidth(timer) {
           time.replaceChildren(buildCounter(countdownProbe, timer.highMs)),
         CHECK_WORDS
       );
-      checkPx = Math.max(restingPx, check.readout);
+      heldWidths.check = inEms(check.readout);
       timer.words.style.setProperty('--words-width', inEms(check.words));
     }
   }
-  timer.restingWidth = inEms(restingPx);
-  timer.checkWidth = inEms(checkPx);
+  timer.heldWidths = heldWidths;
   holdReadoutWidth(timer, timer.phase);
 }
 
 function holdReadoutWidth(timer, phase) {
-  const isMeasured = Boolean(timer.restingWidth);
+  const isMeasured = Boolean(timer.heldWidths);
   if (!isMeasured) return;
-  timer.readout.style.minInlineSize =
-    phase === 'check' ? timer.checkWidth : timer.restingWidth;
+  timer.readout.style.minInlineSize = timer.heldWidths[phase] ?? '0';
 }
 
 // Removing the class and reading layout before adding it back restarts the animation, so every tap and every chime moves the square again.
@@ -174,7 +170,20 @@ function showTime(timer, { phase, targetAt }) {
   }
 }
 
+// A wider readout would push the bar back in one frame, so it grows from the width it had instead.
+function easeReadoutWider(timer, widthBefore) {
+  const widthAfter = timer.readout.getBoundingClientRect().width;
+  const isHidden = widthBefore === 0;
+  if (isHidden || widthAfter <= widthBefore) return;
+  timer.readout.style.setProperty('--width-before', `${widthBefore}px`);
+  timer.readout.style.setProperty('--width-after', `${widthAfter}px`);
+  timer.readout.classList.remove('is-widening');
+  void timer.readout.offsetWidth;
+  timer.readout.classList.add('is-widening');
+}
+
 function showPhase(timer, state) {
+  const widthBefore = timer.readout.getBoundingClientRect().width;
   timer.band.dataset.phase = state.phase;
   const label = `${ACTIONS[state.phase]} ${titleCase(timer.name)} Timer`;
   timer.glyph.name = GLYPHS[state.phase];
@@ -182,6 +191,7 @@ function showPhase(timer, state) {
   timer.tooltip.textContent = label;
   showTime(timer, state);
   holdReadoutWidth(timer, state.phase);
+  easeReadoutWider(timer, widthBefore);
 }
 
 let audio = null;

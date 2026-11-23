@@ -3091,6 +3091,22 @@ wa-input::part(clear-button):hover {
     transition-property: color, min-inline-size;
   }
 
+  .timer-readout.is-widening {
+    animation: readout-widen var(--wa-transition-normal) var(--wa-transition-easing);
+  }
+
+  @keyframes readout-widen {
+    from {
+      max-inline-size: var(--width-before);
+      overflow-x: clip;
+    }
+
+    to {
+      max-inline-size: var(--width-after);
+      overflow-x: clip;
+    }
+  }
+
   .timer-words {
     overflow-x: clip;
     animation: words-arrive var(--wa-transition-normal) var(--wa-transition-easing);
