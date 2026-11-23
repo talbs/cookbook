@@ -68,11 +68,11 @@ eleventyComputed:
   <wa-random-content class="empty-jokes" animation="fade-up">
     {%- for joke in searchJokes %}
     <div class="wa-stack wa-gap-l wa-align-items-center">
-      <div class="empty-ornament wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0" aria-hidden="true">
+      <hue-hop class="empty-ornament wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0" hue="{{ joke.hue }}" aria-hidden="true">
         <span class="rule-run"></span>
         <span class="empty-icons wa-cluster wa-flex-nowrap wa-gap-s">{% for name in joke.icons %}<wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>{% endfor %}</span>
         <span class="rule-run"></span>
-      </div>
+      </hue-hop>
       <div class="wa-stack wa-gap-xs wa-align-items-center">
         <p class="empty-joke">{{ joke.headline }}</p>
         <p class="empty-detail">{{ joke.aside }}</p>
@@ -95,4 +95,5 @@ eleventyComputed:
 
 {% block scripts %}
 <script type="module" src="/assets/listing.js"></script>
+<script type="module" src="/assets/vendor/hue-hop.js"></script>
 {% endblock %}
