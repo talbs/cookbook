@@ -1499,6 +1499,20 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .site-footer .wa-split {
     row-gap: var(--wa-space-xs);
   }
+
+  /* Next to "Source" the arrow reads as a third link, so it goes to the far edge. */
+  .site-footer .wa-split > .wa-cluster {
+    flex-basis: 100%;
+    justify-content: space-between;
+  }
+
+  /* A full 44px for a thumb, on the gutter. On a listing that is the floating arrow's box, so the arrow doesn't jump sideways
+     when one fades out and this one scrolls in. The box's extra height comes back in margin, so the row stays as tall as its words. */
+  .site-footer .footer-top {
+    inline-size: var(--to-top-size);
+    block-size: var(--to-top-size);
+    margin: calc((1rem - var(--to-top-size)) / 2) 0;
+  }
 }
 
 @media (width < 30rem) {
