@@ -13,7 +13,7 @@ const COURSE_HEADINGS = {
   drink: 'Drinks',
   condiment: 'Condiments',
 };
-// Tags that say how a recipe is cooked. Seasons come from the validator's list; every other tag names a kind of dish.
+// Tags that say how a recipe is cooked. Seasons come from the validator's list, family tags from FAMILY_TAG_NAMES; every other tag names a kind of dish.
 const METHOD_TAGS = [
   'air-fryer',
   'baking',
@@ -28,6 +28,9 @@ const METHOD_TAGS = [
   'sous-vide',
   'stir-fry',
 ];
+const FAMILY_TAG_NAMES = {
+  'auntie-jeanie': 'Auntie Jeanie',
+};
 const RECIPE_PATH_PATTERN = /^\.\/recipes\/[^/]+\.cook$/;
 
 // A title as words of single letters, so each letter can move on its own without a word ever breaking in two.
@@ -89,7 +92,20 @@ function listSeasonTags(tags) {
   return tags.filter(tag => SEASON_NAMES.includes(tag));
 }
 
+function isFamilyTag(tag) {
+  return Object.hasOwn(FAMILY_TAG_NAMES, tag);
+}
+
+function labelTag(tag) {
+  return isFamilyTag(tag) ? FAMILY_TAG_NAMES[tag] : tag;
+}
+
+function listFamilyTags(tags) {
+  return tags.filter(isFamilyTag);
+}
+
 function nameTagKind(tag) {
+  if (isFamilyTag(tag)) return 'Family';
   if (SEASON_NAMES.includes(tag)) return 'Seasons';
   if (METHOD_TAGS.includes(tag)) return 'Methods';
   return 'Dishes';
@@ -100,6 +116,7 @@ function groupTagsByKind(collections) {
     ['Dishes', []],
     ['Methods', []],
     ['Seasons', []],
+    ['Family', []],
   ]);
   for (const name of listTagNames(collections)) {
     const recipes = collections[name];
@@ -168,6 +185,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('groupByCourse', groupByCourse);
   eleventyConfig.addFilter('tagNames', listTagNames);
   eleventyConfig.addFilter('seasonTags', listSeasonTags);
+  eleventyConfig.addFilter('familyTags', listFamilyTags);
+  eleventyConfig.addFilter('tagLabel', labelTag);
   eleventyConfig.addFilter('groupTagsByKind', groupTagsByKind);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
   eleventyConfig.addFilter('recipesThatUse', listRecipesThatUse);

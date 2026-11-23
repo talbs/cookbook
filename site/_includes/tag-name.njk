@@ -1,4 +1,4 @@
 {#- A tag page with one recipe only lists that recipe again, so a tag links once a second recipe joins it. #}
 {% macro tagName(tag) -%}
-{%- if collections[tag].length > 1 %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% else %}<span>{{ tag }}</span>{% endif -%}
+{%- if collections[tag].length > 1 %}<a href="/tags/{{ tag }}/">{{ tag | tagLabel }}</a>{% else %}<span>{{ tag | tagLabel }}</span>{% endif -%}
 {%- endmacro %}
