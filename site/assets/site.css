@@ -815,7 +815,7 @@ wa-scroller:has(.course-links) {
   gap: 0;
 }
 
-/* On phones the icons leave the title under half the row, so it sets small on up to two lines, which still fit the 40px row. */
+/* On phones the icons leave the title about half the row, so it sets small on up to two lines, which still fit the 40px row. */
 .pinned-title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -823,7 +823,7 @@ wa-scroller:has(.course-links) {
   min-inline-size: 0;
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  --title-size: 1rem;
+  --title-size: 1.125rem;
   font-size: var(--title-size);
   font-weight: 800;
   font-synthesis: none;
