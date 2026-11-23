@@ -994,6 +994,39 @@ button.shortcut {
   margin-block: 0 var(--wa-space-s);
 }
 
+/* The negative end margin cancels the anchor's own width, so a heading wraps the same with or without it. */
+.heading-anchor {
+  display: inline-block;
+  inline-size: 1em;
+  margin-inline: var(--wa-space-s) -1em;
+  font-size: 0.7em;
+  font-size: 1cap;
+  color: var(--note-ink);
+  text-decoration: none;
+  opacity: 0;
+}
+
+.heading-anchor wa-icon {
+  vertical-align: baseline;
+}
+
+.section-head:hover > .heading-anchor {
+  opacity: 0.8;
+}
+
+.section-head > .heading-anchor:is(:hover, :focus-visible) {
+  opacity: 1;
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .heading-anchor {
+    transition:
+      opacity var(--wa-transition-fast) var(--wa-transition-easing),
+      color var(--wa-transition-fast) var(--wa-transition-easing);
+  }
+}
+
 /* These stacks' 16px gap already parts a head from what it names. With the head's 12px on top it sat further from its first step than the steps sit from each other (24px). */
 @media screen {
   :is(.needs, .before-start, .method) > .section-head {
@@ -3386,6 +3419,7 @@ wa-page[view='desktop'] {
   .site-footer,
   .mode-rest,
   wa-tooltip,
+  .heading-anchor,
   wa-details.step-note,
   .wait-mark,
   .step .step-needs,
