@@ -513,7 +513,7 @@ wa-scroller:has(.course-links) {
   white-space: normal;
 }
 
-/* Each letter of a listing's title is its own box, so it can lean when the pointer crosses it. Words stay whole. */
+/* Each letter of a listing's title is its own box, so it can lean and take a color when the pointer crosses it. Words stay whole. */
 .title-word {
   display: inline-block;
   white-space: nowrap;
@@ -523,11 +523,33 @@ wa-scroller:has(.course-links) {
   display: inline-block;
 }
 
+@property --title-hop-start { syntax: '<color>'; inherits: true; initial-value: black; }
+@property --title-hop-end { syntax: '<color>'; inherits: true; initial-value: black; }
+
+@media screen and (hover: hover) and (forced-colors: none) and (prefers-contrast: no-preference) {
+  .title-letter {
+    --title-hop-start: var(--wa-color-text-normal);
+    --title-hop-end: var(--wa-color-text-normal);
+    --hop-start: var(--title-hop-start);
+    --hop-end: var(--title-hop-end);
+    transition:
+      --title-hop-start var(--wa-transition-normal) var(--ease-swift),
+      --title-hop-end var(--wa-transition-normal) var(--ease-swift);
+  }
+
+  .title-letter:hover {
+    --title-hop-start: light-dark(oklch(64% .15 65), oklch(86% .14 82));
+    --title-hop-end: var(--accent);
+  }
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .title-letter {
     transition:
       scale var(--settle) var(--ease-spring),
-      rotate var(--settle) var(--ease-spring);
+      rotate var(--settle) var(--ease-spring),
+      --title-hop-start var(--wa-transition-normal) var(--ease-swift),
+      --title-hop-end var(--wa-transition-normal) var(--ease-swift);
   }
 
   .title-letter:hover {
