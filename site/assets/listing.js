@@ -52,13 +52,16 @@ if (searchInput) {
   const recipeItems = [...document.querySelectorAll('.recipe-cards > li, .recipe-rows > li')];
   const courseSections = [...document.querySelectorAll('.course')];
   const courseLinks = document.querySelector('.course-links');
+  const courseScroller = courseLinks.closest('wa-scroller');
   const emptyNote = document.querySelector('.search-empty');
   const timeSelect = document.querySelector('.time-select');
   const matchCount = document.querySelector('.match-count');
   const untimedNote = document.querySelector('.untimed-note');
   const urlByItem = new Map();
   const searchTextByItem = new Map();
+  const listing = document.querySelector('main.listing');
   let hiddenItems = new Set();
+  let isSearching = false;
   let untimedCount = 0;
   let hasStartedLoading = false;
   let hasSearchTextLoaded = false;
@@ -204,6 +207,7 @@ if (searchInput) {
     const terms = simplify(readQuery()).split(/\s+/).filter(Boolean);
     const maxMinutes = readMaxMinutes();
     const itemsToHide = new Set();
+    const isSearchingNow = readQuery().trim() !== '';
     untimedCount = 0;
     let hasTextMatch = false;
     for (const item of recipeItems) {
@@ -224,10 +228,11 @@ if (searchInput) {
 
     // Typing a letter that leaves the same recipes showing changes nothing, so nothing moves.
     const isSameListing = recipeItems.every(item => hiddenItems.has(item) === itemsToHide.has(item));
-    if (isSameListing) return;
+    if (isSameListing && isSearchingNow === isSearching) return;
 
     // The change itself runs a frame later, so it reads the newest result then, not the one from when it was asked for.
     hiddenItems = itemsToHide;
+    isSearching = isSearchingNow;
     if (isInstant) showHiddenItems();
     else changeWithTransition(showHiddenItems);
   }
@@ -249,6 +254,7 @@ if (searchInput) {
   }
 
   function showHiddenItems() {
+    listing.classList.toggle('is-searching', isSearching);
     for (const item of recipeItems) {
       item.hidden = hiddenItems.has(item);
     }
@@ -275,8 +281,7 @@ if (searchInput) {
     // One joke per dead end: it stays put while the cook keeps typing, and changes the next time nothing matches.
     if (!hasMatch && emptyNote.hidden) tellNewJoke();
     emptyNote.hidden = hasMatch;
-    viewRest.hidden = !hasMatch;
-    courseLinks.hidden = !hasMatch;
+    courseScroller.hidden = isSearching || !hasMatch;
   }
 
   function servePicksFrom(popover) {

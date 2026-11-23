@@ -435,6 +435,10 @@ wa-scroller:has(.course-links) {
   margin-inline: calc(-1 * var(--wa-space-s));
 }
 
+wa-scroller[hidden] {
+  display: none;
+}
+
 .course-links {
   /* Sized to its links, so the end padding is part of what scrolls instead of being overflowed past. */
   min-inline-size: max-content;
@@ -1600,6 +1604,54 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   mask: var(--divider);
 }
 
+/* While searching, the matches read as one list. The course names stay for screen readers, since each section is named by its heading. */
+.is-searching .course .section-head {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.is-searching .course + .course::before {
+  content: none;
+}
+
+/* Rows run on from one course into the next, in the same newspaper columns one course uses. */
+[data-view='list'] .is-searching .listing-results:has(> .search-empty[hidden]) {
+  display: block;
+  column-gap: var(--column-gap);
+}
+
+[data-view='list'] .is-searching .course {
+  display: block;
+}
+
+[data-view='list'] .is-searching .recipe-rows {
+  column-count: auto;
+}
+
+@media (min-width: 48rem) {
+  [data-view='list'] .is-searching .listing-results:has(> .search-empty[hidden]) {
+    column-count: 2;
+  }
+}
+
+/* Cards from every course share one grid, so one match per course still sits side by side. */
+:root:not([data-view='list']) .is-searching .listing-results {
+  display: grid;
+  row-gap: var(--wa-space-2xl);
+}
+
+:root:not([data-view='list']) .is-searching :is(.course, .recipe-cards) {
+  display: contents;
+}
+
+.is-searching .search-empty {
+  grid-column: 1 / -1;
+}
+
 .empty-state {
   position: relative;
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
@@ -1894,7 +1946,8 @@ wa-button.special::part(base) {
   display: none;
 }
 
-.recipe-cards {
+.recipe-cards,
+:root:not([data-view='list']) .is-searching .listing-results {
   --min-column-size: 17rem;
   margin: 0;
   column-gap: var(--column-gap);
