@@ -183,7 +183,8 @@ if (searchInput) {
 
   // Hue Hop keeps a hue's two ends on its own element, so they are copied to whatever holds the links beside it.
   function shareHue(hueHop, linkHolder) {
-    for (const end of hueEnds) linkHolder.style.setProperty(end, getComputedStyle(hueHop).getPropertyValue(end));
+    const hueStyle = getComputedStyle(hueHop);
+    for (const end of hueEnds) linkHolder.style.setProperty(end, hueStyle.getPropertyValue(end));
   }
 
   // Before the kit loads there is nothing to shuffle yet.

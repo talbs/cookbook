@@ -171,6 +171,10 @@ body {
   --shortcut-size: 2.5rem;
   /* Negative: how far a 1rem icon's tap box overhangs the icon on each side. */
   --shortcut-inset: calc((1rem - var(--shortcut-size)) / 2);
+  /* How far a hatch sits inside the frame around it, on the view switch and on a hatch button. */
+  --hatch-inset: 3px;
+  /* A hovered link's line, and the current page's: thicker, with a 2px floor so it still shows on small text. */
+  --heavy-line: max(2px, 0.12em);
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --to-top-size: 2.75rem;
   /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
@@ -208,7 +212,7 @@ a:hover,
 .link-button:hover,
 .listing-row:hover .listing-name {
   text-decoration-color: var(--accent);
-  text-decoration-thickness: max(2px, 0.12em);
+  text-decoration-thickness: var(--heavy-line);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -445,7 +449,7 @@ wa-scroller:has(.course-links) {
 .site-nav a[aria-current] {
   font-weight: var(--wa-font-weight-bold);
   text-decoration-color: currentColor;
-  text-decoration-thickness: max(2px, 0.12em);
+  text-decoration-thickness: var(--heavy-line);
 }
 
 /* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
@@ -644,7 +648,7 @@ wa-scroller:has(.course-links) {
 .recipe-icons wa-icon,
 .made-with wa-icon {
   --primary-color: var(--divider-ink);
-  --secondary-color: var(--ink);
+  --secondary-color: var(--icon-hue, var(--ink));
   --secondary-opacity: 0;
   transition:
     --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
@@ -664,7 +668,7 @@ wa-scroller:has(.course-links) {
 @media (hover: hover) {
   .recipe-icons:hover wa-icon,
   :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon {
-    --primary-color: var(--ink);
+    --primary-color: var(--icon-hue, var(--ink));
     --secondary-opacity: var(--icon-fill);
   }
 
@@ -677,7 +681,7 @@ wa-scroller:has(.course-links) {
 
 /* A keyboard gets the same inked icons on a focused card, and a finger gets them while it presses, so this sits outside the hover query. */
 :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon {
-  --primary-color: var(--ink);
+  --primary-color: var(--icon-hue, var(--ink));
   --secondary-opacity: var(--icon-fill);
 }
 
@@ -801,7 +805,7 @@ wa-scroller:has(.course-links) {
 
 /* The switch is a wa-radio-group of button radios. The group draws the frame; the radios lose their own fill and border. */
 .mode-switch {
-  --switch-inset: 3px;
+  --switch-inset: var(--hatch-inset);
   position: relative;
   isolation: isolate;
   padding: var(--switch-inset);
@@ -1635,60 +1639,48 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .empty-icons wa-icon,
 .not-found .stats wa-icon {
-  --primary-color: var(--ink);
-  --secondary-color: var(--ink);
+  --primary-color: var(--icon-hue, var(--ink));
+  --secondary-color: var(--icon-hue, var(--ink));
   --secondary-opacity: var(--icon-fill);
 }
 
-/* Hue Hop hands everything inside it the two ends of the hue. Where it doesn't run, on paper, or when contrast is forced,
-   each fallback is the colour the icon or dots had before. */
+/* Hue Hop hands everything inside it the two ends of the hue, and the script copies them to a panel whose links sit
+   beside one. Where it doesn't run, on paper, or when contrast is forced, every use falls back to the colour it had before. */
 @media screen and (forced-colors: none) and (prefers-contrast: no-preference) {
-  hue-hop.empty-ornament .rule-run:first-child {
+  hue-hop,
+  .pick-popover,
+  .search-empty {
+    --hue-mid: color-mix(in oklch, var(--hop-start), var(--hop-end));
+  }
+
+  .empty-ornament .rule-run:first-child {
     background: var(--hop-start, var(--divider-ink));
   }
 
-  hue-hop.empty-ornament .rule-run:last-child {
+  .empty-ornament .rule-run:last-child {
     background: var(--hop-end, var(--divider-ink));
   }
 
-  hue-hop.empty-ornament wa-icon,
-  .pick-link:is(:focus-visible, :active) hue-hop.pick-icons wa-icon {
-    --primary-color: var(--icon-hue, var(--ink));
-    --secondary-color: var(--icon-hue, var(--ink));
-  }
-
-  @media (hover: hover) {
-    .pick-link:hover hue-hop.pick-icons wa-icon {
-      --primary-color: var(--icon-hue, var(--ink));
-      --secondary-color: var(--icon-hue, var(--ink));
-    }
-  }
-
-  /* Links beside a hue underline in the middle of it, where the rest of the site uses the accent. */
-  .pick-popover,
-  .search-empty {
-    --link-hue: color-mix(in oklch, var(--hop-start), var(--hop-end));
-  }
-
-  :is(.pick-popover, .search-empty) :is(a, .link-button):hover {
-    text-decoration-color: var(--link-hue, var(--accent));
-  }
-
-  /* The chef's hat wears the middle of the dish's hue for as long as the dish is out. */
-  wa-button.special:has(~ .pick-popover[open]) hue-hop wa-icon {
-    color: color-mix(in oklch, var(--hop-start, currentColor), var(--hop-end, currentColor));
-  }
-
-  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(1) {
+  hue-hop wa-icon:nth-child(1) {
     --icon-hue: var(--hop-start);
   }
 
-  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(2) {
-    --icon-hue: color-mix(in oklch, var(--hop-start), var(--hop-end));
+  hue-hop wa-icon:nth-child(2) {
+    --icon-hue: var(--hue-mid);
   }
 
-  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(3) {
+  hue-hop wa-icon:nth-child(3) {
     --icon-hue: var(--hop-end);
+  }
+
+  /* Links beside a hue underline in the middle of it, where the rest of the site uses the accent. */
+  :is(.pick-popover, .search-empty) :is(a, .link-button):hover {
+    text-decoration-color: var(--hue-mid, var(--accent));
+  }
+
+  /* A hatch button's icon wears the middle of its popover's hue for as long as the popover is open. */
+  .hatch-button:has(~ wa-popover[open]) hue-hop wa-icon {
+    color: var(--hue-mid);
   }
 }
 
@@ -1733,13 +1725,8 @@ wa-button[appearance='plain']:hover::part(base) {
 }
 
 /* A bare button that takes the view switch's dress when pointed at, or while its popover is open:
-   a thin frame, with the hatch held the same 3px inside it. It dresses a wa-button, a button or a link. */
-:is(wa-button, button, a).hatch-button {
-  --hatch-inset: 3px;
-}
-
+   a thin frame, with the hatch held the same distance inside it. It dresses a wa-button, a button or a link. */
 wa-button.hatch-button::part(base),
-wa-button.hatch-button:hover::part(base),
 :is(button, a).hatch-button {
   position: relative;
   isolation: isolate;
@@ -1811,10 +1798,6 @@ wa-button.special::part(base) {
 
 /* Below 480px the words no longer fit beside the nav, so the button folds to its hat and keeps the words for screen readers. */
 @media (width < 30rem) {
-  wa-button.special {
-    margin-inline-start: var(--shortcut-inset);
-  }
-
   wa-button.special::part(base) {
     inline-size: var(--shortcut-size);
     padding-inline: 0;
