@@ -1740,6 +1740,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   [data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
     column-count: 2;
   }
+
+  /* The stack's gap gives 24px; while searching on wide screens the results sit 32px under the toolbar. */
+  .listing.is-searching > .listing-results {
+    padding-block-start: calc(var(--wa-space-xl) - var(--wa-space-l));
+  }
 }
 
 /* Cards from every course share one grid, so one match per course still sits side by side. */
