@@ -106,6 +106,8 @@
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
   {%- set hasFacts = servings or yield or course or difficulty or totalMinutes != null %}
   {%- set hasCredit = hasSource or author %}
+  {%- set familyTags = tags | familyTags %}
+  {%- set otherTags = tags | tagsOtherThanFamily %}
   {%- set creditLine %}
         <dt>{% if hasSource %}{{ "Adapted from" if adapted else "From" }}{% else %}By{% endif %}</dt>
         <dd>
@@ -306,17 +308,22 @@
       <span class="rule-run"></span>
       {%- endif %}
     </div>
-    {%- if hasCredit %}
+    {%- if hasCredit or familyTags.length %}
     <dl class="credit wa-cluster wa-align-items-start wa-gap-2xl">
+      {%- if hasCredit %}
       <div>{{ creditLine | safe }}</div>
+      {%- endif %}
+      {%- if familyTags.length %}
+      <div><dt>Handed down by</dt><dd>{% for tag in familyTags %}{{ tagName(tag) }}{% if not loop.last %}{{ " and " if loop.revindex0 == 1 else ", " }}{% endif %}{% endfor %}</dd></div>
+      {%- endif %}
     </dl>
     {%- endif %}
     <dl class="connections wa-cluster wa-align-items-start wa-gap-2xl">
       {%- if cuisine %}
       <div><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
       {%- endif %}
-      {%- if tags.length %}
-      <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}{{ tagName(tag) }}{% endfor %}</dd></div>
+      {%- if otherTags.length %}
+      <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in otherTags %}{{ tagName(tag) }}{% endfor %}</dd></div>
       {%- endif %}
       {%- if usedIn.length %}
       <div class="wa-span-grid">{{ usedInLine | safe }}</div>

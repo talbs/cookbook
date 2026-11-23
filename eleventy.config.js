@@ -104,6 +104,10 @@ function listFamilyTags(tags) {
   return tags.filter(isFamilyTag);
 }
 
+function listTagsOtherThanFamily(tags) {
+  return tags.filter(tag => !isFamilyTag(tag));
+}
+
 function nameTagKind(tag) {
   if (isFamilyTag(tag)) return 'Family';
   if (SEASON_NAMES.includes(tag)) return 'Seasons';
@@ -186,6 +190,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter('tagNames', listTagNames);
   eleventyConfig.addFilter('seasonTags', listSeasonTags);
   eleventyConfig.addFilter('familyTags', listFamilyTags);
+  eleventyConfig.addFilter('tagsOtherThanFamily', listTagsOtherThanFamily);
   eleventyConfig.addFilter('tagLabel', labelTag);
   eleventyConfig.addFilter('groupTagsByKind', groupTagsByKind);
   eleventyConfig.addFilter('recipeNamed', findRecipeNamed);
