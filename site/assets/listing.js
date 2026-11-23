@@ -113,6 +113,10 @@ if (searchInput) {
     const iconSet = container.querySelector('.pick-icons');
     iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
     iconSet.replaceChildren(...icons);
+    // Hue Hop keeps a hue's two ends on its own element, so they are copied up for the links beside the icons.
+    for (const end of ['--hop-start', '--hop-end']) {
+      container.style.setProperty(end, getComputedStyle(iconSet).getPropertyValue(end));
+    }
   }
 
   async function loadSearchText() {
