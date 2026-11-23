@@ -16,8 +16,8 @@
         <a href="/about/"{% if page.url == "/about/" %} aria-current="page"{% endif %}>About</a>
         <a href="{{ site.source }}">Source</a>
       </nav>
-      {#- A recipe keeps its own arrow in the pinned bar, and the 404 is one screen tall. #}
-      {%- if not recipe and not isNotFoundPage %}
+      {#- The 404 is one screen tall. #}
+      {%- if not isNotFoundPage %}
       <a class="footer-top shortcut wa-border-radius-s" id="footer-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to Top"></wa-icon></a>
       <wa-tooltip for="footer-top" placement="top">Back to Top</wa-tooltip>
       {%- endif %}

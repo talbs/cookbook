@@ -373,8 +373,8 @@ wa-page > main {
     display: none;
   }
 
-  /* The footer's arrow stands in for the floating one, which only phones have. */
-  .site-footer .footer-top {
+  /* A listing's arrow moves into its sticky toolbar at this width, so the footer's goes. A recipe has no other. */
+  .listing-page .site-footer .footer-top {
     display: none;
   }
 }
@@ -815,7 +815,7 @@ wa-scroller:has(.course-links) {
   gap: 0;
 }
 
-/* On phones the icons leave the title under half the row, so it sets small on up to two lines, which still fit the 40px row. */
+/* On phones the icons leave the title about half the row, so it sets small on up to two lines, which still fit the 40px row. */
 .pinned-title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -823,7 +823,7 @@ wa-scroller:has(.course-links) {
   min-inline-size: 0;
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  --title-size: 1rem;
+  --title-size: 1.125rem;
   font-size: var(--title-size);
   font-weight: 800;
   font-synthesis: none;
@@ -1498,6 +1498,20 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   /* Stacked, the credit and the links read as one pair. */
   .site-footer .wa-split {
     row-gap: var(--wa-space-xs);
+  }
+
+  /* Next to "Source" the arrow reads as a third link, so it goes to the far edge. */
+  .site-footer .wa-split > .wa-cluster {
+    flex-basis: 100%;
+    justify-content: space-between;
+  }
+
+  /* A full 44px for a thumb, on the gutter. On a listing that is the floating arrow's box, so the arrow doesn't jump sideways
+     when one fades out and this one scrolls in. The box's extra height comes back in margin, so the row stays as tall as its words. */
+  .site-footer .footer-top {
+    inline-size: var(--to-top-size);
+    block-size: var(--to-top-size);
+    margin: calc((1rem - var(--to-top-size)) / 2) 0;
   }
 }
 
