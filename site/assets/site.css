@@ -1794,14 +1794,15 @@ wa-button.hatch-button:has(~ wa-popover[open])::part(base)::before {
   }
 }
 
-/* The button's box hangs past the page edge, as the shortcuts' boxes do, so the hat starts where the title does. */
+/* The button's box hangs past the page edge by as much as the shortcuts' boxes do across the bar, and its padding
+   is that same distance, so the hat starts where the title does. */
 wa-button.special {
-  margin-inline-start: calc(-1 * (var(--wa-space-m) + var(--wa-border-width-s)));
+  margin-inline-start: var(--shortcut-inset);
 }
 
 wa-button.special::part(base) {
   block-size: var(--shortcut-size);
-  padding-inline: var(--wa-space-m);
+  padding-inline: calc(-1 * var(--shortcut-inset) - var(--wa-border-width-s));
 }
 
 .special hue-hop {
