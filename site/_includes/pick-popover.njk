@@ -2,7 +2,7 @@
 {% macro pickPopover(anchorId, placement) %}
 <wa-popover class="pick-popover" for="{{ anchorId }}" placement="{{ placement }}">
   <div class="pick wa-stack wa-gap-m">
-    <a class="pick-link wa-stack" href="/"><span class="pick-icons recipe-icons wa-cluster wa-flex-nowrap wa-gap-s" aria-hidden="true"></span><span class="pick-title"></span></a>
+    <a class="pick-link wa-stack" href="/"><hue-hop class="pick-icons recipe-icons wa-cluster wa-flex-nowrap wa-gap-s" aria-hidden="true"></hue-hop><span class="pick-title"></span></a>
     <div class="pick-foot wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l">
       <p class="pick-label"><span class="wa-text-nowrap"><wa-format-date weekday="long" lang="en"></wa-format-date> <span class="pick-word"></span></span><span class="pick-season wa-text-nowrap"></span></p>
       <button type="button" class="pick-again link-button">Send back</button>

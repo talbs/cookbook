@@ -98,6 +98,8 @@ if (searchInput) {
     return words.join(' ');
   }
 
+  const hueByCourse = { breakfast: 'honey', condiment: 'fern', dessert: 'guava', drink: 'honey', main: 'ember', side: 'fern' };
+
   function showPick(container, pick) {
     container.querySelector('wa-format-date').date = pick.now;
     container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
@@ -108,7 +110,9 @@ if (searchInput) {
 
     const icons = [];
     for (const icon of pick.entry.icons) icons.push(icon.cloneNode());
-    container.querySelector('.pick-icons').replaceChildren(...icons);
+    const iconSet = container.querySelector('.pick-icons');
+    iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
+    iconSet.replaceChildren(...icons);
   }
 
   async function loadSearchText() {
@@ -265,9 +269,12 @@ if (searchInput) {
     let shownPick = null;
     let isSendingBack = false;
 
+    const triggerBell = document.getElementById(popover.getAttribute('for')).querySelector('hue-hop');
+
     function showPickInPopover(pick) {
       shownPick = pick;
       showPick(popover, pick);
+      triggerBell?.setAttribute('hue', hueByCourse[pick.entry.course]);
     }
 
     // The panel fits its title, so its width glides between the two instead of jumping.

@@ -1639,7 +1639,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* Hue Hop hands everything inside it the two ends of the hue. Where it doesn't run, on paper, or when contrast is forced,
-   the ornament stays ink and dots. */
+   each fallback is the colour the icon or dots had before. */
 @media screen and (forced-colors: none) and (prefers-contrast: no-preference) {
   hue-hop.empty-ornament .rule-run:first-child {
     background: var(--hop-start, var(--divider-ink));
@@ -1649,20 +1649,33 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     background: var(--hop-end, var(--divider-ink));
   }
 
-  hue-hop.empty-ornament wa-icon {
+  hue-hop.empty-ornament wa-icon,
+  .pick-link:is(:focus-visible, :active) hue-hop.pick-icons wa-icon {
     --primary-color: var(--icon-hue, var(--ink));
     --secondary-color: var(--icon-hue, var(--ink));
   }
 
-  hue-hop.empty-ornament wa-icon:nth-child(1) {
+  @media (hover: hover) {
+    .pick-link:hover hue-hop.pick-icons wa-icon {
+      --primary-color: var(--icon-hue, var(--ink));
+      --secondary-color: var(--icon-hue, var(--ink));
+    }
+  }
+
+  /* The bell wears the middle of the dish's hue for as long as the dish is out. */
+  wa-button.special:has(~ .pick-popover[open]) hue-hop wa-icon {
+    color: color-mix(in oklch, var(--hop-start, currentColor), var(--hop-end, currentColor));
+  }
+
+  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(1) {
     --icon-hue: var(--hop-start);
   }
 
-  hue-hop.empty-ornament wa-icon:nth-child(2) {
+  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(2) {
     --icon-hue: color-mix(in oklch, var(--hop-start), var(--hop-end));
   }
 
-  hue-hop.empty-ornament wa-icon:nth-child(3) {
+  :is(hue-hop.empty-ornament, hue-hop.pick-icons) wa-icon:nth-child(3) {
     --icon-hue: var(--hop-end);
   }
 }
@@ -1730,7 +1743,7 @@ wa-button.special:hover::part(base) {
     padding-inline: 0;
   }
 
-  .special wa-icon {
+  .special hue-hop {
     margin-inline-end: 0;
   }
 
