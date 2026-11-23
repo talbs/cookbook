@@ -2887,6 +2887,7 @@ wa-input::part(clear-button):hover {
 
 @media (prefers-reduced-motion: no-preference) {
   :root {
+    --scale-move: scale var(--settle) var(--ease-spring);
     scroll-behavior: smooth;
   }
 
@@ -2922,31 +2923,23 @@ wa-input::part(clear-button):hover {
     transition: translate var(--settle) var(--ease-slide);
   }
 
-  /* Dip fast on press, spring back on release. */
+  /* Press and hover go by role. A framed box dips to 0.97. An icon that is the whole button grows to 1.15 on hover and dips to 0.8.
+     An icon beside a label only grows, so it doesn't sink away from its words. Dip fast on press, spring back on release. */
+  /* Each transition list names --scale-move once and a press swaps its timing, so the color fades listed beside it stay put. */
   /* A select dips on its host, so the kit's own fades on the field inside stay untouched. */
   .mode-switch,
   wa-button,
   wa-select,
-  .shortcut wa-icon {
-    transition: scale var(--settle) var(--ease-spring);
+  .shortcut wa-icon,
+  wa-button wa-icon {
+    transition: var(--scale-move);
   }
 
-  @media (hover: hover) {
-    .shortcut:hover wa-icon {
-      scale: 1.15;
-    }
-  }
-
-  .mode-switch:active,
-  wa-button:active,
-  wa-select:active {
-    scale: 0.97;
-    transition: scale var(--press) ease-out;
-  }
-
-  .shortcut:active wa-icon {
-    scale: 0.8;
-    transition: scale var(--press) ease-out;
+  :is(a, button).hatch-button {
+    transition:
+      color var(--wa-transition-normal) var(--wa-transition-easing),
+      border-color var(--wa-transition-normal) var(--wa-transition-easing),
+      var(--scale-move);
   }
 
   wa-input::part(clear-button),
@@ -2954,16 +2947,43 @@ wa-input::part(clear-button):hover {
   wa-copy-button::part(button) {
     transition:
       color var(--wa-transition-normal) var(--wa-transition-easing),
-      scale var(--settle) var(--ease-spring);
+      var(--scale-move);
   }
 
+  /* The scheme toggle skips the frame dip so its sun and moon swap is the only movement on a press. */
+  .mode-switch:active,
+  wa-button:active,
+  wa-select:active,
+  .hatch-button:not(#site-scheme):active,
+  .mode-rest .page-action:active {
+    --scale-move: scale var(--press) ease-out;
+    scale: 0.97;
+  }
+
+  @media (hover: hover) {
+    .shortcut:hover wa-icon,
+    wa-button:hover wa-icon,
+    wa-input::part(clear-button):hover,
+    wa-dialog::part(close-button__button):hover,
+    wa-copy-button::part(button):hover {
+      scale: 1.15;
+    }
+  }
+
+  .shortcut:active wa-icon,
   wa-input::part(clear-button):active,
   wa-dialog::part(close-button__button):active,
   wa-copy-button::part(button):active {
+    --scale-move: scale var(--press) ease-out;
     scale: 0.8;
-    transition:
-      color var(--wa-transition-normal) var(--wa-transition-easing),
-      scale var(--press) ease-out;
+  }
+
+  /* Folded below 480px, Today's Special is its hat alone, so the hat dips like an icon-only button. */
+  @media (width < 30rem) {
+    .special:active wa-icon {
+      --scale-move: scale var(--press) ease-out;
+      scale: 0.8;
+    }
   }
 
   wa-select::part(expand-icon) {
@@ -2981,15 +3001,7 @@ wa-input::part(clear-button):hover {
   /* Switching scheme, the old icon sets down out of the button and the new one rises into its place, timed like a mode's body. */
   .shortcut :is(.to-dark, .to-light) {
     transition:
-      scale var(--settle) var(--ease-spring),
-      opacity var(--fade-in) ease-out var(--fade-in-delay),
-      translate var(--settle) var(--ease-settle) var(--fade-in-delay);
-  }
-
-  /* The press rule's shorter transition list would cancel a swap still in flight; this keeps the fade and rise listed while pressed. */
-  .shortcut:active :is(.to-dark, .to-light) {
-    transition:
-      scale var(--press) ease-out,
+      var(--scale-move),
       opacity var(--fade-in) ease-out var(--fade-in-delay),
       translate var(--settle) var(--ease-settle) var(--fade-in-delay);
   }
@@ -2999,19 +3011,6 @@ wa-input::part(clear-button):hover {
     transition:
       opacity var(--press) ease-in,
       translate var(--press) ease-in;
-  }
-
-  /* Resting beside the switch, print and share wear its frame, so they dip like the switch instead of like a shortcut. */
-  .mode-rest .page-action:active {
-    scale: 0.97;
-    transition:
-      color var(--wa-transition-fast) var(--wa-transition-easing),
-      border-color var(--wa-transition-fast) var(--wa-transition-easing),
-      scale var(--press) ease-out;
-  }
-
-  .mode-rest .page-action wa-icon {
-    scale: none;
   }
 
   /* The bar drops in over a settle like the skip link, and goes on a press like the toast. */
@@ -3047,7 +3046,7 @@ wa-input::part(clear-button):hover {
     transition:
       color var(--wa-transition-fast) var(--wa-transition-easing),
       border-color var(--wa-transition-fast) var(--wa-transition-easing),
-      scale var(--settle) var(--ease-spring);
+      var(--scale-move);
   }
 
   /* The bar stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
