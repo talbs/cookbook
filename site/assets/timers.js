@@ -92,7 +92,10 @@ async function measureReadout(timer, fillTime, words = '') {
   probe.style.position = 'absolute';
   probe.style.visibility = 'hidden';
   probe.style.minInlineSize = '0';
-  probe.querySelector('.timer-words').textContent = words;
+  const probeWords = probe.querySelector('.timer-words');
+  probeWords.textContent = words;
+  // The words ease in from no width, which would be the width measured here.
+  probeWords.style.animation = 'none';
   fillTime(probe.querySelector('.timer-time'));
   timer.band.append(probe);
   const counter = probe.querySelector('wa-counter');
@@ -100,36 +103,52 @@ async function measureReadout(timer, fillTime, words = '') {
     await customElements.whenDefined('wa-counter');
     await counter.updateComplete;
   }
-  const width = probe.getBoundingClientRect().width;
+  const widths = {
+    readout: probe.getBoundingClientRect().width,
+    words: probeWords.getBoundingClientRect().width,
+  };
   probe.remove();
-  return width;
+  return widths;
 }
 
-// The label, the countdown and the check countdown differ in width, so each band holds the widest of them and no phase shifts the bar.
+// The label and the countdown differ in width, so each band holds the wider of the two and starting a timer doesn't shift the bar. "Check now" is wider still, and the band only makes room for it while it shows.
 async function reserveReadoutWidth(timer) {
-  const widths = [
-    await measureReadout(timer, (time) => (time.innerHTML = timer.labelHtml)),
-  ];
+  const fontSize = parseFloat(getComputedStyle(timer.readout).fontSize);
+  const inEms = (width) => `${width / fontSize}em`;
+  const label = await measureReadout(
+    timer,
+    (time) => (time.innerHTML = timer.labelHtml)
+  );
+  let restingPx = label.readout;
+  let checkPx = restingPx;
   if (!timer.isLong) {
     const countdownProbe = { name: timer.name, startedAt: 0 };
-    widths.push(
-      await measureReadout(timer, (time) =>
-        time.replaceChildren(buildCounter(countdownProbe, timer.lowMs))
-      )
+    const countdown = await measureReadout(timer, (time) =>
+      time.replaceChildren(buildCounter(countdownProbe, timer.lowMs))
     );
+    restingPx = Math.max(restingPx, countdown.readout);
+    checkPx = restingPx;
     if (timer.lowMs < timer.highMs) {
-      widths.push(
-        await measureReadout(
-          timer,
-          (time) =>
-            time.replaceChildren(buildCounter(countdownProbe, timer.highMs)),
-          CHECK_WORDS
-        )
+      const check = await measureReadout(
+        timer,
+        (time) =>
+          time.replaceChildren(buildCounter(countdownProbe, timer.highMs)),
+        CHECK_WORDS
       );
+      checkPx = Math.max(restingPx, check.readout);
+      timer.words.style.setProperty('--words-width', inEms(check.words));
     }
   }
-  const fontSize = parseFloat(getComputedStyle(timer.readout).fontSize);
-  timer.readout.style.minInlineSize = `${Math.max(...widths) / fontSize}em`;
+  timer.restingWidth = inEms(restingPx);
+  timer.checkWidth = inEms(checkPx);
+  holdReadoutWidth(timer, timer.phase);
+}
+
+function holdReadoutWidth(timer, phase) {
+  const isMeasured = Boolean(timer.restingWidth);
+  if (!isMeasured) return;
+  timer.readout.style.minInlineSize =
+    phase === 'check' ? timer.checkWidth : timer.restingWidth;
 }
 
 // Removing the class and reading layout before adding it back restarts the animation, so every tap and every chime moves the square again.
@@ -162,6 +181,7 @@ function showPhase(timer, state) {
   timer.control.setAttribute('aria-label', label);
   timer.tooltip.textContent = label;
   showTime(timer, state);
+  holdReadoutWidth(timer, state.phase);
 }
 
 let audio = null;

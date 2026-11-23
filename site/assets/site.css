@@ -2794,6 +2794,27 @@ wa-input::part(clear-button):hover {
       scale var(--settle) var(--ease-settle);
   }
 
+  /* The readout's held width and the check words grow on the same clock, so the bar eases back as the words arrive. */
+  .timer-readout {
+    transition-property: color, min-inline-size;
+  }
+
+  .timer-words {
+    overflow-x: clip;
+    animation: words-arrive var(--wa-transition-normal) var(--wa-transition-easing);
+  }
+
+  @keyframes words-arrive {
+    from {
+      max-inline-size: 0;
+      margin-inline-end: calc(-1 * var(--wa-space-2xs));
+    }
+
+    to {
+      max-inline-size: var(--words-width);
+    }
+  }
+
   /* The icons' curve would fling the hatch past the border; this one overshoots about 3px, inside the switch's padding. */
   .mode-switch::before {
     transition: translate var(--settle) var(--ease-slide);
