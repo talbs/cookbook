@@ -10,6 +10,7 @@ const ACTIONS = {
   done: 'Clear',
 };
 const CHIME_NOTES = { check: 2, done: 3 };
+const CHECK_WORDS = 'check now';
 const TELL_SOURCE = '/assets/vendor/tiny-tells.min.js';
 const TELL_STATES = { running: 'working', check: 'warning', done: 'done' };
 
@@ -86,12 +87,12 @@ function readBand(band, savedStarts) {
   };
 }
 
-async function measureReadout(timer, fillTime) {
+async function measureReadout(timer, fillTime, words = '') {
   const probe = timer.readout.cloneNode(true);
   probe.style.position = 'absolute';
   probe.style.visibility = 'hidden';
   probe.style.minInlineSize = '0';
-  probe.querySelector('.timer-words').textContent = '';
+  probe.querySelector('.timer-words').textContent = words;
   fillTime(probe.querySelector('.timer-time'));
   timer.band.append(probe);
   const counter = probe.querySelector('wa-counter');
@@ -104,7 +105,7 @@ async function measureReadout(timer, fillTime) {
   return width;
 }
 
-// The label and the countdown differ in width, so each band holds the wider of its own two and starting a timer doesn't shift the bar.
+// The label, the countdown and the check countdown differ in width, so each band holds the widest of them and no phase shifts the bar.
 async function reserveReadoutWidth(timer) {
   const widths = [
     await measureReadout(timer, (time) => (time.innerHTML = timer.labelHtml)),
@@ -116,6 +117,16 @@ async function reserveReadoutWidth(timer) {
         time.replaceChildren(buildCounter(countdownProbe, timer.lowMs))
       )
     );
+    if (timer.lowMs < timer.highMs) {
+      widths.push(
+        await measureReadout(
+          timer,
+          (time) =>
+            time.replaceChildren(buildCounter(countdownProbe, timer.highMs)),
+          CHECK_WORDS
+        )
+      );
+    }
   }
   const fontSize = parseFloat(getComputedStyle(timer.readout).fontSize);
   timer.readout.style.minInlineSize = `${Math.max(...widths) / fontSize}em`;
@@ -130,7 +141,7 @@ function replayMove(timer, moveClass) {
 
 function showTime(timer, { phase, targetAt }) {
   const { isLong } = timer;
-  timer.words.textContent = phase === 'check' && !isLong ? 'check now' : '';
+  timer.words.textContent = phase === 'check' && !isLong ? CHECK_WORDS : '';
   if (phase === 'idle') {
     timer.time.innerHTML = timer.labelHtml;
   } else if (phase === 'done') {
@@ -138,7 +149,7 @@ function showTime(timer, { phase, targetAt }) {
   } else if (isLong && phase === 'running') {
     timer.time.textContent = `ready ${formatClockTime(targetAt)}`;
   } else if (isLong) {
-    timer.time.textContent = `check now · by ${formatClockTime(targetAt)}`;
+    timer.time.textContent = `${CHECK_WORDS} · by ${formatClockTime(targetAt)}`;
   } else {
     timer.time.replaceChildren(buildCounter(timer, targetAt));
   }
