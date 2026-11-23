@@ -29,20 +29,24 @@ eleventyComputed:
           <wa-icon slot="start" name="magnifying-glass" variant="regular"></wa-icon>
         </wa-input>
       </div>
-      <wa-select class="time-select wa-visually-hidden-label" label="Time" value="any" hidden>
-        <wa-icon slot="start" name="clock" variant="regular"></wa-icon>
-        <wa-option value="any">Any time</wa-option>
-        <wa-option value="30">Up to 30 min</wa-option>
-        <wa-option value="60">Up to 1 hour</wa-option>
-      </wa-select>
+      <wa-button class="filters-toggle" appearance="outlined" aria-expanded="false" aria-controls="listing-filters"><wa-icon name="sliders" variant="regular" label="Filters"></wa-icon></wa-button>
+      <div class="listing-filters" id="listing-filters">
+        <wa-select class="time-select wa-visually-hidden-label" label="Time" value="any" hidden>
+          <wa-icon slot="start" name="clock" variant="regular"></wa-icon>
+          <wa-option value="any">Any time</wa-option>
+          <wa-option value="30">Up to 30 min</wa-option>
+          <wa-option value="60">Up to 1 hour</wa-option>
+        </wa-select>
+        <div class="view-rest" hidden>
+          <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
+            <wa-radio appearance="button" value="cards">Cards</wa-radio>
+            <wa-radio appearance="button" value="list">List</wa-radio>
+          </wa-radio-group>
+        </div>
+      </div>
+      <script>if (matchMedia('(width < 48rem)').matches) document.getElementById('listing-filters').inert = true;</script>
       <a class="to-top shortcut wa-border-radius-s" id="listing-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to Top"></wa-icon></a>
       <wa-tooltip for="listing-top" placement="bottom">Back to Top</wa-tooltip>
-      <div class="view-rest" hidden>
-        <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
-          <wa-radio appearance="button" value="cards">Cards</wa-radio>
-          <wa-radio appearance="button" value="list">List</wa-radio>
-        </wa-radio-group>
-      </div>
     </div>
     <p class="match-count wa-visually-hidden" role="status"></p>
     <p class="untimed-note" hidden></p>

@@ -348,6 +348,18 @@ if (searchInput) {
   for (const popover of document.querySelectorAll('.pick-popover')) servePicksFrom(popover);
   document.querySelector('#site-pick').hidden = false;
 
+  const filtersToggle = document.querySelector('.filters-toggle');
+  const listingFilters = document.querySelector('.listing-filters');
+  const isPhoneWidth = matchMedia('(width < 48rem)');
+
+  function showFilters(isOpen) {
+    listingFilters.inert = isPhoneWidth.matches && !isOpen;
+    filtersToggle.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  filtersToggle.addEventListener('click', () => showFilters(listingFilters.inert));
+  isPhoneWidth.addEventListener('change', () => showFilters(false));
+
   searchInput.closest('.search-field').hidden = false;
   timeSelect.hidden = false;
 

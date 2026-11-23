@@ -1385,14 +1385,37 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-inline-start: auto;
 }
 
-/* From tablet width up the index's toolbar sticks to the top of the window. Its padding is taken back in margin,
+/* The index's toolbar sticks to the top of the window. Its padding is taken back in margin,
    so it sits where it did before it could stick. */
+.listing-controls.can-stick {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  isolation: isolate;
+  margin-block: calc(-1 * var(--wa-space-m));
+  padding-block: var(--wa-space-m);
+}
+
+/* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
+.listing-controls.can-stick::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(50% - 50vw);
+  border-block-end: var(--wa-border-width-s) solid transparent;
+  background: var(--paper);
+}
+
+.listing-controls.is-stuck::before {
+  border-block-end-color: var(--wa-color-surface-border);
+}
+
 .stuck-marker {
   block-size: 0;
   margin-block: calc(-1 * var(--wa-space-l) / 2);
 }
 
-/* On a phone the toolbar scrolls away, so the arrow floats in the bottom corner instead, at a full 44px for a thumb. */
+/* On a phone the arrow floats in the bottom corner, at a full 44px for a thumb. */
 .to-top {
   position: fixed;
   inset: auto var(--page-gutter) var(--float-gap) auto;
@@ -1458,27 +1481,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     column-gap: var(--wa-space-l);
   }
 
-  .listing-controls.can-stick {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 2;
-    isolation: isolate;
-    margin-block: calc(-1 * var(--wa-space-m));
-    padding-block: var(--wa-space-m);
+  .filters-toggle {
+    display: none;
   }
 
-  /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
-  .listing-controls.can-stick::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: 0 calc(50% - 50vw);
-    border-block-end: var(--wa-border-width-s) solid transparent;
-    background: var(--paper);
+  .listing-filters {
+    display: contents;
   }
 
-  .listing-controls.is-stuck::before {
-    border-block-end-color: var(--wa-color-surface-border);
+  .view-rest {
+    order: 1;
   }
 
   /* In the bar, the arrow sits just left of the switch and takes the row's spare room, so the switch never moves when it appears. */
@@ -1513,14 +1525,51 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   flex: 0 0 13.5rem;
 }
 
-.time-select::part(combobox) {
+.time-select::part(combobox),
+.filters-toggle::part(base) {
   box-shadow: var(--wa-shadow-s);
 }
 
 @media (width < 48rem) {
+  .listing-controls.can-stick {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    row-gap: 0;
+  }
+
+  .listing-controls.can-stick:has(> .listing-filters[inert]) {
+    grid-template-rows: auto 0fr;
+  }
+
   .search-field {
-    flex-basis: 100%;
     max-inline-size: none;
+  }
+
+  /* Opening or closing Filters changes the toolbar's height. Left on, the browser scrolls to keep the rows still, which pulls a stuck toolbar off the top. */
+  .listing-results {
+    overflow-anchor: none;
+  }
+
+  /* The padding grows the 40px square to the arrow's 44px for a thumb; the margin takes it back so the row keeps its height. */
+  .filters-toggle {
+    margin: calc((var(--bar-switch-height) - var(--to-top-size)) / 2);
+    padding: calc((var(--to-top-size) - var(--bar-switch-height)) / 2);
+  }
+
+  /* The second row folds to nothing when closed, so its gap rides on the controls inside the fold. */
+  .listing-filters {
+    display: flex;
+    grid-column: 1 / -1;
+    align-self: stretch;
+    gap: var(--wa-space-m);
+    min-block-size: 0;
+    overflow: clip;
+    overflow-clip-margin: var(--wa-space-xs);
+  }
+
+  .listing-filters > * {
+    margin-block-start: var(--wa-space-m);
   }
 
   /* The floating back-to-top arrow would cover the footer's last link, so it leaves once the footer shows. */
@@ -1578,7 +1627,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .recipe-search,
-.time-select {
+.time-select,
+.filters-toggle {
   --wa-form-control-height: var(--bar-switch-height);
   --wa-form-control-border-color: var(--control-edge);
   --wa-form-control-border-radius: var(--wa-border-radius-m);
@@ -1763,6 +1813,11 @@ wa-button[appearance='outlined']:hover::part(base) {
   background: var(--paper);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* The Filters icon rests in the quieter ink of the toolbar's other icons, and still takes the accent on hover. */
+wa-button.filters-toggle::part(base) {
+  color: var(--note-ink);
 }
 
 /* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
@@ -3181,6 +3236,10 @@ wa-input::part(clear-button):hover {
 
   .listing-controls.can-stick::before {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  .listing-controls.can-stick {
+    transition: grid-template-rows var(--wa-transition-normal) var(--wa-transition-easing);
   }
 
   /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
