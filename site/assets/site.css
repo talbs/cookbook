@@ -3267,14 +3267,14 @@ wa-input::part(clear-button):hover {
   ::view-transition-old(mode-bar),
   ::view-transition-old(mode-rest),
   ::view-transition-old(scheme-toggle),
-  ::view-transition-old(search-field) {
+  ::view-transition-old(listing-controls) {
     display: none;
   }
 
   ::view-transition-new(mode-bar),
   ::view-transition-new(mode-rest),
   ::view-transition-new(scheme-toggle),
-  ::view-transition-new(search-field) {
+  ::view-transition-new(listing-controls) {
     animation: none;
   }
 
@@ -3315,7 +3315,7 @@ wa-input::part(clear-button):hover {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .search-field) {
+    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .listing-controls) {
     view-transition-name: none;
   }
 
@@ -3347,7 +3347,7 @@ wa-input::part(clear-button):hover {
       visibility var(--wa-transition-slow);
   }
 
-  /* A search settles its new results in the way a mode does. The search field stays live, so typing never waits on the move. */
+  /* A search settles its new results in the way a mode does. The toolbar stays live, so typing never waits on the move. */
   .listing-results {
     view-transition-name: listing-results;
   }
@@ -3362,8 +3362,10 @@ wa-input::part(clear-button):hover {
       mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
   }
 
-  .search-field {
-    view-transition-name: search-field;
+  /* A named piece is drawn above the rest of the page while it moves. The whole toolbar is named, paper and all,
+     so the results can't be drawn over a stuck toolbar. */
+  .listing-controls {
+    view-transition-name: listing-controls;
   }
 
   .empty-icons wa-icon,
