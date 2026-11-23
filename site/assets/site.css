@@ -435,6 +435,10 @@ wa-scroller:has(.course-links) {
   margin-inline: calc(-1 * var(--wa-space-s));
 }
 
+wa-scroller[hidden] {
+  display: none;
+}
+
 .course-links {
   /* Sized to its links, so the end padding is part of what scrolls instead of being overflowed past. */
   min-inline-size: max-content;
@@ -1381,14 +1385,37 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-inline-start: auto;
 }
 
-/* From tablet width up the index's toolbar sticks to the top of the window. Its padding is taken back in margin,
+/* The index's toolbar sticks to the top of the window. Its padding is taken back in margin,
    so it sits where it did before it could stick. */
+.listing-controls.can-stick {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  isolation: isolate;
+  margin-block: calc(-1 * var(--wa-space-m));
+  padding-block: var(--wa-space-m);
+}
+
+/* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
+.listing-controls.can-stick::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(50% - 50vw);
+  border-block-end: var(--wa-border-width-s) solid transparent;
+  background: var(--paper);
+}
+
+.listing-controls.is-stuck::before {
+  border-block-end-color: var(--wa-color-surface-border);
+}
+
 .stuck-marker {
   block-size: 0;
   margin-block: calc(-1 * var(--wa-space-l) / 2);
 }
 
-/* On a phone the toolbar scrolls away, so the arrow floats in the bottom corner instead, at a full 44px for a thumb. */
+/* On a phone the arrow floats in the bottom corner, at a full 44px for a thumb. */
 .to-top {
   position: fixed;
   inset: auto var(--page-gutter) var(--float-gap) auto;
@@ -1454,27 +1481,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     column-gap: var(--wa-space-l);
   }
 
-  .listing-controls.can-stick {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 2;
-    isolation: isolate;
-    margin-block: calc(-1 * var(--wa-space-m));
-    padding-block: var(--wa-space-m);
+  .filters-toggle {
+    display: none;
   }
 
-  /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
-  .listing-controls.can-stick::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: 0 calc(50% - 50vw);
-    border-block-end: var(--wa-border-width-s) solid transparent;
-    background: var(--paper);
+  .listing-filters {
+    display: contents;
   }
 
-  .listing-controls.is-stuck::before {
-    border-block-end-color: var(--wa-color-surface-border);
+  .view-rest {
+    order: 1;
   }
 
   /* In the bar, the arrow sits just left of the switch and takes the row's spare room, so the switch never moves when it appears. */
@@ -1498,6 +1514,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   overflow-x: clip;
 }
 
+.stuck-tap {
+  display: none;
+}
+
 .search-field {
   flex: 1 1 14rem;
   max-inline-size: 24rem;
@@ -1509,14 +1529,101 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   flex: 0 0 13.5rem;
 }
 
-.time-select::part(combobox) {
+.time-select::part(combobox),
+.filters-toggle::part(base) {
   box-shadow: var(--wa-shadow-s);
 }
 
 @media (width < 48rem) {
+  .listing-controls.can-stick {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    row-gap: 0;
+  }
+
+  .listing-controls.can-stick:has(> .listing-filters[inert]) {
+    grid-template-rows: auto 0fr;
+  }
+
   .search-field {
-    flex-basis: 100%;
+    position: relative;
     max-inline-size: none;
+  }
+
+  /* Typing mode is for touch screens; with a mouse the field is just a field. */
+  @media (pointer: coarse) {
+    .stuck-tap {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      opacity: 0;
+    }
+
+    .search-field:focus-within .stuck-tap {
+      display: none;
+    }
+  }
+
+  /* While the keyboard is up nothing may sit above the toolbar, or Safari slides the screen past it. */
+  wa-page:has(.listing.is-typing) .site-header,
+  .is-typing :is(.listing-head, .header-rule) {
+    display: none;
+  }
+
+  .listing.is-typing {
+    padding-block-start: var(--wa-space-m);
+  }
+
+  .is-typing .listing-controls.can-stick {
+    position: relative;
+  }
+
+  :is(.is-searching, .is-typing) .listing-results {
+    min-block-size: 100svh;
+    align-content: start;
+  }
+
+  /* Opening or closing Filters changes the toolbar's height. Left on, the browser scrolls to keep the rows still, which pulls a stuck toolbar off the top. */
+  .listing-results {
+    overflow-anchor: none;
+  }
+
+  /* The keyboard covers the lower half, so the words come first and start at the top. */
+  .listing-results > .search-empty {
+    flex: none;
+    justify-content: start;
+    padding-block: var(--wa-space-xl);
+  }
+
+  .empty-ornament {
+    order: 1;
+  }
+
+  /* The padding grows the 40px square to the arrow's 44px for a thumb; the margin takes it back so the row keeps its height. */
+  .filters-toggle {
+    margin: calc((var(--bar-switch-height) - var(--to-top-size)) / 2);
+    padding: calc((var(--to-top-size) - var(--bar-switch-height)) / 2);
+  }
+
+  /* The second row folds to nothing when closed, so its gap rides on the controls inside the fold. */
+  .listing-filters {
+    display: flex;
+    grid-column: 1 / -1;
+    align-self: stretch;
+    gap: var(--wa-space-m);
+    min-block-size: 0;
+    overflow: clip;
+    overflow-clip-margin: var(--wa-space-xs);
+  }
+
+  .listing-filters > * {
+    margin-block-start: var(--wa-space-m);
   }
 
   /* The floating back-to-top arrow would cover the footer's last link, so it leaves once the footer shows. */
@@ -1574,7 +1681,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .recipe-search,
-.time-select {
+.time-select,
+.filters-toggle {
   --wa-form-control-height: var(--bar-switch-height);
   --wa-form-control-border-color: var(--control-edge);
   --wa-form-control-border-radius: var(--wa-border-radius-m);
@@ -1598,6 +1706,59 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-end: var(--wa-space-xl);
   background: var(--divider-ink);
   mask: var(--divider);
+}
+
+/* While searching, the matches read as one list. The course names stay for screen readers, since each section is named by its heading. */
+:is(.is-searching, .is-typing) .course .section-head {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:is(.is-searching, .is-typing) .course + .course::before {
+  content: none;
+}
+
+/* Rows run on from one course into the next, in the same newspaper columns one course uses. */
+[data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
+  display: block;
+  column-gap: var(--column-gap);
+}
+
+[data-view='list'] :is(.is-searching, .is-typing) .course {
+  display: block;
+}
+
+[data-view='list'] :is(.is-searching, .is-typing) .recipe-rows {
+  column-count: auto;
+}
+
+@media (min-width: 48rem) {
+  [data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
+    column-count: 2;
+  }
+
+  /* The stack's gap gives 24px; while searching on wide screens the results sit 32px under the toolbar. */
+  .listing.is-searching > .listing-results {
+    padding-block-start: calc(var(--wa-space-xl) - var(--wa-space-l));
+  }
+}
+
+/* Cards from every course share one grid, so one match per course still sits side by side. */
+:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
+  display: grid;
+  row-gap: var(--wa-space-2xl);
+}
+
+:root:not([data-view='list']) :is(.is-searching, .is-typing) :is(.course, .recipe-cards) {
+  display: contents;
+}
+
+:is(.is-searching, .is-typing) .search-empty {
+  grid-column: 1 / -1;
 }
 
 .empty-state {
@@ -1711,6 +1872,11 @@ wa-button[appearance='outlined']:hover::part(base) {
   background: var(--paper);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* The Filters icon rests in the quieter ink of the toolbar's other icons, and still takes the accent on hover. */
+wa-button.filters-toggle::part(base) {
+  color: var(--note-ink);
 }
 
 /* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
@@ -1894,7 +2060,8 @@ wa-button.special::part(base) {
   display: none;
 }
 
-.recipe-cards {
+.recipe-cards,
+:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
   --min-column-size: 17rem;
   margin: 0;
   column-gap: var(--column-gap);
@@ -3127,6 +3294,10 @@ wa-input::part(clear-button):hover {
 
   .listing-controls.can-stick::before {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  .listing-controls.can-stick {
+    transition: grid-template-rows var(--wa-transition-normal) var(--wa-transition-easing);
   }
 
   /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
