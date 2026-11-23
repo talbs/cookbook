@@ -170,7 +170,20 @@ function showTime(timer, { phase, targetAt }) {
   }
 }
 
+// A wider readout would push the bar back in one frame, so it grows from the width it had instead.
+function easeReadoutWider(timer, widthBefore) {
+  const widthAfter = timer.readout.getBoundingClientRect().width;
+  const isHidden = widthBefore === 0;
+  if (isHidden || widthAfter <= widthBefore) return;
+  timer.readout.style.setProperty('--width-before', `${widthBefore}px`);
+  timer.readout.style.setProperty('--width-after', `${widthAfter}px`);
+  timer.readout.classList.remove('is-widening');
+  void timer.readout.offsetWidth;
+  timer.readout.classList.add('is-widening');
+}
+
 function showPhase(timer, state) {
+  const widthBefore = timer.readout.getBoundingClientRect().width;
   timer.band.dataset.phase = state.phase;
   const label = `${ACTIONS[state.phase]} ${titleCase(timer.name)} Timer`;
   timer.glyph.name = GLYPHS[state.phase];
@@ -178,6 +191,7 @@ function showPhase(timer, state) {
   timer.tooltip.textContent = label;
   showTime(timer, state);
   holdReadoutWidth(timer, state.phase);
+  easeReadoutWider(timer, widthBefore);
 }
 
 let audio = null;
