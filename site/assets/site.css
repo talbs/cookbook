@@ -1731,24 +1731,31 @@ wa-button[appearance='plain']:hover::part(base) {
 }
 
 /* A bare button that takes the view switch's dress when pointed at, or while its popover is open:
-   a thin frame, with the hatch held the same 3px inside it. */
-wa-button.hatch-button {
+   a thin frame, with the hatch held the same 3px inside it. It dresses a wa-button, a button or a link. */
+:is(wa-button, button, a).hatch-button {
   --hatch-inset: 3px;
 }
 
 wa-button.hatch-button::part(base),
-wa-button.hatch-button:hover::part(base) {
+wa-button.hatch-button:hover::part(base),
+:is(button, a).hatch-button {
   position: relative;
   isolation: isolate;
   border: var(--wa-border-width-s) solid transparent;
   border-radius: var(--wa-border-radius-m);
   background: none;
   font-weight: var(--wa-font-weight-bold);
-  color: var(--ink);
   transition: border-color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
-wa-button.hatch-button::part(base)::before {
+/* A plain wa-button turns the accent on hover; this one keeps its ink. */
+wa-button.hatch-button::part(base),
+wa-button.hatch-button:hover::part(base) {
+  color: var(--ink);
+}
+
+wa-button.hatch-button::part(base)::before,
+:is(button, a).hatch-button::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -1759,12 +1766,30 @@ wa-button.hatch-button::part(base)::before {
   transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
-wa-button.hatch-button:is(:hover, :has(~ wa-popover[open]))::part(base) {
+wa-button.hatch-button:has(~ wa-popover[open])::part(base) {
   border-color: var(--control-edge);
 }
 
-wa-button.hatch-button:is(:hover, :has(~ wa-popover[open]))::part(base)::before {
+wa-button.hatch-button:has(~ wa-popover[open])::part(base)::before {
   opacity: 1;
+}
+
+/* Hover-only, so a tapped button on a phone doesn't stay dressed. */
+@media (hover: hover) {
+  wa-button.hatch-button:hover::part(base),
+  :is(button, a).hatch-button:hover {
+    border-color: var(--control-edge);
+  }
+
+  wa-button.hatch-button:hover::part(base)::before,
+  :is(button, a).hatch-button:hover::before {
+    opacity: 1;
+  }
+
+  /* The frame and hatch already say "hovered", so an icon shortcut skips its usual turn to the accent. */
+  .shortcut.hatch-button:hover {
+    color: var(--ink);
+  }
 }
 
 /* The button's box hangs past the page edge, as the shortcuts' boxes do, so the hat starts where the title does. */
