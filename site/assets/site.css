@@ -2116,6 +2116,7 @@ wa-details {
 /* One line tall on purpose: a started timer's tell overflows it a little without growing the row. */
 .wait-glyph {
   display: inline-grid;
+  place-content: center;
   place-items: center;
   flex: none;
   inline-size: var(--wait-glyph-size);
