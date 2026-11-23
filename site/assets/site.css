@@ -1633,15 +1633,19 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     padding: calc((var(--to-top-size) - var(--bar-switch-height)) / 2);
   }
 
-  /* The second row folds to nothing when closed, so its gap rides on the controls inside the fold. */
+  /* The second row folds to nothing when closed, so its gap rides on the controls inside the fold.
+     The fold clips at its padding, so the padding is as deep as a focus ring at its widest, as it settles in,
+     and the margin takes it back. Safari has no overflow-clip-margin to do this. */
   .listing-filters {
+    --ring-room: calc(var(--wa-focus-ring-width) + var(--wa-focus-ring-offset) + 4px);
     display: flex;
     grid-column: 1 / -1;
     align-self: stretch;
     gap: var(--wa-space-m);
     min-block-size: 0;
+    margin: 0 calc(-1 * var(--ring-room)) calc(-1 * var(--ring-room));
+    padding: 0 var(--ring-room) var(--ring-room);
     overflow: clip;
-    overflow-clip-margin: var(--wa-space-xs);
   }
 
   .listing-filters > * {
