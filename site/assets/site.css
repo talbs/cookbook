@@ -2216,7 +2216,7 @@ wa-progress-bar.wait-run::part(indicator) {
   margin: 0;
 }
 
-/* Both lists share capped columns so File sits over Tags, and rows sit as far apart as the lists do. */
+/* Rows sit as far apart as the lists do. */
 .credit,
 .connections {
   display: grid;

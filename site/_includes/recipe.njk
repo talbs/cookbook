@@ -320,9 +320,9 @@
       <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% endfor %}</dd></div>
       {%- endif %}
       {%- if usedIn.length %}
-      <div>{{ usedInLine | safe }}</div>
+      <div class="wa-span-grid">{{ usedInLine | safe }}</div>
       {%- endif %}
-      <div><dt>File</dt><dd><a class="file-link" href="/recipes/{{ page.fileSlug }}.txt">{{ page.fileSlug }}.cook</a></dd></div>
+      <div class="wa-span-grid"><dt>File</dt><dd><a class="file-link" href="/recipes/{{ page.fileSlug }}.txt">{{ page.fileSlug }}.cook</a></dd></div>
     </dl>
   </footer>
   <p class="timer-status wa-visually-hidden" role="status"></p>
