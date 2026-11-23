@@ -2197,7 +2197,7 @@ wa-progress-bar.wait-run::part(progress-bar) {
   block-size: 1.75rem;
   border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--note-ink);
 }
 
