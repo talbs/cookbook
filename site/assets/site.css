@@ -815,16 +815,28 @@ wa-scroller:has(.course-links) {
   gap: 0;
 }
 
+/* On phones the icons leave the title under half the row, so it sets small on up to two lines, which still fit the 40px row. */
 .pinned-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   min-inline-size: 0;
   margin: 0;
   font-family: var(--wa-font-family-heading);
-  --title-size: 1.5rem;
+  --title-size: 1rem;
   font-size: var(--title-size);
   font-weight: 800;
   font-synthesis: none;
-  line-height: 1;
+  line-height: 1.05;
   text-transform: uppercase;
+  text-wrap: balance;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* The resting print button stays at the top of the page; in the phone bar its 40px goes to the title. */
+wa-page:not([view='desktop']) .mode-bar .print-control {
+  display: none;
 }
 
 /* Free Lunch has no ñ, and the sans fallback's is half again as wide. So a title's ñ stays in the markup at no size,
@@ -3212,6 +3224,13 @@ wa-page[view='desktop'] {
 
   & .shortcuts {
     margin-inline-end: 0;
+  }
+
+  & .pinned-title {
+    display: block;
+    --title-size: 1.5rem;
+    line-height: 1;
+    white-space: nowrap;
   }
 }
 
