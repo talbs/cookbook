@@ -307,13 +307,11 @@
       <span class="rule-run"></span>
       {%- endif %}
     </div>
+    {%- if hasCredit %}
     <dl class="credit wa-cluster wa-align-items-start wa-gap-2xl">
-      {%- if hasCredit %}
       <div>{{ creditLine | safe }}</div>
-      {%- endif %}
-      <div><dt>File</dt><dd><a class="file-link" href="/recipes/{{ page.fileSlug }}.txt">{{ page.fileSlug }}.cook</a></dd></div>
     </dl>
-    {%- if tags.length or usedIn.length or cuisine %}
+    {%- endif %}
     <dl class="connections wa-cluster wa-align-items-start wa-gap-2xl">
       {%- if cuisine %}
       <div><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
@@ -324,8 +322,8 @@
       {%- if usedIn.length %}
       <div>{{ usedInLine | safe }}</div>
       {%- endif %}
+      <div><dt>File</dt><dd><a class="file-link" href="/recipes/{{ page.fileSlug }}.txt">{{ page.fileSlug }}.cook</a></dd></div>
     </dl>
-    {%- endif %}
   </footer>
   <p class="timer-status wa-visually-hidden" role="status"></p>
   <wa-toast class="screen-toast" placement="bottom-start"></wa-toast>
