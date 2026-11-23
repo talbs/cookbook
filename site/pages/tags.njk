@@ -12,7 +12,7 @@ kickerCounts: tags
   <h2 class="section-head" id="{{ group.heading | lower }}-heading">{{ group.heading }}</h2>
   <ul class="listing-rows wa-list-plain" role="list">
     {%- for tag in group.tags %}
-    <li><a class="listing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="{{ tag.url }}"><span class="listing-name"><span class="row-words">{{ tag.name | tagLabel }}</span></span>
+    <li><a class="listing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="{{ tag.url }}"><span class="listing-name wa-text-nowrap"><span class="row-words">{{ tag.name | tagLabel }}</span></span>
       {%- if tag.onlyRecipeTitle %} <span class="listing-detail wa-text-end">{{ tag.onlyRecipeTitle }}</span>
       {%- else %} <span class="listing-detail wa-text-nowrap">{{ tag.count }}<span class="wa-visually-hidden"> recipes</span></span>
       {%- endif -%}
