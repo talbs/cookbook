@@ -83,7 +83,7 @@ eleventyComputed:
   <p class="empty-ways-out empty-suggestions wa-cluster wa-align-items-center wa-justify-content-center wa-gap-xs">Try
     <wa-random-content class="empty-tags" items="3">
       {%- for tag in collections | tagNames %}
-      <button type="button" class="link-button" data-search="{{ tag }}">{{ tag }}</button>
+      <button type="button" class="link-button" data-search="{{ tag }}">{{ tag | tagLabel }}</button>
       {%- endfor %}
     </wa-random-content>
     <span class="empty-special">or <button type="button" class="link-button" id="empty-pick">today’s special</button></span>

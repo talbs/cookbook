@@ -29,6 +29,7 @@ A good one: `Instant ramen baked on a sheet pan until crisp, with hoisin-maple g
 - Stick to the kinds the `tags` row in [Front matter keys](recipe-format.md#front-matter-keys) lists. No ingredient tags (`chicken`) and no character tags (`spicy`).
 - Tags are optional. Don't invent one to fill the line.
 - A new method or gear tag also goes in `METHOD_TAGS` in `eleventy.config.js`. Without it, `/tags/` files the tag under Dishes.
+- A family tag names the person a recipe was handed down by (`auntie-jeanie`). It also goes in `FAMILY_TAG_NAMES` in `eleventy.config.js`, with the name to print in its place. Without it, `/tags/` files the tag under Dishes and prints it as written.
 
 ## Seasons
 
