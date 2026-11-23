@@ -1,10 +1,10 @@
 [
-  { "headline": "Nacho recipe", "aside": "It might be someone's. It isn't ours.", "icons": ["taco", "cheese", "pepper-hot"] },
-  { "headline": "Lettuce try again", "aside": "Romaine calm. Fewer letters usually helps.", "icons": ["leafy-green", "salad", "carrot"] },
-  { "headline": "This search is toast", "aside": "Burnt on both sides.", "icons": ["bread-slice", "bread-slice-butter", "fire"] },
-  { "headline": "Well, this is a pickle", "aside": "And not the good kind. Those are under Condiments.", "icons": ["cucumber", "jar", "garlic"] },
-  { "headline": "Donut have that one", "aside": "We checked the hole cookbook.", "icons": ["donut", "mug-hot", "cookie"] },
-  { "headline": "We came up empty-plated", "aside": "Sad for everyone.", "icons": ["plate-utensils", "bowl-spoon", "mug-saucer"] },
-  { "headline": "Out to lunch", "aside": "That recipe, not us. We're right here.", "icons": ["sign-hanging", "sandwich", "clock"] },
-  { "headline": "Nothing's cooking", "aside": "Yet. The pot is being watched.", "icons": ["pot-food", "fire-burner", "hat-chef"] }
+  { "headline": "Nacho recipe", "aside": "It might be someone's. It isn't ours.", "hue": "ember", "icons": ["taco", "cheese", "pepper-hot"] },
+  { "headline": "Lettuce try again", "aside": "Romaine calm. Fewer letters usually helps.", "hue": "fern", "icons": ["leafy-green", "salad", "carrot"] },
+  { "headline": "This search is toast", "aside": "Burnt on both sides.", "hue": "honey", "icons": ["bread-slice", "bread-slice-butter", "fire"] },
+  { "headline": "Well, this is a pickle", "aside": "And not the good kind. Those are under Condiments.", "hue": "fern", "icons": ["cucumber", "jar", "garlic"] },
+  { "headline": "Donut have that one", "aside": "We checked the hole cookbook.", "hue": "guava", "icons": ["donut", "mug-hot", "cookie"] },
+  { "headline": "We came up empty-plated", "aside": "Sad for everyone.", "hue": "moon", "icons": ["plate-utensils", "bowl-spoon", "mug-saucer"] },
+  { "headline": "Out to lunch", "aside": "That recipe, not us. We're right here.", "hue": "honey", "icons": ["sign-hanging", "sandwich", "clock"] },
+  { "headline": "Nothing's cooking", "aside": "Yet. The pot is being watched.", "hue": "ember", "icons": ["pot-food", "fire-burner", "hat-chef"] }
 ]

@@ -98,6 +98,8 @@ if (searchInput) {
     return words.join(' ');
   }
 
+  const hueByCourse = { breakfast: 'honey', condiment: 'fern', dessert: 'guava', drink: 'honey', main: 'ember', side: 'fern' };
+
   function showPick(container, pick) {
     container.querySelector('wa-format-date').date = pick.now;
     container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
@@ -108,7 +110,10 @@ if (searchInput) {
 
     const icons = [];
     for (const icon of pick.entry.icons) icons.push(icon.cloneNode());
-    container.querySelector('.pick-icons').replaceChildren(...icons);
+    const iconSet = container.querySelector('.pick-icons');
+    iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
+    iconSet.replaceChildren(...icons);
+    shareHue(iconSet, container);
   }
 
   async function loadSearchText() {
@@ -174,10 +179,25 @@ if (searchInput) {
     searchInput.focus();
   }
 
+  const hueEnds = ['--hop-start', '--hop-end'];
+
+  // Hue Hop keeps a hue's two ends on its own element, so they are copied to whatever holds the links beside it.
+  function shareHue(hueHop, linkHolder) {
+    const hueStyle = getComputedStyle(hueHop);
+    for (const end of hueEnds) linkHolder.style.setProperty(end, hueStyle.getPropertyValue(end));
+  }
+
   // Before the kit loads there is nothing to shuffle yet.
   function tellNewJoke() {
-    emptyNote.querySelector('.empty-jokes').randomize?.();
+    const jokes = emptyNote.querySelector('.empty-jokes');
+    jokes.randomize?.();
     emptyNote.querySelector('.empty-tags').randomize?.();
+
+    const ornament = jokes.querySelector(':scope > :not([hidden]) hue-hop');
+    // Moon is all greys, too quiet to show a hover, so that joke's links keep the accent.
+    const isGrey = ornament.getAttribute('hue') === 'moon';
+    if (isGrey) for (const end of hueEnds) emptyNote.style.removeProperty(end);
+    else shareHue(ornament, emptyNote);
   }
 
   function showMatches({ isInstant = false } = {}) {
@@ -265,9 +285,12 @@ if (searchInput) {
     let shownPick = null;
     let isSendingBack = false;
 
+    const triggerIcon = document.getElementById(popover.getAttribute('for')).querySelector('hue-hop');
+
     function showPickInPopover(pick) {
       shownPick = pick;
       showPick(popover, pick);
+      triggerIcon?.setAttribute('hue', hueByCourse[pick.entry.course]);
     }
 
     // The panel fits its title, so its width glides between the two instead of jumping.

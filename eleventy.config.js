@@ -164,6 +164,7 @@ export default function (eleventyConfig) {
   eleventyConfig.ignores.add('test/**');
   eleventyConfig.addPassthroughCopy({ 'site/assets': 'assets' });
   eleventyConfig.addPassthroughCopy({ 'node_modules/tiny-tells/dist/tiny-tells.min.js': 'assets/vendor/tiny-tells.min.js' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/hue-hop/dist/hue-hop.js': 'assets/vendor/hue-hop.js' });
   // The dev server would otherwise patch an open page in place, which resets what the page's scripts have set without running them again.
   eleventyConfig.setServerOptions({ domDiff: false, port: 4186 });
 
