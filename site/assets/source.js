@@ -55,6 +55,18 @@ async function showSourceDialog() {
 registerCooklangGrammar();
 highlighter.language = 'cooklang';
 
+// A note that doesn't fit beside the file name wraps below the title's one line, out of sight.
+// Its link leaves the keyboard's path with it, so focus never lands on something nobody can see.
+const sourceName = dialog.querySelector('.source-name');
+const sourceNote = dialog.querySelector('.source-note');
+
+function markWhetherNoteShows() {
+  const hasWrappedBelowName = sourceNote.getBoundingClientRect().top >= sourceName.getBoundingClientRect().bottom;
+  sourceNote.inert = hasWrappedBelowName;
+}
+
+new ResizeObserver(markWhetherNoteShows).observe(dialog.querySelector('.source-title'));
+
 fileLink.addEventListener('click', async event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
