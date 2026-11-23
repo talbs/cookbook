@@ -61,6 +61,9 @@ if (searchInput) {
   let hiddenItems = new Set();
   let untimedCount = 0;
   let hasStartedLoading = false;
+  let hasSearchTextLoaded = false;
+  let emptySearchTimer = null;
+  const reportedEmptyQueries = new Set();
 
   // Lowercase with accents removed, so "jalapeno" finds "Jalapeños".
   function simplify(text) {
@@ -120,6 +123,7 @@ if (searchInput) {
       const fullerText = searchTextByUrl.get(urlByItem.get(item));
       if (fullerText) searchTextByItem.set(item, fullerText);
     }
+    hasSearchTextLoaded = true;
   }
 
   // The first sign of interest fetches the ingredient lists, whether that is a click into the field or text arriving in it.
@@ -181,9 +185,11 @@ if (searchInput) {
     const maxMinutes = readMaxMinutes();
     const itemsToHide = new Set();
     untimedCount = 0;
+    let hasTextMatch = false;
     for (const item of recipeItems) {
       const searchText = searchTextByItem.get(item);
       const hasEveryTerm = terms.every(term => searchText.includes(term));
+      if (hasEveryTerm) hasTextMatch = true;
       if (!hasEveryTerm || !isQuickEnough(item, maxMinutes)) itemsToHide.add(item);
       // Every recipe is in the page twice, as a card and as a row, so only its card is counted.
       const isCard = item.parentElement.classList.contains('recipe-cards');
@@ -194,6 +200,7 @@ if (searchInput) {
       term.textContent = describeSearch();
     }
     writeSearchToUrl();
+    reportEmptySearchSoon(terms.length > 0 && !hasTextMatch);
 
     // Typing a letter that leaves the same recipes showing changes nothing, so nothing moves.
     const isSameListing = recipeItems.every(item => hiddenItems.has(item) === itemsToHide.has(item));
@@ -203,6 +210,22 @@ if (searchInput) {
     hiddenItems = itemsToHide;
     if (isInstant) showHiddenItems();
     else changeWithTransition(showHiddenItems);
+  }
+
+  // Searches whose words match no recipe tell us which keywords are missing. A dead end caused only by the time limit isn't one of those.
+  function reportEmptySearchSoon(isEmptySearch) {
+    clearTimeout(emptySearchTimer);
+    if (!isEmptySearch) return;
+    emptySearchTimer = setTimeout(reportEmptySearch, 1000);
+  }
+
+  function reportEmptySearch() {
+    if (!hasSearchTextLoaded) return;
+    const query = readQuery().trim().slice(0, 100);
+    const simplifiedQuery = simplify(query);
+    if (reportedEmptyQueries.has(simplifiedQuery)) return;
+    reportedEmptyQueries.add(simplifiedQuery);
+    window.umami?.track('search-empty', { query });
   }
 
   function showHiddenItems() {
