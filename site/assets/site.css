@@ -2126,6 +2126,28 @@ wa-details {
   grid-area: 1 / 1;
 }
 
+.wait-glyph tiny-tell {
+  --tell-size: var(--wait-glyph-size);
+}
+
+.wait-glyph tiny-tell,
+.wait-glyph[data-tell] wa-icon {
+  opacity: 0;
+  scale: 0.8;
+}
+
+.wait-glyph[data-tell] tiny-tell {
+  opacity: 1;
+  scale: 1;
+}
+
+@starting-style {
+  .wait-glyph[data-tell] tiny-tell {
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+
 [data-mode='overview'] .wait-mark {
   display: none;
 }
@@ -2763,6 +2785,12 @@ wa-input::part(clear-button):hover {
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
+  }
+
+  .wait-glyph:not([data-instant]) > * {
+    transition:
+      opacity var(--settle) var(--ease-settle),
+      scale var(--settle) var(--ease-settle);
   }
 
   /* The icons' curve would fling the hatch past the border; this one overshoots about 3px, inside the switch's padding. */
