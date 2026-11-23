@@ -1,4 +1,5 @@
 {% extends "base.njk" %}
+{% from "tag-name.njk" import tagName with context %}
 
 {% block head %}
     {#- Only this template knows the title, so the running footer's text is set here; site.css styles and places it. #}
@@ -317,7 +318,7 @@
       <div><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
       {%- endif %}
       {%- if tags.length %}
-      <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}<a href="/tags/{{ tag }}/">{{ tag }}</a>{% endfor %}</dd></div>
+      <div><dt>Tags</dt><dd class="wa-cluster wa-gap-s">{% for tag in tags %}{{ tagName(tag) }}{% endfor %}</dd></div>
       {%- endif %}
       {%- if usedIn.length %}
       <div class="wa-span-grid">{{ usedInLine | safe }}</div>
