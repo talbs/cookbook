@@ -1514,6 +1514,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   overflow-x: clip;
 }
 
+.stuck-tap {
+  display: none;
+}
+
 .search-field {
   flex: 1 1 14rem;
   max-inline-size: 24rem;
@@ -1543,7 +1547,46 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   .search-field {
+    position: relative;
     max-inline-size: none;
+  }
+
+  /* Typing mode is for touch screens; with a mouse the field is just a field. */
+  @media (pointer: coarse) {
+    .stuck-tap {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      opacity: 0;
+    }
+
+    .search-field:focus-within .stuck-tap {
+      display: none;
+    }
+  }
+
+  /* While the keyboard is up nothing may sit above the toolbar, or Safari slides the screen past it. */
+  wa-page:has(.listing.is-typing) .site-header,
+  .is-typing :is(.listing-head, .header-rule) {
+    display: none;
+  }
+
+  .listing.is-typing {
+    padding-block-start: var(--wa-space-m);
+  }
+
+  .is-typing .listing-controls.can-stick {
+    position: relative;
+  }
+
+  :is(.is-searching, .is-typing) .listing-results {
+    min-block-size: 100svh;
+    align-content: start;
   }
 
   /* Opening or closing Filters changes the toolbar's height. Left on, the browser scrolls to keep the rows still, which pulls a stuck toolbar off the top. */
@@ -1655,7 +1698,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* While searching, the matches read as one list. The course names stay for screen readers, since each section is named by its heading. */
-.is-searching .course .section-head {
+:is(.is-searching, .is-typing) .course .section-head {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -1664,41 +1707,41 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   white-space: nowrap;
 }
 
-.is-searching .course + .course::before {
+:is(.is-searching, .is-typing) .course + .course::before {
   content: none;
 }
 
 /* Rows run on from one course into the next, in the same newspaper columns one course uses. */
-[data-view='list'] .is-searching .listing-results:has(> .search-empty[hidden]) {
+[data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
   display: block;
   column-gap: var(--column-gap);
 }
 
-[data-view='list'] .is-searching .course {
+[data-view='list'] :is(.is-searching, .is-typing) .course {
   display: block;
 }
 
-[data-view='list'] .is-searching .recipe-rows {
+[data-view='list'] :is(.is-searching, .is-typing) .recipe-rows {
   column-count: auto;
 }
 
 @media (min-width: 48rem) {
-  [data-view='list'] .is-searching .listing-results:has(> .search-empty[hidden]) {
+  [data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
     column-count: 2;
   }
 }
 
 /* Cards from every course share one grid, so one match per course still sits side by side. */
-:root:not([data-view='list']) .is-searching .listing-results {
+:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
   display: grid;
   row-gap: var(--wa-space-2xl);
 }
 
-:root:not([data-view='list']) .is-searching :is(.course, .recipe-cards) {
+:root:not([data-view='list']) :is(.is-searching, .is-typing) :is(.course, .recipe-cards) {
   display: contents;
 }
 
-.is-searching .search-empty {
+:is(.is-searching, .is-typing) .search-empty {
   grid-column: 1 / -1;
 }
 
@@ -2002,7 +2045,7 @@ wa-button.special::part(base) {
 }
 
 .recipe-cards,
-:root:not([data-view='list']) .is-searching .listing-results {
+:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
   --min-column-size: 17rem;
   margin: 0;
   column-gap: var(--column-gap);

@@ -29,17 +29,29 @@ viewSwitch.addEventListener('change', () => {
 
 // A marker just above the toolbar going off the top is how the page knows the toolbar is stuck.
 const stickyToolbar = document.querySelector('.listing-controls.can-stick');
+const stuckMarker = document.createElement('div');
+stuckMarker.className = 'stuck-marker';
+const isPhoneWidth = matchMedia('(width < 48rem)');
+const isTouchScreen = matchMedia('(pointer: coarse)');
+
+// On a phone the toolbar counts as stuck within 1px of the top, because closing the keyboard can leave it a fraction of a pixel down.
+// While typing it sits at the top only because the page top is hidden, so that doesn't count.
+function markWhetherStuck() {
+  const isStuck = isPhoneWidth.matches
+    ? stickyToolbar.getBoundingClientRect().top < 1 && !stickyToolbar.closest('.is-typing')
+    : stuckMarker.getBoundingClientRect().top < 0;
+  stickyToolbar.classList.toggle('is-stuck', isStuck);
+}
+
 if (stickyToolbar) {
-  const stuckMarker = document.createElement('div');
-  stuckMarker.className = 'stuck-marker';
   stickyToolbar.before(stuckMarker);
-
-  function markWhetherStuck() {
-    stickyToolbar.classList.toggle('is-stuck', stuckMarker.getBoundingClientRect().top < 0);
-  }
-
   addEventListener('scroll', markWhetherStuck, { passive: true });
   markWhetherStuck();
+  // The page's reveal animation slides everything a few pixels after a load or a jump, with no scroll event, so check again once it ends.
+  const page = document.querySelector('wa-page');
+  page.addEventListener('animationend', event => {
+    if (event.target === page) markWhetherStuck();
+  });
 
   const footerWatcher = new IntersectionObserver(([entry]) => {
     stickyToolbar.classList.toggle('is-at-footer', entry.isIntersecting);
@@ -62,6 +74,8 @@ if (searchInput) {
   const listing = document.querySelector('main.listing');
   let hiddenItems = new Set();
   let isSearching = false;
+  let isTyping = false;
+  let scrollYBeforeTyping = 0;
   let untimedCount = 0;
   let hasStartedLoading = false;
   let hasSearchTextLoaded = false;
@@ -233,7 +247,8 @@ if (searchInput) {
     // The change itself runs a frame later, so it reads the newest result then, not the one from when it was asked for.
     hiddenItems = itemsToHide;
     isSearching = isSearchingNow;
-    if (isInstant) showHiddenItems();
+    // While a crossfade runs, every tap lands on the page root. With the keyboard up the next tap is usually a result, so the swap is instant.
+    if (isInstant || isTyping) showHiddenItems();
     else changeWithTransition(showHiddenItems);
   }
 
@@ -281,7 +296,7 @@ if (searchInput) {
     // One joke per dead end: it stays put while the cook keeps typing, and changes the next time nothing matches.
     if (!hasMatch && emptyNote.hidden) tellNewJoke();
     emptyNote.hidden = hasMatch;
-    courseScroller.hidden = isSearching || !hasMatch;
+    courseScroller.hidden = isSearching || isTyping || !hasMatch;
   }
 
   function servePicksFrom(popover) {
@@ -350,17 +365,118 @@ if (searchInput) {
 
   const filtersToggle = document.querySelector('.filters-toggle');
   const listingFilters = document.querySelector('.listing-filters');
-  const isPhoneWidth = matchMedia('(width < 48rem)');
 
   function showFilters(isOpen) {
     listingFilters.inert = isPhoneWidth.matches && !isOpen;
     filtersToggle.setAttribute('aria-expanded', String(isOpen));
   }
 
+  // On a phone the tap on the field is caught first, so the page top is gone and the page is at its top before the keyboard opens.
+  // This order is what kept Safari from sliding the screen past the toolbar; it was found by trial, so it stays as it is.
+  const listingControls = document.querySelector('.listing-controls');
+  const searchField = searchInput.closest('.search-field');
+  const stuckTap = searchField.querySelector('.stuck-tap');
+  let isPressInToolbar = false;
+  let clickWaitTimer = null;
+  const clickWaitMs = 100;
+
+  function markTyping(isOn) {
+    isTyping = isOn;
+    listing.classList.toggle('is-typing', isOn);
+    courseScroller.hidden = isSearching || isTyping || !emptyNote.hidden;
+  }
+
+  function startTyping(event) {
+    if (searchField.matches(':focus-within')) return;
+    event.preventDefault();
+    if (!isTyping) scrollYBeforeTyping = scrollY;
+    markTyping(true);
+    scrollTo({ top: 0, behavior: 'instant' });
+    searchInput.focus();
+    isPressInToolbar = false;
+    // Safari sometimes turns the tap down, for one that lands as a scroll stops. Typing mode without a keyboard would leave the page top missing.
+    if (!searchField.matches(':focus-within')) stopTyping();
+  }
+
+  // With a search in the field the reader stays on the same results; an empty field puts them back where they were before the tap.
+  function stopTyping() {
+    if (!isTyping) return;
+    if (readQuery().trim()) {
+      const markerTopBefore = stuckMarker.getBoundingClientRect().top;
+      markTyping(false);
+      scrollBy({ top: stuckMarker.getBoundingClientRect().top - markerTopBefore, behavior: 'instant' });
+      markWhetherStuck();
+    } else {
+      changeWithTransition(() => {
+        markTyping(false);
+        scrollTo({ top: scrollYBeforeTyping, behavior: 'instant' });
+        markWhetherStuck();
+      });
+    }
+  }
+
+  stuckTap.addEventListener('touchend', startTyping);
+  stuckTap.addEventListener('click', startTyping);
+  document.addEventListener('pointerdown', event => (isPressInToolbar = listingControls.contains(event.target)), {
+    capture: true
+  });
+  // A press that never blurs the field, like the clear button, mustn't count for a later blur from the keyboard's Done.
+  for (const type of ['click', 'pointercancel']) {
+    document.addEventListener(type, () => setTimeout(() => (isPressInToolbar = false)), { capture: true });
+  }
+
+  // iOS blurs the field just before a tap's click, then aims the click where the tap was before any scroll.
+  // So the page top comes back once the click has landed, or after a short wait when none comes (the keyboard's Done, a link preview).
+  function waitForClickThenStopTyping() {
+    clearTimeout(clickWaitTimer);
+    clickWaitTimer = setTimeout(stopTypingAfterClickWait, clickWaitMs);
+  }
+
+  function cancelClickWait() {
+    clearTimeout(clickWaitTimer);
+    clickWaitTimer = null;
+  }
+
+  function stopTypingAfterClickWait() {
+    cancelClickWait();
+    if (!searchField.matches(':focus-within')) stopTyping();
+  }
+
+  searchInput.addEventListener('blur', () => {
+    if (isTyping && !isPressInToolbar) waitForClickThenStopTyping();
+  });
+  // With the field already blurred by a press in the toolbar, iOS sends a tap's mousedown on release, just before its click.
+  document.addEventListener(
+    'mousedown',
+    event => {
+      const isFieldFocused = searchField.matches(':focus-within');
+      if (isTyping && !isFieldFocused && !listingControls.contains(event.target)) waitForClickThenStopTyping();
+    },
+    { capture: true }
+  );
+  document.addEventListener('click', () => {
+    if (clickWaitTimer !== null) stopTypingAfterClickWait();
+  });
+  // A drag scrolls the page, and the toolbar can't stick while typing, so a drag ends typing. A tap that wobbles a few pixels doesn't.
+  let touchStartY = 0;
+  document.addEventListener('touchstart', event => (touchStartY = event.touches[0].clientY), { passive: true });
+  document.addEventListener(
+    'touchmove',
+    event => {
+      if (!isTyping || Math.abs(event.touches[0].clientY - touchStartY) < 10) return;
+      isPressInToolbar = false;
+      searchInput.blur();
+      cancelClickWait();
+      stopTyping();
+    },
+    { passive: true }
+  );
+
   filtersToggle.addEventListener('click', () => showFilters(listingFilters.inert));
   isPhoneWidth.addEventListener('change', () => showFilters(false));
+  isTouchScreen.addEventListener('change', stopTyping);
 
-  searchInput.closest('.search-field').hidden = false;
+  searchField.hidden = false;
   timeSelect.hidden = false;
 
   searchInput.addEventListener('focus', loadSearchTextOnce);
@@ -392,8 +508,13 @@ if (searchInput) {
     if (location.hash !== '#search') return;
     await customElements.whenDefined('wa-input');
     await searchInput.updateComplete;
-    searchInput.scrollIntoView({ block: 'center' });
-    searchInput.focus();
+    // A phone only opens the keyboard for a tap, so there the field is only brought into view.
+    if (isPhoneWidth.matches) {
+      scrollBy({ top: listingControls.getBoundingClientRect().top, behavior: 'instant' });
+    } else {
+      searchInput.scrollIntoView({ block: 'center' });
+      searchInput.focus();
+    }
     history.replaceState(history.state, '', location.pathname + location.search);
   }
 
