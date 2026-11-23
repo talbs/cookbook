@@ -10,8 +10,18 @@ const ACTIONS = {
   done: 'Clear',
 };
 const CHIME_NOTES = { check: 2, done: 3 };
-const HOURGLASS_FRAMES = ['hourglass-start', 'hourglass-half', 'hourglass-end'];
-const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const TELL_SOURCE = '/assets/vendor/tiny-tells.min.js';
+const TELL_STATES = { running: 'working', check: 'warning', done: 'done' };
+
+let tellLoad = null;
+
+function loadTell() {
+  tellLoad ??= import(TELL_SOURCE).then(
+    () => true,
+    () => false
+  );
+  return tellLoad;
+}
 
 function capitalize(words) {
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -69,7 +79,8 @@ function readBand(band, savedStarts) {
     control: band.querySelector('.timer-control'),
     square: band.querySelector('.timer-square'),
     readout: band.querySelector('.timer-readout'),
-    hourglass: band.querySelector('.timer-hourglass'),
+    slot: band.querySelector('.wait-glyph'),
+    tell: null,
     glyph: band.querySelector('.timer-control wa-icon'),
     tooltip: band.querySelector('wa-tooltip'),
   };
@@ -199,7 +210,6 @@ export function startTimers({ root, savedStarts, onChange, isCooking, onScreenHe
   );
   const status = root.querySelector('.timer-status');
   let clock = null;
-  let tickCount = 0;
 
   function isTicking(timer) {
     return timer.phase === 'running' || timer.phase === 'check';
@@ -218,29 +228,39 @@ export function startTimers({ root, savedStarts, onChange, isCooking, onScreenHe
     replayMove(timer, 'is-flashing');
   }
 
-  function showHourglass(timer, phase) {
-    let frame = 'hourglass-half';
-    if (phase === 'done') frame = 'hourglass-end';
-    const isTurning = phase === 'running' || phase === 'check';
-    if (isTurning && !prefersReducedMotion.matches)
-      frame = HOURGLASS_FRAMES[tickCount % HOURGLASS_FRAMES.length];
-    if (timer.hourglass.name !== frame) timer.hourglass.name = frame;
+  async function showMark(timer, { isInstant }) {
+    timer.slot.toggleAttribute('data-instant', isInstant);
+    if (timer.phase === 'idle') {
+      timer.slot.removeAttribute('data-tell');
+      return;
+    }
+    const isLoaded = await loadTell();
+    // The library can arrive after Stop, and the timer is idle by then.
+    if (!isLoaded || timer.phase === 'idle') return;
+    if (!timer.tell) {
+      timer.tell = document.createElement('tiny-tell');
+      timer.tell.setAttribute('tell', 'dekatron');
+      timer.tell.setAttribute('color', 'current');
+      timer.tell.setAttribute('label', '');
+      timer.slot.append(timer.tell);
+    }
+    timer.tell.state = TELL_STATES[timer.phase];
+    timer.slot.setAttribute('data-tell', '');
   }
 
-  function renderTimer(timer, now, { isAnnounced }) {
+  function renderTimer(timer, now, { isAnnounced, isInstant = false }) {
     const state = readTimerPhase(timer, now);
     timer.bar.value = state.fractionDone * 100;
-    showHourglass(timer, state.phase);
     const hasChanged = state.phase !== timer.phase;
     if (hasChanged) showPhase(timer, state);
     if (hasChanged && isAnnounced && CHIME_NOTES[state.phase])
       announce(timer, state.phase);
     timer.phase = state.phase;
+    if (hasChanged) showMark(timer, { isInstant });
     return hasChanged;
   }
 
   function tick() {
-    tickCount++;
     const now = Date.now();
     let hasAnyPhaseChanged = false;
     for (const timer of timers) {
@@ -290,7 +310,7 @@ export function startTimers({ root, savedStarts, onChange, isCooking, onScreenHe
 
   const now = Date.now();
   for (const timer of timers) {
-    renderTimer(timer, now, { isAnnounced: false });
+    renderTimer(timer, now, { isAnnounced: false, isInstant: true });
     timer.control.hidden = false;
     timer.control.addEventListener('click', () => pressControl(timer));
     firstSightWatcher.observe(timer.band);
