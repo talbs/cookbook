@@ -2110,6 +2110,43 @@ wa-details {
   line-height: var(--wa-line-height-condensed);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
+  --wait-glyph-size: clamp(20px, 1.43em, 48px);
+}
+
+/* One line tall on purpose: a started timer's tell overflows it a little without growing the row. */
+.wait-glyph {
+  display: inline-grid;
+  place-content: center;
+  place-items: center;
+  flex: none;
+  inline-size: var(--wait-glyph-size);
+  block-size: 1em;
+}
+
+.wait-glyph > * {
+  grid-area: 1 / 1;
+}
+
+.wait-glyph tiny-tell {
+  --tell-size: var(--wait-glyph-size);
+}
+
+.wait-glyph tiny-tell,
+.wait-glyph[data-tell] wa-icon {
+  opacity: 0;
+  scale: 0.8;
+}
+
+.wait-glyph[data-tell] tiny-tell {
+  opacity: 1;
+  scale: 1;
+}
+
+@starting-style {
+  .wait-glyph[data-tell] tiny-tell {
+    opacity: 0;
+    scale: 0.8;
+  }
 }
 
 [data-mode='overview'] .wait-mark {
@@ -2160,7 +2197,7 @@ wa-progress-bar.wait-run::part(progress-bar) {
   block-size: 1.75rem;
   border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--note-ink);
 }
 
@@ -2749,6 +2786,12 @@ wa-input::part(clear-button):hover {
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
+  }
+
+  .wait-glyph:not([data-instant]) > * {
+    transition:
+      opacity var(--settle) var(--ease-settle),
+      scale var(--settle) var(--ease-settle);
   }
 
   /* The icons' curve would fling the hatch past the border; this one overshoots about 3px, inside the switch's padding. */

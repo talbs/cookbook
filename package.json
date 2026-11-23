@@ -17,7 +17,8 @@
     "@cooklang/cooklang": "0.19.1",
     "@resvg/resvg-js": "2.6.2",
     "satori": "0.63.2",
-    "subset-font": "2.9.0"
+    "subset-font": "2.9.0",
+    "tiny-tells": "0.6.0"
   },
   "engines": {
     "node": ">=24.19"
