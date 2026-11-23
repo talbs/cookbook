@@ -85,7 +85,7 @@ site/                 Everything that turns recipes into a website
   _data/              Site-wide data: the site title, footer links, the jokes shown when a search finds nothing
   assets/             Sent to the browser as written, served from /assets/
     site.css          All the site's own styles
-    listing.js        Search, the time filter and the cards/list switch
+    listing.js        Search, the time filter and the cards/list switch. Reports searches that find nothing to Umami as `search-empty`
     pick.js           Chooses the Chef's Pick, shared with the tests
     recipe.js         Overview and Cook modes, checked-off steps, print
     scheme.js         The light/dark toggle
