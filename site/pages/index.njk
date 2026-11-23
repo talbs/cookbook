@@ -58,7 +58,8 @@ eleventyComputed:
 {% block results %}
 {%- for group in courses %}
 <section class="course wa-stack wa-gap-m" data-course="{{ group.course }}" aria-labelledby="{{ group.course }}-heading">
-  <h2 class="section-head" id="{{ group.course }}-heading">{{ group.heading }}</h2>
+  <h2 class="section-head" id="{{ group.course }}-heading" aria-label="{{ group.heading }}">{{ group.heading }}<a class="heading-anchor" id="{{ group.course }}-anchor" href="#{{ group.course }}-heading"><wa-icon name="pretzel" variant="regular" label="Link to {{ group.heading }}"></wa-icon></a></h2>
+  <wa-tooltip for="{{ group.course }}-anchor" placement="top">Link to {{ group.heading }}</wa-tooltip>
   {{ recipeCards(group.recipes, "h3") }}
   {{ recipeRows(group.recipes, true) }}
 </section>
