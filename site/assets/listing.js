@@ -269,12 +269,12 @@ if (searchInput) {
     let shownPick = null;
     let isSendingBack = false;
 
-    const triggerBell = document.getElementById(popover.getAttribute('for')).querySelector('hue-hop');
+    const triggerIcon = document.getElementById(popover.getAttribute('for')).querySelector('hue-hop');
 
     function showPickInPopover(pick) {
       shownPick = pick;
       showPick(popover, pick);
-      triggerBell?.setAttribute('hue', hueByCourse[pick.entry.course]);
+      triggerIcon?.setAttribute('hue', hueByCourse[pick.entry.course]);
     }
 
     // The panel fits its title, so its width glides between the two instead of jumping.
