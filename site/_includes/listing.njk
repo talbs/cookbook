@@ -19,11 +19,11 @@
     <header class="listing-head wa-split wa-gap-l">
       {%- set titleWords = heading | titleWords %}
       {%- set longestWord = titleWords | longestWordLength %}
-      <h1{% if longestWord > 16 %} class="can-break"{% endif %} style="--longest-word: {{ longestWord }}; --title-letters: {{ heading.length }}" aria-label="{{ heading }}">
+      <h1{% if longestWord > 16 %} class="can-break"{% endif %} style="--longest-word: {{ longestWord }}; --title-letters: {{ heading.length }}" aria-label="{{ heading }}"><hue-hop>
         {%- for word in titleWords -%}
         <span class="title-word" aria-hidden="true">{% for letter in word.letters %}<span class="title-letter">{{ letter }}</span>{% endfor %}</span>{% if word.hasSpaceAfter and not loop.last %} {% endif %}
         {%- endfor -%}
-      </h1>
+      </hue-hop></h1>
       <p class="description wa-text-balance">{% block lede %}{{ lede or description or site.description }}{% endblock %}</p>
     </header>
     <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
@@ -31,4 +31,5 @@
     <div class="listing-results wa-stack wa-gap-3xl">
       {% block results %}{% endblock %}
     </div>
+    <script type="module" src="/assets/vendor/hue-hop.js"></script>
 {% endblock %}
