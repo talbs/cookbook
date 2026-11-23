@@ -373,8 +373,8 @@ wa-page > main {
     display: none;
   }
 
-  /* The footer's arrow stands in for the floating one, which only phones have. */
-  .site-footer .footer-top {
+  /* A listing's arrow moves into its sticky toolbar at this width, so the footer's goes. A recipe has no other. */
+  .listing-page .site-footer .footer-top {
     display: none;
   }
 }
