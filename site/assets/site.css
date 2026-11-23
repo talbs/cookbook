@@ -1662,13 +1662,14 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     }
   }
 
-  /* The links in the panel underline in the middle of the dish's hue, where the rest of the site uses the accent. */
-  .pick-popover {
-    --pick-hue: color-mix(in oklch, var(--hop-start), var(--hop-end));
+  /* Links beside a hue underline in the middle of it, where the rest of the site uses the accent. */
+  .pick-popover,
+  .search-empty {
+    --link-hue: color-mix(in oklch, var(--hop-start), var(--hop-end));
   }
 
-  .pick-popover :is(a, .link-button):hover {
-    text-decoration-color: var(--pick-hue, var(--accent));
+  :is(.pick-popover, .search-empty) :is(a, .link-button):hover {
+    text-decoration-color: var(--link-hue, var(--accent));
   }
 
   /* The chef's hat wears the middle of the dish's hue for as long as the dish is out. */

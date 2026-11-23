@@ -113,10 +113,7 @@ if (searchInput) {
     const iconSet = container.querySelector('.pick-icons');
     iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
     iconSet.replaceChildren(...icons);
-    // Hue Hop keeps a hue's two ends on its own element, so they are copied up for the links beside the icons.
-    for (const end of ['--hop-start', '--hop-end']) {
-      container.style.setProperty(end, getComputedStyle(iconSet).getPropertyValue(end));
-    }
+    shareHue(iconSet, container);
   }
 
   async function loadSearchText() {
@@ -182,10 +179,24 @@ if (searchInput) {
     searchInput.focus();
   }
 
+  const hueEnds = ['--hop-start', '--hop-end'];
+
+  // Hue Hop keeps a hue's two ends on its own element, so they are copied to whatever holds the links beside it.
+  function shareHue(hueHop, linkHolder) {
+    for (const end of hueEnds) linkHolder.style.setProperty(end, getComputedStyle(hueHop).getPropertyValue(end));
+  }
+
   // Before the kit loads there is nothing to shuffle yet.
   function tellNewJoke() {
-    emptyNote.querySelector('.empty-jokes').randomize?.();
+    const jokes = emptyNote.querySelector('.empty-jokes');
+    jokes.randomize?.();
     emptyNote.querySelector('.empty-tags').randomize?.();
+
+    const ornament = jokes.querySelector(':scope > :not([hidden]) hue-hop');
+    // Moon is all greys, too quiet to show a hover, so that joke's links keep the accent.
+    const isGrey = ornament.getAttribute('hue') === 'moon';
+    if (isGrey) for (const end of hueEnds) emptyNote.style.removeProperty(end);
+    else shareHue(ornament, emptyNote);
   }
 
   function showMatches({ isInstant = false } = {}) {
