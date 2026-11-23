@@ -3245,9 +3245,11 @@ wa-page[view='desktop'] {
     margin-block-start: var(--wa-space-l);
   }
 
+  /* The two lists share a grid row, so the shorter one would spread its wrapped lines to the taller one's height. */
   .credit,
   .connections {
     display: flex;
+    align-content: start;
   }
 
   .credit {
