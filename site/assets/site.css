@@ -1720,24 +1720,59 @@ wa-button[appearance='plain']:hover::part(base) {
   color: var(--accent);
 }
 
-/* The chosen radio's hatch on a button of its own; the switch's frame only shows on hover. */
-wa-button.special::part(base),
-wa-button.special:hover::part(base) {
-  block-size: var(--shortcut-size);
+/* A bare button that takes the view switch's dress when pointed at, or while its popover is open:
+   a thin frame, with the hatch held the same 3px inside it. */
+wa-button.hatch-button {
+  --hatch-inset: 3px;
+}
+
+wa-button.hatch-button::part(base),
+wa-button.hatch-button:hover::part(base) {
+  position: relative;
+  isolation: isolate;
   border: var(--wa-border-width-s) solid transparent;
   border-radius: var(--wa-border-radius-m);
-  background: var(--hatch) border-box;
+  background: none;
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
   transition: border-color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
-wa-button.special:hover::part(base) {
+wa-button.hatch-button::part(base)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: var(--hatch-inset);
+  border-radius: calc(var(--wa-border-radius-m) - var(--hatch-inset) - var(--wa-border-width-s));
+  background: var(--hatch);
+  opacity: 0;
+  transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+wa-button.hatch-button:is(:hover, :has(~ wa-popover[open]))::part(base) {
   border-color: var(--control-edge);
+}
+
+wa-button.hatch-button:is(:hover, :has(~ wa-popover[open]))::part(base)::before {
+  opacity: 1;
+}
+
+/* The button's box hangs past the page edge, as the shortcuts' boxes do, so the bell starts where the title does. */
+wa-button.special {
+  margin-inline-start: calc(-1 * (var(--wa-space-m) + var(--wa-border-width-s)));
+}
+
+wa-button.special::part(base) {
+  block-size: var(--shortcut-size);
+  padding-inline: var(--wa-space-m);
 }
 
 /* Below 480px the words no longer fit beside the nav, so the button folds to its bell and keeps the words for screen readers. */
 @media (width < 30rem) {
+  wa-button.special {
+    margin-inline-start: var(--shortcut-inset);
+  }
+
   wa-button.special::part(base) {
     inline-size: var(--shortcut-size);
     padding-inline: 0;
