@@ -2110,6 +2110,20 @@ wa-details {
   line-height: var(--wa-line-height-condensed);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
+  --wait-glyph-size: clamp(20px, 1.43em, 48px);
+}
+
+/* One line tall on purpose: a started timer's tell overflows it a little without growing the row. */
+.wait-glyph {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--wait-glyph-size);
+  block-size: 1em;
+}
+
+.wait-glyph > * {
+  grid-area: 1 / 1;
 }
 
 [data-mode='overview'] .wait-mark {
