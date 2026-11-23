@@ -757,6 +757,14 @@ wa-scroller:has(.course-links) {
   border-color: var(--accent);
 }
 
+/* The bar carries its own copy of every control in this row, so the row steps aside while the bar shows.
+   It waits a mode-settle's distance below its spot, so it rises back the way a new mode's body does. */
+.mode-rest[inert] {
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 0.75rem;
+}
+
 /* wa-page's header slot is sticky, but this bar sits outside the flow, so the slot is zero tall and the page starts with the title.
    Once the resting switch scrolls away, the bar slides down from above the viewport. */
 .mode-bar {
@@ -2781,10 +2789,29 @@ wa-input::part(clear-button):hover {
     scale: none;
   }
 
+  /* The bar drops in over a settle like the skip link, and goes on a press like the toast. */
   .mode-bar {
     transition:
-      translate var(--wa-transition-slow) var(--wa-transition-easing),
-      visibility var(--wa-transition-slow);
+      translate var(--press) ease-in,
+      visibility var(--press);
+  }
+
+  .mode-bar.is-pinned {
+    transition: translate var(--settle) var(--ease-settle);
+  }
+
+  .mode-rest {
+    transition:
+      opacity var(--fade-in) ease-out var(--fade-in-delay),
+      translate var(--settle) var(--ease-settle) var(--fade-in-delay);
+  }
+
+  /* It only drops below its spot once it has faded, so it never slides on the way out. */
+  .mode-rest[inert] {
+    transition:
+      opacity var(--press) ease-in,
+      visibility var(--press),
+      translate 0s var(--press);
   }
 
   .mode-switch wa-radio {
