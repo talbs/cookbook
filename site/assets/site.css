@@ -441,9 +441,11 @@ wa-scroller:has(.course-links) {
   scroll-margin-inline: var(--wa-space-s);
 }
 
+/* The current page wears the hover's heavier line in ink, and keeps it on hover: it says where you are, not where you could go. */
 .site-nav a[aria-current] {
   font-weight: var(--wa-font-weight-bold);
-  text-decoration-line: none;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: max(2px, 0.12em);
 }
 
 /* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
