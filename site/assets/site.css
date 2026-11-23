@@ -2814,11 +2814,12 @@ wa-popover::part(popup__popup) {
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--wa-space-l) var(--wa-space-s);
-  block-size: 1lh;
-  /* The clip reaches past the line far enough for the cooklang link's focus ring; the row gap keeps a wrapped note, and its ring, below that reach.
-     Chrome drops a calc() margin, so --wa-space-xs is written out as 0.5rem. */
+  /* The clip is at the padding, which reaches past the line far enough for the cooklang link's focus ring; the margin takes it back.
+     The row gap keeps a wrapped note, and its ring, below that reach. Safari has no overflow-clip-margin to do this. */
+  block-size: calc(1lh + 2 * var(--wa-space-xs));
+  margin: calc(-1 * var(--wa-space-xs));
+  padding: var(--wa-space-xs);
   overflow: clip;
-  overflow-clip-margin: 0.5rem;
 }
 
 .source-name {
