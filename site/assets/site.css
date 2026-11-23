@@ -1594,6 +1594,17 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     overflow-anchor: none;
   }
 
+  /* The keyboard covers the lower half, so the words come first and start at the top. */
+  .listing-results > .search-empty {
+    flex: none;
+    justify-content: start;
+    padding-block: var(--wa-space-xl);
+  }
+
+  .empty-ornament {
+    order: 1;
+  }
+
   /* The padding grows the 40px square to the arrow's 44px for a thumb; the margin takes it back so the row keeps its height. */
   .filters-toggle {
     margin: calc((var(--bar-switch-height) - var(--to-top-size)) / 2);
