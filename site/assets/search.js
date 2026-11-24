@@ -168,10 +168,12 @@ function showResults() {
   reportEmptySearchSoon(isDeadEnd);
 }
 
-function openSearch() {
+async function openSearch() {
   loadEntries();
   searchTooltip?.hide();
   dialog.open = true;
+  // The field can't take focus until the dialog has drawn itself open. Waiting only this long stays inside the tap, which is the one moment iOS will raise the keyboard.
+  await dialog.updateComplete;
   field.focus();
 }
 
@@ -194,6 +196,11 @@ if (!isApplePlatform) {
 
 searchButton?.addEventListener('pointerenter', loadEntries, { once: true });
 searchButton?.addEventListener('click', openSearch);
+
+// A tap also counts as a hover, so the tooltip's show timer is still running when the tap opens the dialog.
+searchTooltip?.addEventListener('wa-show', event => {
+  if (dialog.open) event.preventDefault();
+});
 
 document.addEventListener('keydown', event => {
   if (event.key !== 'k' || !isCommandHeld(event)) return;
