@@ -1905,6 +1905,13 @@ wa-button.hatch-button::part(base),
   transition: border-color var(--fade);
 }
 
+:is(button, a).hatch-button {
+  transition:
+    color var(--fade),
+    border-color var(--fade),
+    var(--scale-move);
+}
+
 /* A plain wa-button turns the accent on hover; this one keeps its ink. */
 wa-button.hatch-button::part(base),
 wa-button.hatch-button:hover::part(base) {
@@ -3078,13 +3085,6 @@ wa-popover::part(popup__popup) {
   .shortcut wa-icon,
   wa-button wa-icon {
     transition: var(--scale-move);
-  }
-
-  :is(a, button).hatch-button {
-    transition:
-      color var(--fade),
-      border-color var(--fade),
-      var(--scale-move);
   }
 
   /* The scheme toggle skips the frame dip so its sun and moon swap is the only movement on a press. */
