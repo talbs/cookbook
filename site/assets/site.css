@@ -323,6 +323,7 @@ wa-page::part(skip-to-content):focus {
   wa-button::part(base):focus-visible,
   wa-dialog::part(close-button__base):focus-visible,
   wa-copy-button::part(button):focus-visible,
+  wa-scroller::part(content):focus-visible,
   wa-input:focus-within::part(base),
   wa-select:focus-within::part(combobox),
   wa-checkbox:focus-within::part(control),
@@ -403,11 +404,6 @@ wa-page > main {
   .recipe-page .site-footer .header-rule {
     display: none;
   }
-
-  /* A listing's arrow moves into its sticky toolbar at this width, so the footer's goes. A recipe has no other. */
-  .listing-page .site-footer .footer-top {
-    display: none;
-  }
 }
 
 .made-by {
@@ -460,6 +456,9 @@ wa-page > main {
 wa-scroller:has(.course-links) {
   max-inline-size: none;
   margin-inline: calc(-1 * var(--wa-space-s));
+  /* The kit rings the scroller's own tab stop outside its box, and its overflow clip hid that ring. Its content does the scrolling, so nothing else spills. */
+  overflow: visible;
+  border-radius: var(--wa-form-control-border-radius);
 }
 
 wa-scroller[hidden] {
@@ -477,10 +476,15 @@ wa-scroller[hidden] {
 }
 
 /* The current page wears the hover's heavier line in ink, and keeps it on hover: it says where you are, not where you could go. */
-.site-nav a[aria-current] {
-  font-weight: var(--wa-font-weight-bold);
+.site-nav a[aria-current],
+.course-links a[aria-current] {
   text-decoration-color: currentColor;
   text-decoration-thickness: var(--heavy-line);
+}
+
+/* Not on the course links: a bold link is wider, so every link after it would shift each time the mark moves. */
+.site-nav a[aria-current] {
+  font-weight: var(--wa-font-weight-bold);
 }
 
 /* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
@@ -988,12 +992,14 @@ button.shortcut {
   color: var(--note-ink);
 }
 
-.mode-switch wa-radio:state(checked) {
+.mode-switch wa-radio:state(checked),
+.quick-toggle[aria-pressed='true'] {
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
 }
 
-.mode-switch wa-radio:not(:state(checked)):hover {
+.mode-switch wa-radio:not(:state(checked)):hover,
+.quick-toggle[aria-pressed='false']:hover {
   color: var(--accent);
 }
 
@@ -1072,7 +1078,7 @@ button.shortcut {
 
 /* These stacks' 16px gap already parts a head from what it names. With the head's 12px on top it sat further from its first step than the steps sit from each other (24px). */
 @media screen {
-  :is(.needs, .before-start, .method) > .section-head {
+  :is(.needs, .before-start, .method, .course, .tag-group) > .section-head {
     margin-block-end: 0;
   }
 }
@@ -1408,9 +1414,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-inline-start: auto;
 }
 
-/* The index's toolbar sticks to the top of the window. Its padding is taken back in margin,
-   so it sits where it did before it could stick. */
-.listing-controls.can-stick {
+/* The index's course links stick to the top of the window. Their padding is taken back in margin,
+   so they sit where they did before they could stick. */
+.course-bar {
   position: sticky;
   inset-block-start: 0;
   z-index: 2;
@@ -1420,7 +1426,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
-.listing-controls.can-stick::before {
+.course-bar::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -1429,8 +1435,18 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   background: var(--paper);
 }
 
-.listing-controls.is-stuck::before {
+.course-bar.is-stuck::before {
   border-block-end-color: var(--wa-color-surface-border);
+}
+
+.course-bar > wa-scroller {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+/* Room for the arrow and the row's gap, less the scroller's own overhang past the column. */
+.course-bar.is-stuck > wa-scroller {
+  margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m) - var(--wa-space-s));
 }
 
 .stuck-marker {
@@ -1438,16 +1454,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block: calc(-1 * var(--stack-gap) / 2);
 }
 
-/* On a phone the arrow floats in the bottom corner, at a full 44px for a thumb. */
+/* The arrow lies over the end of the bar, so the course links get the whole row until the bar sticks and the arrow shows. */
 .to-top {
-  position: fixed;
-  inset: auto var(--page-gutter) var(--float-gap) auto;
-  z-index: 2;
-  inline-size: var(--to-top-size);
-  block-size: var(--to-top-size);
-  border: var(--wa-border-width-s) solid var(--control-edge);
-  background: var(--paper);
-  box-shadow: var(--wa-shadow-s);
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  margin-block: auto;
   visibility: hidden;
   opacity: 0;
   translate: 0 0.5rem;
@@ -1502,25 +1514,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     align-items: baseline;
     column-gap: var(--wa-space-l);
   }
-
-  .view-rest {
-    order: 1;
-  }
-
-  /* In the bar, the arrow sits just left of the switch and takes the row's spare room, so the switch never moves when it appears. */
-  .to-top {
-    position: static;
-    inline-size: var(--shortcut-size);
-    block-size: var(--shortcut-size);
-    margin-inline-start: auto;
-    border: 0;
-    background: none;
-    box-shadow: none;
-  }
-
-  .can-stick .view-rest {
-    margin-inline-start: 0;
-  }
 }
 
 /* The full-width bar is wider than the page's column; this keeps it from adding a sideways scroll. */
@@ -1528,24 +1521,31 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   overflow-x: clip;
 }
 
-/* Wide enough for its longest choice with the clock and the arrow either side. */
-.time-select {
-  flex: 0 0 13.5rem;
+/* Fixed width, so the bold label never resizes it. */
+.quick-toggle {
+  display: inline-flex;
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wa-space-xs);
+  inline-size: 6rem;
+  block-size: var(--bar-switch-height);
+  padding: 0;
+  border: var(--wa-border-width-s) solid var(--control-edge);
+  border-radius: var(--wa-border-radius-m);
+  background: none;
+  color: var(--note-ink);
+  font: inherit;
+  cursor: pointer;
 }
 
-.time-select::part(combobox) {
-  box-shadow: var(--wa-shadow-s);
+.quick-toggle[aria-pressed='true']::before {
+  opacity: 1;
 }
 
 @media (width < 48rem) {
-  /* The floating back-to-top arrow would cover the footer's last link, so it leaves once the footer shows. */
-  .is-at-footer .to-top {
-    visibility: hidden;
-    opacity: 0;
-    translate: 0 0.5rem;
-    scale: 0.8;
-  }
-
   /* The footer's dotted line expects a 24px gap above it. On a phone the page ends on exactly that,
      so the dots sit as far from the page's last line as from the credit under them. */
   .listing,
@@ -1564,8 +1564,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     justify-content: space-between;
   }
 
-  /* A full 44px for a thumb, on the gutter. On a listing that is the floating arrow's box, so the arrow doesn't jump sideways
-     when one fades out and this one scrolls in. The box's extra height comes back in margin, so the row stays as tall as its words. */
+  /* A full 44px for a thumb, on the gutter. The box's extra height comes back in margin, so the row stays as tall as its words. */
   .site-footer .footer-top {
     inline-size: var(--to-top-size);
     block-size: var(--to-top-size);
@@ -1574,15 +1573,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 @media (width < 30rem) {
-  .time-select {
-    flex: 1 1 7.5rem;
-  }
-
-  /* Beside the switch there is only room for the words, so the clock goes. */
-  .time-select wa-icon {
-    display: none;
-  }
-
   /* A column this narrow holds too few words per line to even out, so balanced and pretty wrapping
      leave lines well short of the edge. Ledes and running text fill each line instead; headings stay balanced. */
   main :is(p, li, dd),
@@ -1590,14 +1580,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   .wa-text-pretty {
     text-wrap: wrap;
   }
-}
-
-.time-select {
-  --wa-form-control-height: var(--bar-switch-height);
-  --wa-form-control-border-color: var(--control-edge);
-  --wa-form-control-border-radius: var(--wa-border-radius-m);
-  --wa-form-control-background-color: var(--paper);
-  --wa-form-control-placeholder-color: var(--note-ink);
 }
 
 .course-count {
@@ -1608,7 +1590,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .tag-group + .tag-group::before {
   content: '';
   block-size: var(--band);
-  margin-block-end: var(--wa-space-xl);
+  margin-block-end: var(--wa-space-l);
   background: var(--divider-ink);
   mask: var(--divider);
 }
@@ -1621,6 +1603,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* The results area runs down to the footer, like the 404's. */
 .listing-results {
   flex: 1;
+}
+
+/* The first course gets the same room above its heading as the courses after a divider. */
+.course-bar + .listing-results {
+  margin-block-start: calc(var(--wa-space-2xl) - var(--stack-gap));
 }
 
 .empty-state::before {
@@ -1754,7 +1741,8 @@ wa-button.hatch-button:hover::part(base) {
 }
 
 wa-button.hatch-button::part(base)::before,
-:is(button, a).hatch-button::before {
+:is(button, a).hatch-button::before,
+.quick-toggle::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -3184,11 +3172,18 @@ wa-popover::part(popup__popup) {
     transition: var(--scale-move);
   }
 
+  .quick-toggle {
+    transition:
+      color var(--fade),
+      var(--scale-move);
+  }
+
   /* The scheme toggle skips the frame dip so its sun and moon swap is the only movement on a press. */
   .mode-switch:active,
   wa-button:active,
   wa-select:active,
   .hatch-button:not(#site-scheme):active,
+  .quick-toggle:active,
   .mode-rest .page-action:active {
     --scale-move: scale var(--press) ease-out;
     scale: 0.97;
@@ -3296,14 +3291,16 @@ wa-popover::part(popup__popup) {
   ::view-transition-old(mode-bar),
   ::view-transition-old(mode-rest),
   ::view-transition-old(scheme-toggle),
-  ::view-transition-old(listing-controls) {
+  ::view-transition-old(listing-controls),
+  ::view-transition-old(course-bar) {
     display: none;
   }
 
   ::view-transition-new(mode-bar),
   ::view-transition-new(mode-rest),
   ::view-transition-new(scheme-toggle),
-  ::view-transition-new(listing-controls) {
+  ::view-transition-new(listing-controls),
+  ::view-transition-new(course-bar) {
     animation: none;
   }
 
@@ -3346,7 +3343,7 @@ wa-popover::part(popup__popup) {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .listing-controls) {
+    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .listing-controls, .course-bar) {
     view-transition-name: none;
   }
 
@@ -3361,7 +3358,7 @@ wa-popover::part(popup__popup) {
     view-transition-name: scheme-toggle;
   }
 
-  .listing-controls.can-stick::before {
+  .course-bar::before {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
   }
 
@@ -3374,15 +3371,19 @@ wa-popover::part(popup__popup) {
       visibility var(--wa-transition-slow);
   }
 
-  /* A time limit settles its new results in the way a mode does. The toolbar stays live, so the select never waits on the move. */
+  /* Quick settles its new results in the way a mode does. Both rows stay live, so the controls never wait on the move. */
   .listing-results {
     view-transition-name: listing-results;
   }
 
-  /* A named piece is drawn above the rest of the page while it moves. The whole toolbar is named, paper and all,
-     so the results can't be drawn over a stuck toolbar. */
+  /* A named piece is drawn above the rest of the page while it moves. The resting row is named so the switch's hatch slides;
+     the course links are named, paper and all, so the results can't be drawn over them while they are stuck. */
   .listing-controls {
     view-transition-name: listing-controls;
+  }
+
+  .course-bar {
+    view-transition-name: course-bar;
   }
 
   .empty-icons wa-icon,

@@ -1,5 +1,5 @@
 import { choosePick, chooseSurprise } from './pick.js';
-import { changeWithTransition } from './transition.js';
+import { changeWithTransition, prefersReducedMotion } from './transition.js';
 
 const viewRest = document.querySelector('.view-rest');
 const viewSwitch = viewRest.querySelector('.view-switch');
@@ -27,35 +27,85 @@ viewSwitch.addEventListener('change', () => {
   saveView(view);
 });
 
-// A marker just above the toolbar going off the top is how the page knows the toolbar is stuck.
-const stickyToolbar = document.querySelector('.listing-controls.can-stick');
+const courseSections = [...document.querySelectorAll('.course')];
+const courseScroller = document.querySelector('.course-bar wa-scroller');
+let markedCourseLink = null;
+let isSlideOwed = false;
+
+function findCurrentCourse() {
+  const shownSections = courseSections.filter(section => !section.hidden);
+  // The last courses' headings may never scroll up to the line. At the bottom of the page, a course just followed
+  // keeps its mark while its heading is on screen; otherwise the last course is current.
+  if (scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 1) {
+    const followedSection = shownSections.find(section => {
+      const heading = section.querySelector('.section-head');
+      return location.hash === `#${heading.id}` && heading.getBoundingClientRect().top >= 0;
+    });
+    return followedSection ?? shownSections.at(-1);
+  }
+  // Where a followed course link lands its heading, so a followed course is marked on arrival.
+  const scrollPadding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingBlockStart);
+  return shownSections.findLast(section => {
+    const heading = section.querySelector('.section-head');
+    const landingLine = scrollPadding + parseFloat(getComputedStyle(heading).scrollMarginBlockStart);
+    return heading.getBoundingClientRect().top <= landingLine + 1;
+  });
+}
+
+// Only the scroller's own box moves, sideways: scrollIntoView would also scroll the page to clear its scroll padding.
+function slideIntoView(link, isInstant) {
+  const box = courseScroller.content;
+  isSlideOwed = !box;
+  if (!box) return;
+  const behavior = isInstant || prefersReducedMotion.matches ? 'instant' : 'smooth';
+  if (!link) {
+    box.scrollTo({ left: 0, behavior });
+    return;
+  }
+  const room = parseFloat(getComputedStyle(link.parentElement).paddingInlineStart);
+  const linkRect = link.getBoundingClientRect();
+  const boxRect = box.getBoundingClientRect();
+  if (linkRect.left < boxRect.left) box.scrollBy({ left: linkRect.left - boxRect.left - room, behavior });
+  else if (linkRect.right > boxRect.right) box.scrollBy({ left: linkRect.right - boxRect.right + room, behavior });
+}
+
+function markCurrentCourse() {
+  const section = findCurrentCourse();
+  const link = section ? document.querySelector(`.course-links [data-course="${section.dataset.course}"]`) : null;
+  if (link === markedCourseLink && !isSlideOwed) return;
+  // A smooth slide started while the page is still revealing gets cancelled, so the first mark after a load jumps.
+  const isArriving = markedCourseLink === null || isSlideOwed;
+  markedCourseLink?.removeAttribute('aria-current');
+  link?.setAttribute('aria-current', 'true');
+  markedCourseLink = link;
+  slideIntoView(link, isArriving);
+}
+
+// A marker just above the course links going off the top is how the page knows they are stuck.
+const courseBar = document.querySelector('.course-bar');
 const stuckMarker = document.createElement('div');
 stuckMarker.className = 'stuck-marker';
 
-function markWhetherStuck() {
-  stickyToolbar.classList.toggle('is-stuck', stuckMarker.getBoundingClientRect().top < 0);
+function markCourseBar() {
+  courseBar.classList.toggle('is-stuck', stuckMarker.getBoundingClientRect().top < 0);
+  markCurrentCourse();
 }
 
-if (stickyToolbar) {
-  stickyToolbar.before(stuckMarker);
-  addEventListener('scroll', markWhetherStuck, { passive: true });
-  markWhetherStuck();
+if (courseBar) {
+  courseBar.before(stuckMarker);
+  addEventListener('scroll', markCourseBar, { passive: true });
+  markCourseBar();
   // The page's reveal animation slides everything a few pixels after a load or a jump, with no scroll event, so check again once it ends.
   const page = document.querySelector('wa-page');
   page.addEventListener('animationend', event => {
-    if (event.target === page) markWhetherStuck();
+    if (event.target === page) markCourseBar();
   });
-
-  const footerWatcher = new IntersectionObserver(([entry]) => {
-    stickyToolbar.classList.toggle('is-at-footer', entry.isIntersecting);
-  });
-  footerWatcher.observe(document.querySelector('.site-footer'));
 }
 
-const timeSelect = document.querySelector('.time-select');
-if (timeSelect) {
+const quickToggle = document.querySelector('.quick-toggle');
+if (quickToggle) {
+  const quickMinutes = 30;
   const recipeItems = [...document.querySelectorAll('.recipe-cards > li, .recipe-rows > li')];
-  const courseSections = [...document.querySelectorAll('.course')];
   const courseLinks = document.querySelector('.course-links');
   const matchCount = document.querySelector('.match-count');
   const untimedNote = document.querySelector('.untimed-note');
@@ -106,10 +156,12 @@ if (timeSelect) {
     iconSet.replaceChildren(...icons);
   }
 
-  // "any", or before the kit loads nothing at all, means no limit.
+  function isQuickOn() {
+    return quickToggle.getAttribute('aria-pressed') === 'true';
+  }
+
   function readMaxMinutes() {
-    const minutes = Number(timeSelect.value);
-    return Number.isFinite(minutes) && minutes > 0 ? minutes : null;
+    return isQuickOn() ? quickMinutes : null;
   }
 
   function isQuickEnough(item, maxMinutes) {
@@ -167,6 +219,8 @@ if (timeSelect) {
     untimedNote.hidden = untimedCount === 0;
     untimedNote.textContent =
       untimedCount === 1 ? '1 recipe has no time on it, so it is left out.' : `${untimedCount} recipes have no time on them, so they are left out.`;
+
+    markCurrentCourse();
   }
 
   // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
@@ -178,11 +232,13 @@ if (timeSelect) {
   }
   document.querySelector('#site-pick').hidden = false;
 
-  timeSelect.hidden = false;
-  timeSelect.addEventListener('change', () => showMatches());
+  quickToggle.hidden = false;
+  quickToggle.addEventListener('click', () => {
+    quickToggle.setAttribute('aria-pressed', String(!isQuickOn()));
+    showMatches();
+  });
 
   // A time limit that arrives in the address is applied before anything shows, without the settle.
-  const arrivingTime = new URLSearchParams(location.search).get('time');
-  if (timeSelect.querySelector(`wa-option[value="${CSS.escape(arrivingTime ?? '')}"]`)) timeSelect.value = arrivingTime;
+  if (new URLSearchParams(location.search).get('time') === String(quickMinutes)) quickToggle.setAttribute('aria-pressed', 'true');
   showMatches({ isInstant: true });
 }
