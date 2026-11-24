@@ -1049,15 +1049,15 @@ button.shortcut {
   display: inline-block;
   inline-size: 1.25em;
   margin-inline: var(--wa-space-s) -1.25em;
-  font-size: 0.7em;
-  font-size: 1cap;
+  /* One size under either head: sized to the capitals, it shrank to 12px beside the cards' smaller head. */
+  font-size: 1.125rem;
   color: var(--note-ink);
   text-decoration: none;
   opacity: 0;
 }
 
 .heading-anchor wa-icon {
-  vertical-align: baseline;
+  vertical-align: -0.125em;
 }
 
 .section-head:hover > .heading-anchor {
