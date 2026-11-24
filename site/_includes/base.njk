@@ -93,6 +93,9 @@
       </main>
       {% include "site-footer.njk" %}
     </wa-page>
+    {% include "search-dialog.njk" %}
+    <script type="module" src="/assets/vendor/hue-hop.js"></script>
+    <script type="module" src="/assets/search.js"></script>
     {%- block scripts %}{% endblock %}
   </body>
 </html>

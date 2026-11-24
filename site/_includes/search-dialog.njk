@@ -1,0 +1,53 @@
+{%- set tagSuggestions -%}
+<wa-random-content class="empty-tags" items="3">
+  {%- for tag in collections | tagNames %}
+  <button type="button" class="link-button" data-search="{{ tag }}">{{ tag | tagLabel }}</button>
+  {%- endfor %}
+</wa-random-content>
+{%- endset -%}
+<wa-dialog class="search-dialog" label="Search Recipes" without-header light-dismiss>
+  <wa-input class="search-input wa-visually-hidden-label" type="search" label="Search recipes" placeholder="Name, ingredient or tag" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" with-clear autofocus>
+    <wa-icon slot="start" name="magnifying-glass" variant="regular"></wa-icon>
+  </wa-input>
+  <div class="search-sizer">
+    <div class="search-body">
+      <div class="search-rule rule-run" aria-hidden="true"></div>
+      <p class="search-try empty-suggestions wa-cluster wa-align-items-center wa-gap-xs">Try
+        {{ tagSuggestions | safe }}
+      </p>
+      <ul class="search-results wa-list-plain" role="listbox" aria-label="Recipes" hidden><li class="search-glider" role="presentation" aria-hidden="true" hidden></li></ul>
+      <div class="search-empty empty-state wa-justify-content-center wa-text-center wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
+        <wa-random-content class="empty-jokes" animation="fade-up">
+          {%- for joke in searchJokes %}
+          <div class="wa-stack wa-gap-l wa-align-items-center">
+            <hue-hop class="empty-ornament wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0" hue="{{ joke.hue }}" aria-hidden="true">
+              <span class="rule-run"></span>
+              <span class="empty-icons wa-cluster wa-flex-nowrap wa-gap-s">{% for name in joke.icons %}<wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>{% endfor %}</span>
+              <span class="rule-run"></span>
+            </hue-hop>
+            <div class="wa-stack wa-gap-xs wa-align-items-center">
+              <p class="empty-joke">{{ joke.headline }}</p>
+              <p class="empty-detail">{{ joke.aside }}</p>
+              <p class="wa-visually-hidden">Nothing in the cookbook matches <q class="empty-term"></q>.</p>
+            </div>
+          </div>
+          {%- endfor %}
+        </wa-random-content>
+        <p class="empty-ways-out empty-suggestions wa-cluster wa-align-items-center wa-justify-content-center wa-gap-xs">Try
+          {{ tagSuggestions | safe }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <p class="search-count wa-visually-hidden" role="status"></p>
+  <template class="search-row-template">
+    <li class="search-option" role="option" aria-selected="false">
+      <a class="search-row">
+        <span class="search-icon-slot" aria-hidden="true"><wa-icon class="search-icon" family="duotone" variant="light"></wa-icon></span>
+        <span class="search-label"><span class="search-name"></span> <span class="search-why"></span></span>
+        <span class="search-dots" aria-hidden="true"></span>
+        <span class="search-time"></span>
+      </a>
+    </li>
+  </template>
+</wa-dialog>

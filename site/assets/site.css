@@ -257,6 +257,25 @@ wa-tooltip::part(body) {
   white-space: nowrap;
 }
 
+/* Keys stay quiet beside the words around them: a faint tint of the text colour instead of the kit's keycap edge and shadow. */
+kbd {
+  padding: 0.1em 0.4em;
+  border: 0;
+  border-radius: var(--wa-border-radius-s);
+  background: color-mix(in oklab, currentColor 16%, transparent);
+  box-shadow: none;
+  color: color-mix(in oklab, currentColor 75%, transparent);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: var(--wa-font-weight-semibold);
+  letter-spacing: 0.05em;
+}
+
+/* In a tooltip the key follows a label rather than running text, so it stands a little further off. */
+wa-tooltip kbd {
+  margin-inline-start: var(--wa-space-2xs);
+}
+
 a:focus-visible {
   border-radius: var(--wa-form-control-border-radius);
 }
@@ -929,8 +948,9 @@ button.shortcut {
   overflow: clip;
 }
 
-/* The toggle needs its script, so without scripting it would be a button that does nothing. */
+/* These buttons need their scripts; without scripting, each would do nothing. */
 @media (scripting: none) {
+  #site-search,
   #site-scheme {
     display: none;
   }
@@ -2731,8 +2751,297 @@ wa-popover::part(popup__popup) {
   box-shadow: 0 var(--wa-space-s) var(--wa-space-2xl) color-mix(in oklab, var(--wa-color-neutral-05) 22%, transparent);
 }
 
-.source-dialog::part(dialog)::backdrop {
+.source-dialog::part(dialog)::backdrop,
+.search-dialog::part(dialog)::backdrop {
   background: var(--hatch), color-mix(in oklab, var(--wa-color-neutral-05) 55%, transparent);
+}
+.search-dialog {
+  --width: 38rem;
+  --spacing: var(--wa-space-m);
+}
+
+.search-dialog::part(dialog) {
+  margin-block-start: max(var(--wa-space-l), 8dvh);
+  border: var(--wa-border-width-s) solid var(--wa-color-surface-border);
+  border-radius: var(--wa-border-radius-l);
+  background: var(--paper);
+  box-shadow: var(--wa-shadow-l);
+}
+
+.search-sizer {
+  overflow: clip;
+  overflow-clip-margin: var(--wa-space-2xs);
+}
+
+.search-rule {
+  display: none;
+  margin-block-start: var(--wa-space-s);
+}
+
+.search-body:has(
+    > .search-try:not([hidden]),
+    > .search-results:not([hidden]),
+    > .search-empty:not([hidden])
+  )
+  > .search-rule {
+  display: block;
+}
+
+.search-try {
+  margin: var(--wa-space-s) 0 0;
+  padding-inline: var(--wa-space-s);
+  color: var(--note-ink);
+}
+
+.search-dialog .empty-state {
+  margin-block-start: var(--wa-space-s);
+  padding: var(--wa-space-xl) var(--wa-space-l);
+}
+
+.search-results {
+  position: relative;
+  max-block-size: min(26rem, 38svh);
+  margin: var(--wa-space-s) 0 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  container: search-results / inline-size;
+  --search-fade: 2rem;
+  mask-image: linear-gradient(to bottom, black calc(100% - var(--search-fade)), transparent);
+}
+
+/* The fade says there is more below, so it shows only on a list that scrolls and melts away at the end. */
+@property --search-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes search-fade-out {
+  0%,
+  85% {
+    --search-fade: 2rem;
+  }
+
+  100% {
+    --search-fade: 0px;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .search-results {
+    --search-fade: 0px;
+    animation-name: search-fade-out;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(self);
+  }
+}
+
+.search-glider {
+  position: absolute;
+  inset: 0 0 auto;
+  block-size: var(--glider-size, 0);
+  translate: 0 var(--glider-top, 0);
+  border-radius: var(--wa-border-radius-m);
+  background: color-mix(in oklab, var(--ink) 7%, transparent);
+  pointer-events: none;
+}
+
+.search-option {
+  position: relative;
+}
+
+.search-row:focus-visible {
+  border-radius: var(--wa-border-radius-m);
+}
+
+/* Last baseline keeps the dots and the time on the name's final line when a long name wraps.
+   The list scrolls, so it would clip a ring drawn outside the row; the ring sits inside, on the highlight's corners. */
+.search-row {
+  --wa-focus-ring-offset: calc(-1 * var(--wa-focus-ring-width));
+  border-radius: var(--wa-border-radius-m);
+  display: flex;
+  gap: var(--wa-space-s);
+  align-items: last baseline;
+  padding: var(--wa-space-s);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* The icon gets a wider gap than the row's other pieces, so it reads as its own column. */
+.search-icon-slot {
+  flex: none;
+  align-self: center;
+  margin-inline-end: calc(var(--wa-space-m) - var(--wa-space-s));
+}
+
+.search-icon {
+  --primary-color: var(--note-ink);
+  --secondary-color: var(--note-ink);
+  --secondary-opacity: 0;
+  font-size: var(--wa-font-size-l);
+  transition:
+    --primary-color var(--fade),
+    --secondary-color var(--fade),
+    --secondary-opacity var(--fade);
+}
+
+.search-option[aria-selected="true"] .search-icon {
+  --primary-color: var(--accent);
+  --secondary-color: var(--accent);
+  --secondary-opacity: var(--icon-fill);
+}
+
+.search-label {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.search-name {
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+/* The word space before the note plus this margin matches the row's other gaps. */
+.search-why {
+  margin-inline-start: var(--wa-space-xs);
+  font-size: var(--note-size);
+  color: var(--note-ink);
+}
+
+/* The dots only take room left over, and draw only when that room fits a few, so a long name never leaves a lone dot. */
+.search-dots {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  block-size: var(--band);
+  container-type: inline-size;
+}
+
+.search-dots::before {
+  display: none;
+  block-size: 100%;
+  background: var(--divider-ink);
+  mask: var(--divider);
+  content: '';
+}
+
+@container (min-width: 1.5rem) {
+  .search-dots::before {
+    display: block;
+  }
+}
+
+.search-time {
+  flex: none;
+  margin-inline-start: auto;
+  font-size: var(--note-size);
+  color: var(--note-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* On a narrow sheet the name takes the whole row. The time and why-note flow under it as one line;
+   the note never wraps, so it moves below the time when it doesn't fit whole beside it. */
+@container search-results (width < 26rem) {
+  .search-row {
+    flex-wrap: wrap;
+    align-content: center;
+    gap: var(--wa-space-2xs) var(--wa-space-s);
+    min-block-size: 2.75rem;
+    padding-inline-start: calc(var(--wa-space-s) + 1.25 * var(--wa-font-size-l) + var(--wa-space-m));
+    line-height: var(--wa-line-height-condensed);
+  }
+
+  .search-label {
+    display: contents;
+  }
+
+  .search-row:not(:has(.search-icon-slot)) {
+    padding-inline-start: var(--wa-space-s);
+  }
+
+  .search-icon-slot {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: var(--wa-space-s);
+    translate: 0 -50%;
+  }
+
+  /* Two lines tell almost every name apart; past that a name ends in an ellipsis, so one long title can't push the list down. */
+  .search-name {
+    display: -webkit-box;
+    flex-basis: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .search-time {
+    order: 1;
+    margin-inline-start: 0;
+  }
+
+  .search-why {
+    flex: 0 1 auto;
+    order: 2;
+    margin-inline-start: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .search-dots {
+    display: none;
+  }
+
+  /* Stacked rows run together on a phone, so dots part them. The two beside the highlight or a focus ring step back so it reads as one piece. */
+  .search-option + .search-option::before {
+    content: '';
+    position: absolute;
+    inset: calc(-1 * var(--band) / 2) 0 auto;
+    block-size: var(--band);
+    background: var(--divider-ink);
+    mask: var(--divider);
+    transition: opacity var(--fade);
+  }
+
+  .search-option:is([aria-selected='true'], :has(> :focus-visible))::before,
+  .search-option:is([aria-selected='true'], :has(> :focus-visible)) + .search-option::before {
+    opacity: 0;
+  }
+}
+
+/* A phone's keyboard covers about half the screen and the page doesn't shrink for it, so on short screens
+   the sheet sits higher and the list stops sooner. Measured with Safari's address bar at the top, where the page starts lowest. */
+@media (height < 50rem) {
+  .search-dialog::part(dialog) {
+    margin-block-start: var(--wa-space-l);
+  }
+
+  .search-results {
+    max-block-size: min(26rem, 32svh);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .search-dialog.is-arriving[open]::part(dialog) {
+    animation-duration: 0s;
+  }
+
+  .search-sizer {
+    transition: block-size 200ms var(--ease-swift);
+  }
+
+  .search-glider.can-glide {
+    transition:
+      translate 180ms var(--ease-slide),
+      block-size 180ms var(--ease-slide);
+  }
+}
+
+.search-dialog.is-arriving {
+  --show-duration: 0s;
 }
 
 .source-dialog::part(header) {
