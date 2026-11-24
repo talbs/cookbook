@@ -1,4 +1,4 @@
-export const LONG_TIMER_MS = 120 * 60 * 1000;
+const LONG_TIMER_MS = 120 * 60 * 1000;
 
 export function isLongTimer(highMs) {
   return highMs > LONG_TIMER_MS;

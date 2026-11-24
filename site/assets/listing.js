@@ -268,6 +268,10 @@ if (searchInput) {
     window.umami?.track('search-empty', { query });
   }
 
+  function showCourseLinksWhenBrowsing() {
+    courseScroller.hidden = isSearching || isTyping || !emptyNote.hidden;
+  }
+
   function showHiddenItems() {
     listing.classList.toggle('is-searching', isSearching);
     for (const item of recipeItems) {
@@ -296,7 +300,7 @@ if (searchInput) {
     // One joke per dead end: it stays put while the cook keeps typing, and changes the next time nothing matches.
     if (!hasMatch && emptyNote.hidden) tellNewJoke();
     emptyNote.hidden = hasMatch;
-    courseScroller.hidden = isSearching || isTyping || !hasMatch;
+    showCourseLinksWhenBrowsing();
   }
 
   function servePicksFrom(popover) {
@@ -383,7 +387,7 @@ if (searchInput) {
   function markTyping(isOn) {
     isTyping = isOn;
     listing.classList.toggle('is-typing', isOn);
-    courseScroller.hidden = isSearching || isTyping || !emptyNote.hidden;
+    showCourseLinksWhenBrowsing();
   }
 
   function startTyping(event) {

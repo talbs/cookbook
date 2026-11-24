@@ -253,9 +253,9 @@ for (const printControl of page.querySelectorAll('.print-control')) {
   printControl.addEventListener('click', () => window.print());
 }
 
-for (const checkbox of checkboxes) {
-  checkbox.addEventListener('change', () => {
-    checkbox.classList.add('is-touched');
-    saveState();
-  });
-}
+recipe.addEventListener('change', event => {
+  const checkbox = event.target;
+  if (!checkboxes.includes(checkbox)) return;
+  checkbox.classList.add('is-touched');
+  saveState();
+});
