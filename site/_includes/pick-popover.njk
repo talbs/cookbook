@@ -1,8 +1,9 @@
-{#- The Today’s Special panel: the recipe's icons and title, then when it is for and a link to a surprise recipe. listing.js fills it each time it opens. #}
+{#- The Today’s Special panel: the recipe's icons and title, a dotted rule, then when it is for and a link to a surprise recipe. listing.js fills it each time it opens. #}
 {% macro pickPopover(anchorId, placement) %}
 <wa-popover class="pick-popover" for="{{ anchorId }}" placement="{{ placement }}">
-  <div class="pick wa-stack wa-gap-m">
-    <a class="pick-link wa-stack" href="/"><span class="pick-icons recipe-icons wa-cluster wa-flex-nowrap wa-gap-s" aria-hidden="true"></span><span class="pick-title"></span></a>
+  <div class="pick wa-stack wa-gap-s">
+    <a class="pick-link wa-stack wa-gap-xs" href="/"><span class="pick-icons recipe-icons wa-cluster wa-flex-nowrap wa-gap-s" aria-hidden="true"></span><span class="pick-title"></span></a>
+    <span class="pick-rule rule-run" aria-hidden="true"></span>
     <div class="pick-foot wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l">
       <p class="pick-label"><span class="wa-text-nowrap"><wa-format-date weekday="long" lang="en"></wa-format-date> <span class="pick-word"></span></span><span class="pick-season wa-text-nowrap"></span></p>
       <a class="pick-surprise" href="/">Surprise Me</a>
