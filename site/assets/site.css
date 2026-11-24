@@ -1547,6 +1547,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 @media (width < 48rem) {
+  .quick-toggle {
+    display: none;
+  }
+
   /* The footer's dotted line expects a 24px gap above it. On a phone the page ends on exactly that,
      so the dots sit as far from the page's last line as from the credit under them. */
   .listing,
