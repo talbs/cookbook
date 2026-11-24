@@ -73,7 +73,7 @@ test("every search.json entry has the documented shape", () => {
   assert.equal(entries.length, listRecipePages().length);
 
   for (const entry of entries) {
-    assert.deepEqual(Object.keys(entry), ["url", "title", "description", "tags", "course", "ingredients"]);
+    assert.deepEqual(Object.keys(entry), ["url", "title", "description", "tags", "course", "ingredients", "time", "icon"]);
     assert.ok(entry.url.startsWith("/recipes/"), entry.url);
     assert.ok(isNonEmptyString(entry.title), entry.url);
     assert.ok(isNonEmptyString(entry.description), entry.url);
@@ -81,6 +81,8 @@ test("every search.json entry has the documented shape", () => {
     assert.ok(Array.isArray(entry.ingredients) && entry.ingredients.length > 0, entry.url);
     assert.ok(entry.ingredients.every((name) => typeof name === "string"), entry.url);
     assert.ok(typeof entry.course === "string" || entry.course === null, entry.url);
+    assert.ok(isNonEmptyString(entry.time) || entry.time === null, entry.url);
+    assert.ok(isNonEmptyString(entry.icon) || entry.icon === null, entry.url);
   }
 });
 

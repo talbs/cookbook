@@ -5,7 +5,6 @@ eleventyComputed:
 ---
 {% extends "listing.njk" %}
 {% from "recipe-list.njk" import recipeCards, recipeRows %}
-{% from "pick-popover.njk" import pickPopover %}
 {% set courses = collections.recipes | groupByCourse %}
 
 {% block head %}
@@ -23,29 +22,19 @@ eleventyComputed:
 {% endblock %}
 
 {% block toolbar %}
-    <div class="listing-controls can-stick wa-cluster wa-gap-m">
-      <div class="search-field wa-border-radius-m" hidden>
-        <wa-input class="recipe-search wa-visually-hidden-label" type="search" label="Search recipes" placeholder="Name, ingredient or tag" autocomplete="off" with-clear>
-          <wa-icon slot="start" name="magnifying-glass" variant="regular"></wa-icon>
-        </wa-input>
-        <button class="stuck-tap" type="button" tabindex="-1" aria-hidden="true"></button>
+    <div class="listing-controls can-stick wa-cluster wa-flex-nowrap wa-gap-m">
+      <wa-select class="time-select wa-visually-hidden-label" label="Time" value="any" hidden>
+        <wa-icon slot="start" name="clock" variant="regular"></wa-icon>
+        <wa-option value="any">Any time</wa-option>
+        <wa-option value="30">Up to 30 min</wa-option>
+        <wa-option value="60">Up to 1 hour</wa-option>
+      </wa-select>
+      <div class="view-rest" hidden>
+        <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
+          <wa-radio appearance="button" value="cards">Cards</wa-radio>
+          <wa-radio appearance="button" value="list">List</wa-radio>
+        </wa-radio-group>
       </div>
-      <wa-button class="filters-toggle" appearance="outlined" aria-expanded="false" aria-controls="listing-filters"><wa-icon name="sliders" variant="regular" label="Filters"></wa-icon></wa-button>
-      <div class="listing-filters" id="listing-filters">
-        <wa-select class="time-select wa-visually-hidden-label" label="Time" value="any" hidden>
-          <wa-icon slot="start" name="clock" variant="regular"></wa-icon>
-          <wa-option value="any">Any time</wa-option>
-          <wa-option value="30">Up to 30 min</wa-option>
-          <wa-option value="60">Up to 1 hour</wa-option>
-        </wa-select>
-        <div class="view-rest" hidden>
-          <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
-            <wa-radio appearance="button" value="cards">Cards</wa-radio>
-            <wa-radio appearance="button" value="list">List</wa-radio>
-          </wa-radio-group>
-        </div>
-      </div>
-      <script>if (matchMedia('(width < 48rem)').matches) document.getElementById('listing-filters').inert = true;</script>
       <a class="to-top shortcut wa-border-radius-s" id="listing-top" href="#top"><wa-icon name="arrow-up" variant="regular" label="Back to Top"></wa-icon></a>
       <wa-tooltip for="listing-top" placement="bottom">Back to Top</wa-tooltip>
     </div>
@@ -69,33 +58,6 @@ eleventyComputed:
   {{ recipeRows(group.recipes, true) }}
 </section>
 {%- endfor %}
-<div class="search-empty empty-state wa-justify-content-center wa-text-center wa-stack wa-gap-l wa-align-items-center" role="status" hidden>
-  <wa-random-content class="empty-jokes" animation="fade-up">
-    {%- for joke in searchJokes %}
-    <div class="wa-stack wa-gap-l wa-align-items-center">
-      <hue-hop class="empty-ornament wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-0" hue="{{ joke.hue }}" aria-hidden="true">
-        <span class="rule-run"></span>
-        <span class="empty-icons wa-cluster wa-flex-nowrap wa-gap-s">{% for name in joke.icons %}<wa-icon name="{{ name }}" family="duotone" variant="light"></wa-icon>{% endfor %}</span>
-        <span class="rule-run"></span>
-      </hue-hop>
-      <div class="wa-stack wa-gap-xs wa-align-items-center">
-        <p class="empty-joke">{{ joke.headline }}</p>
-        <p class="empty-detail">{{ joke.aside }}</p>
-        <p class="wa-visually-hidden">Nothing in the cookbook matches <q class="empty-term"></q>.</p>
-      </div>
-    </div>
-    {%- endfor %}
-  </wa-random-content>
-  <p class="empty-ways-out empty-suggestions wa-cluster wa-align-items-center wa-justify-content-center wa-gap-xs">Try
-    <wa-random-content class="empty-tags" items="3">
-      {%- for tag in collections | tagNames %}
-      <button type="button" class="link-button" data-search="{{ tag }}">{{ tag | tagLabel }}</button>
-      {%- endfor %}
-    </wa-random-content>
-    <span class="empty-special">or <button type="button" class="link-button" id="empty-pick">today’s special</button></span>
-  </p>
-  {{ pickPopover("empty-pick", "bottom") }}
-</div>
 {% endblock %}
 
 {% block scripts %}

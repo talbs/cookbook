@@ -14,6 +14,8 @@ export function render({ collections }) {
     tags: item.data.tags,
     course: item.data.course,
     ingredients: listIngredientNames(item.data.recipe),
+    time: item.data.timeLabel ?? null,
+    icon: item.data.icons?.[0] ?? null,
   }));
   return JSON.stringify(entries);
 }
