@@ -1714,8 +1714,9 @@ wa-button[appearance='plain']:hover::part(base) {
   color: var(--accent);
 }
 
-/* A bare button that takes the view switch's dress when pointed at, or while its popover is open:
-   a thin frame, with the hatch held the same distance inside it. It dresses a wa-button, a button or a link. */
+/* A bare button that takes the view switch's dress while it is on (its popover or dialog open):
+   a thin frame, with the hatch held the same distance inside it. Pointing at it shows the frame alone.
+   It dresses a wa-button, a button or a link. */
 wa-button.hatch-button::part(base),
 :is(button, a).hatch-button {
   position: relative;
@@ -1734,7 +1735,7 @@ wa-button.hatch-button::part(base),
     var(--scale-move);
 }
 
-/* A plain wa-button turns the accent on hover; this one keeps its ink. */
+/* A plain wa-button turns the accent on any hover, which a tap on a phone leaves stuck; this one waits for a real pointer. */
 wa-button.hatch-button::part(base),
 wa-button.hatch-button:hover::part(base) {
   color: var(--ink);
@@ -1753,11 +1754,13 @@ wa-button.hatch-button::part(base)::before,
   transition: opacity var(--fade);
 }
 
-wa-button.hatch-button:has(~ wa-popover[open])::part(base) {
+wa-button.hatch-button:has(~ wa-popover[open])::part(base),
+:is(button, a).hatch-button[aria-expanded='true'] {
   border-color: var(--control-edge);
 }
 
-wa-button.hatch-button:has(~ wa-popover[open])::part(base)::before {
+wa-button.hatch-button:has(~ wa-popover[open])::part(base)::before,
+:is(button, a).hatch-button[aria-expanded='true']::before {
   opacity: 1;
 }
 
@@ -1768,15 +1771,14 @@ wa-button.hatch-button:has(~ wa-popover[open])::part(base)::before {
     border-color: var(--control-edge);
   }
 
-  wa-button.hatch-button:hover::part(base)::before,
-  :is(button, a).hatch-button:hover::before {
-    opacity: 1;
+  wa-button.hatch-button:hover::part(base) {
+    color: var(--accent);
   }
+}
 
-  /* The frame and hatch already say "hovered", so an icon shortcut skips its usual turn to the accent. */
-  .shortcut.hatch-button:hover {
-    color: var(--ink);
-  }
+wa-button.hatch-button:has(~ wa-popover[open])::part(base),
+:is(button, a).hatch-button[aria-expanded='true'] {
+  color: var(--ink);
 }
 
 /* The button's box hangs past the page edge by as much as the shortcuts' boxes do across the bar, and its padding
@@ -3168,7 +3170,8 @@ wa-popover::part(popup__popup) {
   wa-button,
   wa-select,
   .shortcut wa-icon,
-  wa-button wa-icon {
+  wa-button wa-icon,
+  .quick-toggle wa-icon {
     transition: var(--scale-move);
   }
 
@@ -3192,6 +3195,7 @@ wa-popover::part(popup__popup) {
   @media (hover: hover) {
     .shortcut:hover wa-icon,
     wa-button:hover wa-icon,
+    .quick-toggle:hover wa-icon,
     wa-input::part(clear-button):hover,
     wa-dialog::part(close-button__button):hover,
     wa-copy-button::part(button):hover {
