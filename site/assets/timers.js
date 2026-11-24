@@ -79,72 +79,11 @@ function readBand(band, savedStarts) {
     labelHtml: time.innerHTML,
     control: band.querySelector('.timer-control'),
     square: band.querySelector('.timer-square'),
-    readout: band.querySelector('.timer-readout'),
     slot: band.querySelector('.wait-glyph'),
     tell: null,
     glyph: band.querySelector('.timer-control wa-icon'),
     tooltip: band.querySelector('wa-tooltip'),
   };
-}
-
-async function measureReadout(timer, fillTime, words = '') {
-  const probe = timer.readout.cloneNode(true);
-  probe.style.position = 'absolute';
-  probe.style.visibility = 'hidden';
-  probe.style.minInlineSize = '0';
-  const probeWords = probe.querySelector('.timer-words');
-  probeWords.textContent = words;
-  // The words ease in from no width, which would be the width measured here.
-  probeWords.style.animation = 'none';
-  fillTime(probe.querySelector('.timer-time'));
-  timer.band.append(probe);
-  const counter = probe.querySelector('wa-counter');
-  if (counter) {
-    await customElements.whenDefined('wa-counter');
-    await counter.updateComplete;
-  }
-  const widths = {
-    readout: probe.getBoundingClientRect().width,
-    words: probeWords.getBoundingClientRect().width,
-  };
-  probe.remove();
-  return widths;
-}
-
-// A running countdown loses width as its digits drop away, so each phase holds its widest readout and the bar stays still while the clock runs. The bar only changes length when the phase does.
-async function reserveReadoutWidth(timer) {
-  const fontSize = parseFloat(getComputedStyle(timer.readout).fontSize);
-  const inEms = (width) => `${width / fontSize}em`;
-  const label = await measureReadout(
-    timer,
-    (time) => (time.innerHTML = timer.labelHtml)
-  );
-  const heldWidths = { idle: inEms(label.readout) };
-  if (!timer.isLong) {
-    const countdownProbe = { name: timer.name, startedAt: 0 };
-    const countdown = await measureReadout(timer, (time) =>
-      time.replaceChildren(buildCounter(countdownProbe, timer.lowMs))
-    );
-    heldWidths.running = inEms(countdown.readout);
-    if (timer.lowMs < timer.highMs) {
-      const check = await measureReadout(
-        timer,
-        (time) =>
-          time.replaceChildren(buildCounter(countdownProbe, timer.highMs)),
-        CHECK_WORDS
-      );
-      heldWidths.check = inEms(check.readout);
-      timer.words.style.setProperty('--words-width', inEms(check.words));
-    }
-  }
-  timer.heldWidths = heldWidths;
-  holdReadoutWidth(timer, timer.phase);
-}
-
-function holdReadoutWidth(timer, phase) {
-  const isMeasured = Boolean(timer.heldWidths);
-  if (!isMeasured) return;
-  timer.readout.style.minInlineSize = timer.heldWidths[phase] ?? '0';
 }
 
 // Removing the class and reading layout before adding it back restarts the animation, so every tap and every chime moves the square again.
@@ -170,28 +109,13 @@ function showTime(timer, { phase, targetAt }) {
   }
 }
 
-// A wider readout would push the bar back in one frame, so it grows from the width it had instead.
-function easeReadoutWider(timer, widthBefore) {
-  const widthAfter = timer.readout.getBoundingClientRect().width;
-  const isHidden = widthBefore === 0;
-  if (isHidden || widthAfter <= widthBefore) return;
-  timer.readout.style.setProperty('--width-before', `${widthBefore}px`);
-  timer.readout.style.setProperty('--width-after', `${widthAfter}px`);
-  timer.readout.classList.remove('is-widening');
-  void timer.readout.offsetWidth;
-  timer.readout.classList.add('is-widening');
-}
-
 function showPhase(timer, state) {
-  const widthBefore = timer.readout.getBoundingClientRect().width;
   timer.band.dataset.phase = state.phase;
   const label = `${ACTIONS[state.phase]} ${titleCase(timer.name)} Timer`;
   timer.glyph.name = GLYPHS[state.phase];
   timer.control.setAttribute('aria-label', label);
   timer.tooltip.textContent = label;
   showTime(timer, state);
-  holdReadoutWidth(timer, state.phase);
-  easeReadoutWider(timer, widthBefore);
 }
 
 let audio = null;
@@ -340,21 +264,11 @@ export function startTimers({ root, savedStarts, onChange, isCooking, onScreenHe
     keepClockRunningWhileNeeded();
   }
 
-  // Bands are hidden in Overview and measure as zero, so each one is measured the first time it takes up space.
-  const firstSightWatcher = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.contentRect.width === 0) continue;
-      firstSightWatcher.unobserve(entry.target);
-      reserveReadoutWidth(timers.find((timer) => timer.band === entry.target));
-    }
-  });
-
   const now = Date.now();
   for (const timer of timers) {
     renderTimer(timer, now, { isAnnounced: false, isInstant: true });
     timer.control.hidden = false;
     timer.control.addEventListener('click', () => pressControl(timer));
-    firstSightWatcher.observe(timer.band);
   }
   keepClockRunningWhileNeeded();
   document.addEventListener('visibilitychange', keepScreenAwakeWhileNeeded);
