@@ -1486,13 +1486,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* The sentence's commas and full stop sit outside the links' underlines; an inline-block doesn't inherit the line. */
-.empty-tags > :not([hidden])::after,
-.empty-special .link-button::after {
+.empty-tags > :not([hidden])::after {
   display: inline-block;
   content: ',';
 }
 
-.empty-special .link-button::after {
+.empty-tags > :nth-last-child(1 of :not([hidden]))::after {
   content: '.';
 }
 
@@ -1502,14 +1501,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     grid-template-columns: 7rem minmax(0, 1fr);
     align-items: baseline;
     column-gap: var(--wa-space-l);
-  }
-
-  .filters-toggle {
-    display: none;
-  }
-
-  .listing-filters {
-    display: contents;
   }
 
   .view-rest {
@@ -1537,122 +1528,16 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   overflow-x: clip;
 }
 
-.stuck-tap {
-  display: none;
-}
-
-.search-field {
-  flex: 1 1 14rem;
-  max-inline-size: 24rem;
-  box-shadow: var(--wa-shadow-s);
-}
-
 /* Wide enough for its longest choice with the clock and the arrow either side. */
 .time-select {
   flex: 0 0 13.5rem;
 }
 
-.time-select::part(combobox),
-.filters-toggle::part(base) {
+.time-select::part(combobox) {
   box-shadow: var(--wa-shadow-s);
 }
 
 @media (width < 48rem) {
-  .listing-controls.can-stick {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto 1fr;
-    row-gap: 0;
-  }
-
-  .listing-controls.can-stick:has(> .listing-filters[inert]) {
-    grid-template-rows: auto 0fr;
-  }
-
-  .search-field {
-    position: relative;
-    max-inline-size: none;
-  }
-
-  /* Typing mode is for touch screens; with a mouse the field is just a field. */
-  @media (pointer: coarse) {
-    .stuck-tap {
-      display: block;
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      background: none;
-      opacity: 0;
-    }
-
-    .search-field:focus-within .stuck-tap {
-      display: none;
-    }
-  }
-
-  /* While the keyboard is up nothing may sit above the toolbar, or Safari slides the screen past it. */
-  wa-page:has(.listing.is-typing) .site-header,
-  .is-typing :is(.listing-head, .header-rule) {
-    display: none;
-  }
-
-  .listing.is-typing {
-    padding-block-start: var(--wa-space-m);
-  }
-
-  .is-typing .listing-controls.can-stick {
-    position: relative;
-  }
-
-  :is(.is-searching, .is-typing) .listing-results {
-    min-block-size: 100svh;
-    align-content: start;
-  }
-
-  /* Opening or closing Filters changes the toolbar's height. Left on, the browser scrolls to keep the rows still, which pulls a stuck toolbar off the top. */
-  .listing-results {
-    overflow-anchor: none;
-  }
-
-  /* The keyboard covers the lower half, so the words come first and start at the top. */
-  .listing-results > .search-empty {
-    flex: none;
-    justify-content: start;
-    padding-block: var(--wa-space-xl);
-  }
-
-  .empty-ornament {
-    order: 1;
-  }
-
-  /* The padding grows the 40px square to the arrow's 44px for a thumb; the margin takes it back so the row keeps its height. */
-  .filters-toggle {
-    margin: calc((var(--bar-switch-height) - var(--to-top-size)) / 2);
-    padding: calc((var(--to-top-size) - var(--bar-switch-height)) / 2);
-  }
-
-  /* The second row folds to nothing when closed, so its gap rides on the controls inside the fold.
-     The fold clips at its padding, so the padding is as deep as a focus ring at its widest, as it settles in,
-     and the margin takes it back. Safari has no overflow-clip-margin to do this. */
-  .listing-filters {
-    --ring-room: calc(var(--wa-focus-ring-width) + var(--wa-focus-ring-offset) + 4px);
-    display: flex;
-    grid-column: 1 / -1;
-    align-self: stretch;
-    gap: var(--wa-space-m);
-    min-block-size: 0;
-    margin: 0 calc(-1 * var(--ring-room)) calc(-1 * var(--ring-room));
-    padding: 0 var(--ring-room) var(--ring-room);
-    overflow: clip;
-  }
-
-  .listing-filters > * {
-    margin-block-start: var(--wa-space-m);
-  }
-
   /* The floating back-to-top arrow would cover the footer's last link, so it leaves once the footer shows. */
   .is-at-footer .to-top {
     visibility: hidden;
@@ -1707,19 +1592,12 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-.recipe-search,
-.time-select,
-.filters-toggle {
+.time-select {
   --wa-form-control-height: var(--bar-switch-height);
   --wa-form-control-border-color: var(--control-edge);
   --wa-form-control-border-radius: var(--wa-border-radius-m);
   --wa-form-control-background-color: var(--paper);
   --wa-form-control-placeholder-color: var(--note-ink);
-}
-
-/* Once the cursor is in the field the hint steps back, so it doesn't read as text already typed. */
-.recipe-search:focus-within::part(input)::placeholder {
-  color: color-mix(in oklab, var(--note-ink) 55%, transparent);
 }
 
 .course-count {
@@ -1735,67 +1613,13 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   mask: var(--divider);
 }
 
-/* While searching, the matches read as one list. The course names stay for screen readers, since each section is named by its heading. */
-:is(.is-searching, .is-typing) .course .section-head {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-:is(.is-searching, .is-typing) .course + .course::before {
-  content: none;
-}
-
-/* Rows run on from one course into the next, in the same newspaper columns one course uses. */
-[data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
-  display: block;
-  column-gap: var(--column-gap);
-}
-
-[data-view='list'] :is(.is-searching, .is-typing) .course {
-  display: block;
-}
-
-[data-view='list'] :is(.is-searching, .is-typing) .recipe-rows {
-  column-count: auto;
-}
-
-@media (min-width: 48rem) {
-  [data-view='list'] :is(.is-searching, .is-typing) .listing-results:has(> .search-empty[hidden]) {
-    column-count: 2;
-  }
-
-  /* The stack's gap gives 24px; while searching on wide screens the results sit 32px under the toolbar. */
-  .listing.is-searching > .listing-results {
-    padding-block-start: calc(var(--wa-space-xl) - var(--stack-gap));
-  }
-}
-
-/* Cards from every course share one grid, so one match per course still sits side by side. */
-:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
-  display: grid;
-  row-gap: var(--wa-space-2xl);
-}
-
-:root:not([data-view='list']) :is(.is-searching, .is-typing) :is(.course, .recipe-cards) {
-  display: contents;
-}
-
-:is(.is-searching, .is-typing) .search-empty {
-  grid-column: 1 / -1;
-}
-
 .empty-state {
   position: relative;
   padding: clamp(var(--wa-space-3xl), 7vw, 5rem) clamp(var(--wa-space-l), 6vw, var(--wa-space-4xl));
 }
 
-/* With no matches, the results area and its panel run down to the footer, like the 404's. */
-.listing-results,
-.search-empty {
+/* The results area runs down to the footer, like the 404's. */
+.listing-results {
   flex: 1;
 }
 
@@ -1890,11 +1714,6 @@ wa-button[appearance='outlined']:hover::part(base) {
   background: var(--paper);
   border-color: var(--accent);
   color: var(--accent);
-}
-
-/* The Filters icon rests in the quieter ink of the toolbar's other icons, and still takes the accent on hover. */
-wa-button.filters-toggle::part(base) {
-  color: var(--note-ink);
 }
 
 /* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
@@ -2016,8 +1835,7 @@ wa-button.special::part(base) {
 }
 
 @media (min-width: 48rem) {
-  .not-found-page main,
-  .listing:has(.search-empty:not([hidden])) {
+  .not-found-page main {
     padding-block-end: var(--wa-space-2xl);
   }
 }
@@ -2085,12 +1903,11 @@ wa-button.special::part(base) {
   display: none;
 }
 
-.recipe-cards,
-:root:not([data-view='list']) :is(.is-searching, .is-typing) .listing-results {
+.recipe-cards {
   --min-column-size: 17rem;
   margin: 0;
   column-gap: var(--column-gap);
-  /* wa-grid stretches a lone card across the whole row; auto-fill keeps every card the same width, in a course of one or a search with one match. */
+  /* wa-grid stretches a lone card across the whole row; auto-fill keeps every card the same width, in a course of one. */
   grid-template-columns: repeat(auto-fill, minmax(min(var(--min-column-size), 100%), 1fr));
 }
 
@@ -3538,10 +3355,6 @@ wa-popover::part(popup__popup) {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
   }
 
-  .listing-controls.can-stick {
-    transition: grid-template-rows var(--fade);
-  }
-
   /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
   .to-top {
     transition:
@@ -3551,7 +3364,7 @@ wa-popover::part(popup__popup) {
       visibility var(--wa-transition-slow);
   }
 
-  /* A search settles its new results in the way a mode does. The toolbar stays live, so typing never waits on the move. */
+  /* A time limit settles its new results in the way a mode does. The toolbar stays live, so the select never waits on the move. */
   .listing-results {
     view-transition-name: listing-results;
   }

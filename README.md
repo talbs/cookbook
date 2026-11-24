@@ -2,7 +2,7 @@
 
 Recipes, personally approved. Culled from books, shows, and the Internet, then changed until we liked them better.
 
-Each recipe is one plain text file written in [Cooklang](https://cooklang.org). [Eleventy](https://www.11ty.dev) turns those files into a static site with a searchable index and a page per tag. Each recipe page has an Overview mode for reading, a Cook mode with countdown timers, and its own print layout.
+Each recipe is one plain text file written in [Cooklang](https://cooklang.org). [Eleventy](https://www.11ty.dev) turns those files into a static site with an index, a page per tag and a search dialog on every page. Each recipe page has an Overview mode for reading, a Cook mode with countdown timers, and its own print layout.
 
 ## Contents
 
@@ -53,7 +53,7 @@ Two things to know on a fresh clone:
 2. `lib/recipe.js` reads the file with the official Cooklang parser (`@cooklang/cooklang`), then shapes the result for the page: ingredients with their amounts added up, equipment, steps, timers and notes.
 3. `lib/validate-recipe.js` checks the recipe against this site's rules. One bad recipe stops the build with exit code 1 and names the file. [When the build fails](docs/recipe-format.md#when-the-build-fails) lists each message.
 4. `site/_includes/recipe.njk` lays the recipe out as a page at `/recipes/<file name>/`. It also writes [schema.org Recipe](https://schema.org/Recipe) data into the page for search engines.
-5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search box reads.
+5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search dialog reads.
 6. The build also publishes each recipe's `.cook` file as plain text at `/recipes/<file name>.txt` and writes `/llms.txt`, a list of every recipe for AI agents. `/sitemap.xml` lists every page for search engines, and `/robots.txt` points them to it. On a recipe page, the File link in the footer shows the file.
 
 No bundler, no framework. The scripts in `site/assets/` are plain ES modules, and the browser loads them as written.
@@ -65,12 +65,12 @@ recipes/              One .cook file per recipe. The file name is the URL
   recipes.json        Gives every recipe the recipe.njk layout
 site/                 Everything that turns recipes into a website
   pages/              Every page that isn't a recipe
-    index.njk         Home: all recipes, with Chef's Pick, search, a time filter and a cards/list switch
+    index.njk         Home: all recipes, with Chef's Pick, a time filter and a cards/list switch
     tags.njk          /tags/, every tag grouped as dishes, methods and seasons
     tag.njk           /tags/<tag>/, one page per tag
     about.njk         /about/
     404.njk
-    search.11ty.js    /search.json, what the search box reads
+    search.11ty.js    /search.json, what the search dialog reads
     raw-recipe.11ty.js /recipes/<file name>.txt, each recipe's .cook file as plain text
     llms.11ty.js      /llms.txt, every recipe's file, grouped by course
     sitemap.11ty.js   /sitemap.xml, every page's address for search engines
@@ -80,12 +80,15 @@ site/                 Everything that turns recipes into a website
     recipe.njk        The recipe page
     listing.njk       The shell shared by index, tag and About pages
     pick-popover.njk  The Chef's Pick panel
+    search-dialog.njk The search dialog on every page, opened from the header or with ⌘K / Ctrl+K
     recipe-list.njk   Recipe cards
     site-header.njk, site-nav.njk, site-footer.njk
   _data/              Site-wide data: the site title, footer links, the jokes shown when a search finds nothing
   assets/             Sent to the browser as written, served from /assets/
     site.css          All the site's own styles
-    listing.js        Search, the time filter and the cards/list switch. Reports searches that find nothing to Umami as `search-empty`
+    listing.js        The time filter, the cards/list switch and Chef's Pick
+    search.js         The search dialog: results, keyboard and the ?q= address. Reports searches that find nothing to Umami as `search-empty`
+    search-match.js   How a search matches and orders recipes, shared with the tests
     pick.js           Chooses the Chef's Pick, shared with the tests
     recipe.js         Overview and Cook modes, checked-off steps, print
     scheme.js         The light/dark toggle
