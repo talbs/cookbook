@@ -105,6 +105,7 @@ if (courseBar) {
 const quickToggle = document.querySelector('.quick-toggle');
 if (quickToggle) {
   const quickMinutes = 30;
+  const narrowScreen = matchMedia('(width < 48rem)');
   const recipeItems = [...document.querySelectorAll('.recipe-cards > li, .recipe-rows > li')];
   const courseLinks = document.querySelector('.course-links');
   const matchCount = document.querySelector('.match-count');
@@ -160,7 +161,9 @@ if (quickToggle) {
     return quickToggle.getAttribute('aria-pressed') === 'true';
   }
 
+  // Quick is hidden on small screens, and a filter with no control on screen can't be seen or turned off.
   function readMaxMinutes() {
+    if (narrowScreen.matches) return null;
     return isQuickOn() ? quickMinutes : null;
   }
 
@@ -237,6 +240,7 @@ if (quickToggle) {
     quickToggle.setAttribute('aria-pressed', String(!isQuickOn()));
     showMatches();
   });
+  narrowScreen.addEventListener('change', () => showMatches({ isInstant: true }));
 
   // A time limit that arrives in the address is applied before anything shows, without the settle.
   if (new URLSearchParams(location.search).get('time') === String(quickMinutes)) quickToggle.setAttribute('aria-pressed', 'true');
