@@ -126,6 +126,9 @@ body {
   --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
   --ease-slide: cubic-bezier(0.34, 1.3, 0.64, 1);
   --ease-swift: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fade: var(--wa-transition-normal) var(--wa-transition-easing);
+  --scale-move: scale 0s;
+  --lift-move: scale 0s, rotate 0s;
   --arrival-strength: 0.55;
   --done-strength: 0.5;
   --arrival-hold: 1.1s;
@@ -267,13 +270,10 @@ wa-page::part(skip-to-content):focus {
   z-index: 3;
   outline: var(--wa-focus-ring);
   outline-offset: var(--wa-focus-ring-offset);
-}
-
-/* The skip link wears the site's heaviest accent: paper words on solid ink. */
-wa-page::part(skip-to-content):focus {
   padding: var(--wa-space-xs) var(--wa-space-m);
   border: 0;
   border-radius: var(--wa-border-radius-s);
+  /* The skip link wears the site's heaviest accent: paper words on solid ink. */
   background: var(--ink);
   color: var(--paper);
   font-weight: var(--wa-font-weight-bold);
@@ -355,6 +355,14 @@ wa-page > main {
   margin-inline: auto;
   padding: var(--wa-space-3xl) var(--page-gutter) var(--wa-space-4xl);
   --rule-gap: 2.25rem;
+}
+
+.recipe,
+.recipe-intro,
+.listing,
+.site-footer {
+  --stack-gap: var(--wa-space-l);
+  gap: var(--stack-gap);
 }
 
 /* The icons sit 12px inside their tap boxes, so this top padding puts them as far from the top edge as the gutter puts them from the side. */
@@ -463,7 +471,7 @@ wa-scroller[hidden] {
   text-box: trim-both cap alphabetic;
   color: var(--ink);
   text-decoration-line: none;
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+  transition: color var(--fade);
 }
 
 .site-name:hover {
@@ -487,18 +495,18 @@ wa-scroller[hidden] {
   text-box: trim-both cap alphabetic;
 }
 
-/* Titles past about 28 characters step down a size at every width, so they don't run to four or five lines. */
-.recipe-head h1.is-long {
-  --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
-}
-
-/* Past 50 characters a third step down keeps the title to about three lines. */
-.recipe-head h1.is-longer {
-  --title-size: clamp(2.25rem, 1.25rem + 3vw, 3.25rem);
-}
-
-/* Below the desktop grid a hyphenated compound in display type can be as wide as the column, so it may break at its hyphen there. */
 @media (width < 64rem) {
+  /* Titles past about 28 characters step down a size, so they don't run to four or five lines. */
+  .recipe-head h1.is-long {
+    --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
+  }
+
+  /* Past 50 characters a third step down keeps the title to about three lines. */
+  .recipe-head h1.is-longer {
+    --title-size: clamp(2.25rem, 1.25rem + 3vw, 3.25rem);
+  }
+
+  /* Below the desktop grid a hyphenated compound in display type can be as wide as the column, so it may break at its hyphen there. */
   .recipe-head h1 .wa-text-nowrap {
     white-space: normal;
   }
@@ -525,6 +533,10 @@ wa-scroller[hidden] {
 
 .title-letter {
   display: inline-block;
+  transition:
+    --title-hop-start var(--wa-transition-normal) var(--ease-swift),
+    --title-hop-end var(--wa-transition-normal) var(--ease-swift),
+    var(--lift-move);
 }
 
 @property --title-hop-start { syntax: '<color>'; inherits: true; initial-value: black; }
@@ -536,9 +548,6 @@ wa-scroller[hidden] {
     --title-hop-end: var(--wa-color-text-normal);
     --hop-start: var(--title-hop-start);
     --hop-end: var(--title-hop-end);
-    transition:
-      --title-hop-start var(--wa-transition-normal) var(--ease-swift),
-      --title-hop-end var(--wa-transition-normal) var(--ease-swift);
   }
 
   .title-letter:hover {
@@ -548,14 +557,6 @@ wa-scroller[hidden] {
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .title-letter {
-    transition:
-      scale var(--settle) var(--ease-spring),
-      rotate var(--settle) var(--ease-spring),
-      --title-hop-start var(--wa-transition-normal) var(--ease-swift),
-      --title-hop-end var(--wa-transition-normal) var(--ease-swift);
-  }
-
   .title-letter:hover {
     scale: 1.08;
     rotate: -4deg;
@@ -588,7 +589,8 @@ wa-scroller[hidden] {
 .description,
 .step-text,
 .recipe-note,
-.about-prose p {
+.about-prose p,
+.empty-detail {
   font-family: var(--wa-font-family-longform);
   font-size: var(--step-size);
   line-height: 1.5;
@@ -627,11 +629,7 @@ wa-scroller[hidden] {
 .header-rule,
 .footer-rule {
   block-size: var(--band);
-  margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--parent-gap));
-}
-
-.header-rule {
-  --parent-gap: var(--wa-space-l);
+  margin-block: calc(var(--rule-gap) - var(--band) / 2 - var(--stack-gap));
 }
 
 /* On one column the title sits 16px above the description, and the wide layout's 36px either side of the dots reads as a hole next to that. */
@@ -639,10 +637,6 @@ wa-scroller[hidden] {
   .recipe-head {
     --rule-gap: var(--wa-space-l);
   }
-}
-
-.footer-rule {
-  --parent-gap: var(--wa-space-m);
 }
 
 .rule-run {
@@ -677,14 +671,18 @@ wa-scroller[hidden] {
   --secondary-color: var(--icon-hue, var(--ink));
   --secondary-opacity: 0;
   transition:
-    --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
-    --secondary-opacity var(--wa-transition-normal) var(--wa-transition-easing);
+    --primary-color var(--fade),
+    --secondary-opacity var(--fade),
+    var(--lift-move);
 }
 
 /* The footer's icon sits beside text, not dots, so its line rests in ink. Half a step up from the text,
    it drops by half the extra size, past wa-icon's own 2px, so its middle stays on the text's middle. */
 .made-with wa-icon {
   --primary-color: var(--ink);
+  transition:
+    --primary-color var(--fade),
+    --secondary-opacity var(--fade);
   font-size: calc((var(--wa-font-size-m) + var(--wa-font-size-l)) / 2);
   vertical-align: calc((var(--wa-font-size-m) - 1em) / 2 - var(--wa-space-3xs));
 }
@@ -696,6 +694,9 @@ wa-scroller[hidden] {
   :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon {
     --primary-color: var(--icon-hue, var(--ink));
     --secondary-opacity: var(--icon-fill);
+    --icon-lift: 1.2;
+    --icon-tilt-odd: -8deg;
+    --icon-tilt-even: 8deg;
   }
 
   .made-with a:hover wa-icon {
@@ -709,17 +710,20 @@ wa-scroller[hidden] {
 :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon {
   --primary-color: var(--icon-hue, var(--ink));
   --secondary-opacity: var(--icon-fill);
+  --icon-lift: 1.2;
+  --icon-tilt-odd: -8deg;
+  --icon-tilt-even: 8deg;
 }
 
 /* The curve overshoots and settles, which reads as a little bounce. */
 @media (prefers-reduced-motion: no-preference) {
   .recipe-icons wa-icon {
-    transition:
-      --primary-color var(--wa-transition-normal) var(--wa-transition-easing),
-      --secondary-opacity var(--wa-transition-normal)
-        var(--wa-transition-easing),
-      scale var(--settle) var(--ease-spring),
-      rotate var(--settle) var(--ease-spring);
+    scale: var(--icon-lift, none);
+    rotate: var(--icon-tilt-odd, none);
+  }
+
+  .recipe-icons wa-icon:nth-child(even) {
+    rotate: var(--icon-tilt-even, none);
   }
 
   .recipe-icons wa-icon:nth-child(2) {
@@ -728,35 +732,6 @@ wa-scroller[hidden] {
 
   .recipe-icons wa-icon:nth-child(3) {
     transition-delay: 90ms;
-  }
-
-  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon {
-    scale: 1.2;
-  }
-
-  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(odd) {
-    rotate: -8deg;
-  }
-
-  :is(.recipe-card, .pick-link):is(:focus-visible, :active) .recipe-icons wa-icon:nth-child(even) {
-    rotate: 8deg;
-  }
-
-  @media (hover: hover) {
-    .recipe-icons:hover wa-icon,
-    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon {
-      scale: 1.2;
-    }
-
-    .recipe-icons:hover wa-icon:nth-child(odd),
-    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon:nth-child(odd) {
-      rotate: -8deg;
-    }
-
-    .recipe-icons:hover wa-icon:nth-child(even),
-    :is(.recipe-card, .pick-link):hover .recipe-icons wa-icon:nth-child(even) {
-      rotate: 8deg;
-    }
   }
 }
 
@@ -910,18 +885,34 @@ wa-page:not([view='desktop']) .mode-bar .print-control {
   margin-inline-start: var(--shortcut-inset);
 }
 
-.shortcut {
+.shortcut,
+.source-dialog::part(close-button__button),
+.source-copy::part(button) {
   display: grid;
-  flex-shrink: 0;
   place-items: center;
   inline-size: var(--shortcut-size);
   block-size: var(--shortcut-size);
   color: var(--note-ink);
-  text-decoration: none;
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
 }
 
-.shortcut:hover {
+.shortcut {
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: color var(--fade);
+}
+
+wa-input::part(clear-button),
+wa-dialog::part(close-button__button),
+wa-copy-button::part(button) {
+  transition:
+    color var(--fade),
+    var(--scale-move);
+}
+
+.shortcut:hover,
+wa-input::part(clear-button):hover,
+.source-dialog::part(close-button__button):hover,
+.source-copy::part(button):hover {
   color: var(--accent);
 }
 
@@ -1074,13 +1065,9 @@ button.shortcut {
   margin-block-start: 0;
 }
 
-/* A note between two steps splits the list in two; this keeps the usual step gap across the split. */
-.method {
+.steps {
   --step-gap: var(--wa-space-l);
-}
-
-.method > .steps + .steps {
-  margin-block-start: calc(var(--step-gap) - var(--wa-space-m));
+  gap: var(--step-gap);
 }
 
 /* On one column (tablets) the lists would stretch edge to edge; past this the leaders get too long to follow. */
@@ -1132,7 +1119,9 @@ button.shortcut {
 }
 
 .checklist,
-.equipment {
+.equipment,
+.lead-notes,
+.timing {
   font-size: var(--list-size);
   line-height: 1.5;
 }
@@ -1318,11 +1307,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block-start: var(--section-space);
 }
 
-.lead-notes {
-  font-size: var(--list-size);
-  line-height: 1.5;
-}
-
 .lead-notes p {
   margin: 0;
 }
@@ -1335,11 +1319,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   --min-column-size: 9em;
   column-gap: var(--wa-space-m);
   margin: 0;
-}
-
-.timing {
-  font-size: var(--list-size);
-  line-height: 1.5;
 }
 
 .timing-total {
@@ -1434,7 +1413,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .stuck-marker {
   block-size: 0;
-  margin-block: calc(-1 * var(--wa-space-l) / 2);
+  margin-block: calc(-1 * var(--stack-gap) / 2);
 }
 
 /* On a phone the arrow floats in the bottom corner, at a full 44px for a thumb. */
@@ -1769,7 +1748,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
   /* The stack's gap gives 24px; while searching on wide screens the results sit 32px under the toolbar. */
   .listing.is-searching > .listing-results {
-    padding-block-start: calc(var(--wa-space-xl) - var(--wa-space-l));
+    padding-block-start: calc(var(--wa-space-xl) - var(--stack-gap));
   }
 }
 
@@ -1878,9 +1857,6 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 .empty-detail {
   max-inline-size: 30em;
-  font-family: var(--wa-font-family-longform);
-  font-size: var(--step-size);
-  line-height: 1.5;
   color: var(--note-ink);
   text-wrap: balance;
 }
@@ -1890,8 +1866,8 @@ wa-button[appearance='outlined']::part(base) {
   background: var(--paper);
   color: var(--ink);
   transition:
-    color var(--wa-transition-normal) var(--wa-transition-easing),
-    border-color var(--wa-transition-normal) var(--wa-transition-easing);
+    color var(--fade),
+    border-color var(--fade);
 }
 
 wa-button[appearance='outlined']:hover::part(base) {
@@ -1908,7 +1884,7 @@ wa-button.filters-toggle::part(base) {
 /* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
 wa-button[appearance='plain']::part(base) {
   color: var(--note-ink);
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+  transition: color var(--fade);
 }
 
 wa-button[appearance='plain']:hover::part(base) {
@@ -1926,7 +1902,7 @@ wa-button.hatch-button::part(base),
   border-radius: var(--wa-border-radius-m);
   background: none;
   font-weight: var(--wa-font-weight-bold);
-  transition: border-color var(--wa-transition-normal) var(--wa-transition-easing);
+  transition: border-color var(--fade);
 }
 
 /* A plain wa-button turns the accent on hover; this one keeps its ink. */
@@ -1944,7 +1920,7 @@ wa-button.hatch-button::part(base)::before,
   border-radius: calc(var(--wa-border-radius-m) - var(--hatch-inset) - var(--wa-border-width-s));
   background: var(--hatch);
   opacity: 0;
-  transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
+  transition: opacity var(--fade);
 }
 
 wa-button.hatch-button:has(~ wa-popover[open])::part(base) {
@@ -2313,7 +2289,6 @@ wa-button.special::part(base) {
   color: var(--note-ink);
 }
 
-/* An open note shows its title in full and in the page's ink. */
 .step-note[open]::part(header) {
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
@@ -2337,13 +2312,6 @@ wa-details {
   --show-duration: var(--settle);
   --hide-duration: var(--press);
   --wa-transition-easing: var(--ease-swift);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  wa-details {
-    --show-duration: 0ms;
-    --hide-duration: 0ms;
-  }
 }
 
 /* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, tinted when open.
@@ -2498,7 +2466,7 @@ wa-progress-bar.wait-run::part(progress-bar) {
 
 .timer-readout {
   justify-content: flex-end;
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
+  transition: color var(--fade);
 }
 
 .timer-words:empty {
@@ -2542,7 +2510,6 @@ wa-progress-bar.wait-run::part(indicator) {
   opacity: 0;
 }
 
-/* Asides sit a size down from the steps. */
 .recipe-note {
   position: relative;
   font-size: var(--aside-size);
@@ -2586,11 +2553,11 @@ wa-progress-bar.wait-run::part(indicator) {
    and the dots sit --rule-gap from the last step, as they do from the credits. */
 .attribution {
   display: grid;
-  gap: var(--wa-space-m);
-  margin-block-start: calc(var(--wa-space-m) - var(--wa-space-l));
+  --stack-gap: var(--wa-space-m);
+  gap: var(--stack-gap);
+  margin-block-start: calc(var(--stack-gap) - var(--wa-space-l));
 }
 
-/* Each label sits above its value, like the facts at the top; labels stay quiet, values take the ink. */
 .attribution dl {
   margin: 0;
 }
@@ -2605,7 +2572,7 @@ wa-progress-bar.wait-run::part(indicator) {
 
 /* Tops up the footer's gap to the rows' gap, so the step from the credit row to the tags row matches the rest. */
 .attribution .connections {
-  margin-block-start: calc(var(--wa-space-l) - var(--wa-space-m));
+  margin-block-start: calc(var(--wa-space-l) - var(--stack-gap));
 }
 
 :is(.facts, .attribution, .colophon) dt {
@@ -2657,12 +2624,7 @@ wa-popover::part(popup__popup) {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  wa-popover::part(popup__popup) {
-    animation:
-      mode-fade-in var(--press) ease-out,
-      panel-drop var(--settle) var(--ease-spring);
-  }
-
+  wa-popover::part(popup__popup),
   wa-dialog::part(dialog) {
     animation:
       mode-fade-in var(--press) ease-out,
@@ -2672,14 +2634,6 @@ wa-popover::part(popup__popup) {
   wa-popover.is-closing::part(popup__popup),
   wa-dialog.is-closing::part(dialog) {
     animation: panel-lift var(--press) ease-in both;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  wa-popover,
-  wa-dialog {
-    --show-duration: 0ms;
-    --hide-duration: 0ms;
   }
 }
 
@@ -2844,32 +2798,11 @@ wa-popover::part(popup__popup) {
 
 .source-dialog::part(close-button__button),
 .source-copy::part(button) {
-  display: grid;
-  place-items: center;
-  inline-size: var(--shortcut-size);
-  block-size: var(--shortcut-size);
   padding: 0;
   border: 0;
   background: none;
-  color: var(--note-ink);
   font-size: 1rem;
   cursor: pointer;
-}
-
-.source-dialog::part(close-button__button):hover,
-.source-copy::part(button):hover {
-  color: var(--accent);
-}
-
-/* The small icon buttons inside kit parts turn the accent on hover like the shortcut icons, and dip like them where motion is allowed. */
-wa-input::part(clear-button),
-wa-dialog::part(close-button__button),
-wa-copy-button::part(button) {
-  transition: color var(--wa-transition-normal) var(--wa-transition-easing);
-}
-
-wa-input::part(clear-button):hover {
-  color: var(--accent);
 }
 
 .source-dialog wa-code-highlighter {
@@ -2909,6 +2842,9 @@ wa-input::part(clear-button):hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  wa-details,
+  wa-popover,
+  wa-dialog,
   .screen-toast wa-toast-item {
     --show-duration: 0ms;
     --hide-duration: 0ms;
@@ -3031,12 +2967,8 @@ wa-input::part(clear-button):hover {
     --aside-size: var(--wa-font-size-l);
   }
 
-  [data-mode='cook'] .method {
-    --step-gap: var(--wa-space-2xl);
-  }
-
   [data-mode='cook'] .steps {
-    gap: var(--step-gap);
+    --step-gap: var(--wa-space-2xl);
   }
 
   [data-mode='cook'] .step-needs {
@@ -3082,6 +3014,9 @@ wa-input::part(clear-button):hover {
 @media (prefers-reduced-motion: no-preference) {
   :root {
     --scale-move: scale var(--settle) var(--ease-spring);
+    --lift-move:
+      scale var(--settle) var(--ease-spring),
+      rotate var(--settle) var(--ease-spring);
     scroll-behavior: smooth;
   }
 
@@ -3097,7 +3032,7 @@ wa-input::part(clear-button):hover {
   }
 
   .timer-readout.is-widening {
-    animation: readout-widen var(--wa-transition-normal) var(--wa-transition-easing);
+    animation: readout-widen var(--fade);
   }
 
   @keyframes readout-widen {
@@ -3114,7 +3049,7 @@ wa-input::part(clear-button):hover {
 
   .timer-words {
     overflow-x: clip;
-    animation: words-arrive var(--wa-transition-normal) var(--wa-transition-easing);
+    animation: words-arrive var(--fade);
   }
 
   @keyframes words-arrive {
@@ -3147,16 +3082,8 @@ wa-input::part(clear-button):hover {
 
   :is(a, button).hatch-button {
     transition:
-      color var(--wa-transition-normal) var(--wa-transition-easing),
-      border-color var(--wa-transition-normal) var(--wa-transition-easing),
-      var(--scale-move);
-  }
-
-  wa-input::part(clear-button),
-  wa-dialog::part(close-button__button),
-  wa-copy-button::part(button) {
-    transition:
-      color var(--wa-transition-normal) var(--wa-transition-easing),
+      color var(--fade),
+      border-color var(--fade),
       var(--scale-move);
   }
 
@@ -3292,11 +3219,13 @@ wa-input::part(clear-button):hover {
     animation-duration: var(--wa-transition-slow);
   }
 
-  ::view-transition-old(recipe-body) {
+  ::view-transition-old(recipe-body),
+  ::view-transition-old(listing-results) {
     animation: mode-out var(--press) ease-in both;
   }
 
-  ::view-transition-new(recipe-body) {
+  ::view-transition-new(recipe-body),
+  ::view-transition-new(listing-results) {
     animation:
       mode-fade-in var(--fade-in) ease-out var(--fade-in-delay) both,
       mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
@@ -3340,7 +3269,7 @@ wa-input::part(clear-button):hover {
   }
 
   .listing-controls.can-stick {
-    transition: grid-template-rows var(--wa-transition-normal) var(--wa-transition-easing);
+    transition: grid-template-rows var(--fade);
   }
 
   /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
@@ -3355,16 +3284,6 @@ wa-input::part(clear-button):hover {
   /* A search settles its new results in the way a mode does. The toolbar stays live, so typing never waits on the move. */
   .listing-results {
     view-transition-name: listing-results;
-  }
-
-  ::view-transition-old(listing-results) {
-    animation: mode-out var(--press) ease-in both;
-  }
-
-  ::view-transition-new(listing-results) {
-    animation:
-      mode-fade-in var(--fade-in) ease-out var(--fade-in-delay) both,
-      mode-settle var(--settle) var(--ease-settle) var(--fade-in-delay) both;
   }
 
   /* A named piece is drawn above the rest of the page while it moves. The whole toolbar is named, paper and all,
@@ -3552,7 +3471,7 @@ wa-input::part(clear-button):hover {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
     display: grid;
     grid-template-columns: var(--side-column) minmax(0, 1fr) 15rem;
-    gap: var(--wa-space-l) var(--column-gap);
+    column-gap: var(--column-gap);
     align-items: start;
   }
 
@@ -3577,7 +3496,6 @@ wa-input::part(clear-button):hover {
     flex-basis: calc(100% - var(--side-column) - var(--column-gap));
   }
 
-  /* Lets the title, description, facts and switch sit on the page grid as one row of cells. */
   .recipe-head,
   .recipe-intro {
     display: contents;
@@ -3589,10 +3507,6 @@ wa-input::part(clear-button):hover {
   }
 
   /* The title has the full row here, so titles up to 50 characters keep the top size in two lines and only the longest step down. */
-  .recipe-head h1.is-long {
-    --title-size: clamp(3.5rem, 2.25rem + 4vw, 5.5rem);
-  }
-
   .recipe-head h1.is-longer {
     --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
   }
@@ -3611,7 +3525,6 @@ wa-input::part(clear-button):hover {
     grid-row: 3;
   }
 
-  /* One row under the description, shared with the switch. */
   .facts {
     grid-column: 1 / 3;
     grid-row: 4;
@@ -3621,7 +3534,6 @@ wa-input::part(clear-button):hover {
     column-gap: var(--wa-space-2xl);
   }
 
-  /* At the end of the facts row, directly above the columns it switches. */
   .mode-rest {
     position: relative;
     grid-column: 3;
@@ -3983,7 +3895,6 @@ wa-page[view='desktop'] {
   }
 
   .method > * + *,
-  .method > .steps + .steps,
   .steps > li + li {
     margin-block-start: var(--wa-space-m);
   }

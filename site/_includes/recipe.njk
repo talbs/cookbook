@@ -101,7 +101,7 @@
 <div class="recipe-nav">
   {% include "site-header.njk" %}
 </div>
-<article id="top" class="recipe wa-stack wa-gap-l" data-recipe="{{ page.fileSlug }}">
+<article id="top" class="recipe wa-stack" data-recipe="{{ page.fileSlug }}">
   {%- set hasSource = source and source.name %}
   {%- set usedIn = collections.recipes | recipesThatUse(page.fileSlug) %}
   {%- set hasFacts = servings or yield or course or difficulty or totalMinutes != null %}
@@ -118,7 +118,7 @@
   {%- set usedInLine %}<dt>Used in</dt><dd>{% for parent in usedIn %}<a href="{{ parent.url }}">{{ parent.data.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd>{% endset %}
   <header class="recipe-head wa-stack wa-gap-m">
     <h1{% if title.length > 50 %} class="is-longer"{% elif title.length > 28 %} class="is-long"{% endif %}>{{ title | escape | keepHyphenatedWordsWhole | showPlainLetters | safe }}</h1>
-    <div class="recipe-intro wa-stack wa-gap-l">
+    <div class="recipe-intro wa-stack">
       <p class="description wa-text-balance">{{ description }}</p>
       <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
       {%- if hasFacts or hasCredit or cuisine or usedIn.length %}
@@ -242,7 +242,7 @@
       {%- endif %}
       {%- for block in section.blocks %}
       {%- if block.type == "steps" %}
-      <ol class="steps wa-list-plain wa-stack wa-gap-l" role="list" start="{{ block.steps[0].number }}">
+      <ol class="steps wa-list-plain wa-stack" role="list" start="{{ block.steps[0].number }}">
         {%- for step in block.steps %}
         <li class="step" id="{{ step.id }}">
           <p class="step-text">
