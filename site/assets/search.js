@@ -246,6 +246,14 @@ dialog.addEventListener('click', event => {
   showResults();
 });
 
+dialog.addEventListener('wa-show', event => {
+  if (event.target === dialog) searchButton?.setAttribute('aria-expanded', 'true');
+});
+
+dialog.addEventListener('wa-hide', event => {
+  if (event.target === dialog) searchButton?.setAttribute('aria-expanded', 'false');
+});
+
 dialog.addEventListener('wa-after-hide', event => {
   if (event.target !== dialog) return;
   dialog.classList.remove('is-arriving');
