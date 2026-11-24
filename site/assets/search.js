@@ -197,6 +197,11 @@ if (!isApplePlatform) {
 searchButton?.addEventListener('pointerenter', loadEntries, { once: true });
 searchButton?.addEventListener('click', openSearch);
 
+// A tap also counts as a hover, so the tooltip's show timer is still running when the tap opens the dialog.
+searchTooltip?.addEventListener('wa-show', event => {
+  if (dialog.open) event.preventDefault();
+});
+
 document.addEventListener('keydown', event => {
   if (event.key !== 'k' || !isCommandHeld(event)) return;
   event.preventDefault();
