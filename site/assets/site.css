@@ -1375,9 +1375,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   text-decoration-line: underline;
 }
 
-/* A row or card is one big link, so only its title carries the link's line: clear at rest, then the same accent line any link gets on hover. */
+/* A row or card is one big link, so only its title carries the link's line: clear at rest, then the same accent line any link gets on hover.
+   The popover's pick joins them: its line at rest would double the dotted rule under it. */
 .listing-name,
-.card-title {
+.card-title,
+.pick-link {
   text-decoration-color: transparent;
 }
 
@@ -2654,7 +2656,7 @@ wa-popover::part(popup__popup) {
 }
 
 .pick-popover::part(body) {
-  padding: var(--wa-space-l);
+  padding: var(--wa-space-m);
 }
 
 /* The arrow's edge is an inset shadow in the kit's own border colour, so it is repainted to match the panel. */
@@ -2701,9 +2703,12 @@ wa-popover::part(popup__popup) {
   text-underline-offset: 0.25em;
 }
 
-/* The extra space keeps the title's underline from reading as a rule above the foot. */
+/* In the panel's column, the rule's own flex: 1 would size it by a zero basis and it would collapse. */
+.pick-rule {
+  flex: none;
+}
+
 .pick-foot {
-  margin-block-start: var(--wa-space-xs);
   font-size: var(--wa-font-size-s);
 }
 
