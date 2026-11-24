@@ -1443,10 +1443,10 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin: 0;
 }
 
-/* Links inside running text, the no-results choices and Send back get taller tap areas without moving the words. */
+/* Links inside running text, the no-results choices and Surprise Me get taller tap areas without moving the words. */
 .listing-head .description a,
 .empty-ways-out .link-button,
-.pick-foot .pick-again {
+.pick-foot .pick-surprise {
   padding-block: var(--wa-space-xs);
 }
 
@@ -1454,7 +1454,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
    It goes on the tags' row, not the tags, because wa-random-content sets its own margins on the ones it shows. */
 .site-footer .site-nav,
 .empty-state .empty-suggestions,
-.pick-foot .pick-again {
+.pick-foot .pick-surprise {
   margin-block: calc(-1 * var(--wa-space-xs));
 }
 
@@ -1810,12 +1810,11 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   --secondary-opacity: var(--icon-fill);
 }
 
-/* Hue Hop hands everything inside it the two ends of the hue, and the script copies them to a panel whose links sit
-   beside one. Where it doesn't run, on paper, or when contrast is forced, every use falls back to the colour it had before. */
+/* Hue Hop hands everything inside it the two ends of the hue, and the script copies them to the empty-search links
+   so they match. Where it doesn't run, on paper, or when contrast is forced, every use falls back to the colour it had before. */
 @media screen and (forced-colors: none) and (prefers-contrast: no-preference) {
   hue-hop,
-  .pick-popover,
-  .search-empty {
+  .empty-ways-out {
     --hue-mid: color-mix(in oklch, var(--hop-start), var(--hop-end));
   }
 
@@ -1840,13 +1839,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 
   /* Links beside a hue underline in the middle of it, where the rest of the site uses the accent. */
-  :is(.pick-popover, .search-empty) :is(a, .link-button):hover {
+  .empty-ways-out :is(a, .link-button):hover {
     text-decoration-color: var(--hue-mid, var(--accent));
-  }
-
-  /* A hatch button's icon wears the middle of its popover's hue for as long as the popover is open. */
-  .hatch-button:has(~ wa-popover[open]) hue-hop wa-icon {
-    color: var(--hue-mid);
   }
 }
 
@@ -1967,7 +1961,7 @@ wa-button.special::part(base) {
   padding-inline: calc(-1 * var(--shortcut-inset) - var(--wa-border-width-s));
 }
 
-.special hue-hop {
+.special wa-icon {
   margin-inline-end: var(--wa-space-xs);
 }
 
@@ -1978,7 +1972,7 @@ wa-button.special::part(base) {
     padding-inline: 0;
   }
 
-  .special hue-hop {
+  .special wa-icon {
     margin-inline-end: 0;
   }
 

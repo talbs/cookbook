@@ -1,5 +1,5 @@
-import { choosePick } from './pick.js';
-import { changeWithTransition, prefersReducedMotion } from './transition.js';
+import { choosePick, chooseSurprise } from './pick.js';
+import { changeWithTransition } from './transition.js';
 
 const viewRest = document.querySelector('.view-rest');
 const viewSwitch = viewRest.querySelector('.view-switch');
@@ -102,9 +102,9 @@ if (searchInput) {
     });
   }
 
-  function choosePickForNow(excludedUrl = null) {
+  function choosePickForNow() {
     const now = new Date();
-    const pick = choosePick({ entries: pickEntries, hour: now.getHours(), monthIndex: now.getMonth(), excludedUrl });
+    const pick = choosePick({ entries: pickEntries, date: now });
     return pick && { ...pick, now };
   }
 
@@ -115,8 +115,6 @@ if (searchInput) {
     return words.join(' ');
   }
 
-  const hueByCourse = { breakfast: 'honey', condiment: 'fern', dessert: 'guava', drink: 'honey', main: 'ember', side: 'fern' };
-
   function showPick(container, pick) {
     container.querySelector('wa-format-date').date = pick.now;
     container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
@@ -125,12 +123,15 @@ if (searchInput) {
     link.href = pick.entry.url;
     link.querySelector('.pick-title').textContent = pick.entry.title;
 
+    const surprise = chooseSurprise({ entries: pickEntries, excludedUrl: pick.entry.url });
+    const surpriseLink = container.querySelector('.pick-surprise');
+    surpriseLink.hidden = surprise === null;
+    if (surprise) surpriseLink.href = surprise.url;
+
     const icons = [];
     for (const icon of pick.entry.icons) icons.push(icon.cloneNode());
     const iconSet = container.querySelector('.pick-icons');
-    iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
     iconSet.replaceChildren(...icons);
-    shareHue(iconSet, container);
   }
 
   async function loadSearchText() {
@@ -211,10 +212,11 @@ if (searchInput) {
     emptyNote.querySelector('.empty-tags').randomize?.();
 
     const ornament = jokes.querySelector(':scope > :not([hidden]) hue-hop');
+    const waysOut = emptyNote.querySelector('.empty-ways-out');
     // Moon is all greys, too quiet to show a hover, so that joke's links keep the accent.
     const isGrey = ornament.getAttribute('hue') === 'moon';
-    if (isGrey) for (const end of hueEnds) emptyNote.style.removeProperty(end);
-    else shareHue(ornament, emptyNote);
+    if (isGrey) for (const end of hueEnds) waysOut.style.removeProperty(end);
+    else shareHue(ornament, waysOut);
   }
 
   function showMatches({ isInstant = false } = {}) {
@@ -303,68 +305,13 @@ if (searchInput) {
     showCourseLinksWhenBrowsing();
   }
 
-  function servePicksFrom(popover) {
-    const panel = popover.querySelector('.pick');
-    const dish = popover.querySelector('.pick-link');
-    let shownPick = null;
-    let isSendingBack = false;
-
-    const triggerIcon = document.getElementById(popover.getAttribute('for')).querySelector('hue-hop');
-
-    function showPickInPopover(pick) {
-      shownPick = pick;
-      showPick(popover, pick);
-      triggerIcon?.setAttribute('hue', hueByCourse[pick.entry.course]);
-    }
-
-    // The panel fits its title, so its width glides between the two instead of jumping.
-    async function slideInPick(pick) {
-      const tokens = getComputedStyle(document.documentElement);
-      const settle = parseFloat(tokens.getPropertyValue('--settle'));
-      const easeSettle = tokens.getPropertyValue('--ease-settle').trim();
-      const leaving = dish.animate(
-        [{ translate: '0', opacity: 1 }, { translate: '-1.5rem 0', opacity: 0 }],
-        { duration: parseFloat(tokens.getPropertyValue('--press')), easing: 'ease-in', fill: 'forwards' }
-      );
-      await leaving.finished;
-
-      const oldWidth = panel.getBoundingClientRect().width;
-      showPickInPopover(pick);
-      const newWidth = panel.getBoundingClientRect().width;
-      leaving.cancel();
-
-      // The new title is laid out at its final width from the start, so it never rewraps while the panel grows.
-      dish.style.inlineSize = `${newWidth}px`;
-      // The settle easing dips past its target, and a panel narrower than its foot would wrap the occasion line.
-      panel.style.minInlineSize = `${Math.min(oldWidth, newWidth)}px`;
-      panel.style.overflow = 'clip';
-      const growing = panel.animate([{ inlineSize: `${oldWidth}px` }, { inlineSize: `${newWidth}px` }], { duration: settle, easing: easeSettle });
-      const arriving = dish.animate([{ translate: '1.5rem 0', opacity: 0 }, { translate: '0', opacity: 1 }], { duration: settle, easing: easeSettle });
-      await Promise.all([growing.finished, arriving.finished]);
-      dish.style.inlineSize = '';
-      panel.style.minInlineSize = '';
-      panel.style.overflow = '';
-    }
-
-    async function sendBack() {
-      const pick = choosePickForNow(shownPick?.entry.url ?? null);
-      if (!pick || isSendingBack) return;
-      isSendingBack = true;
-      if (prefersReducedMotion.matches) showPickInPopover(pick);
-      else await slideInPick(pick);
-      popover.querySelector('.pick-status').textContent = pick.entry.title;
-      isSendingBack = false;
-    }
-
-    // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
+  // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
+  for (const popover of document.querySelectorAll('.pick-popover')) {
     popover.addEventListener('wa-show', () => {
       const pick = choosePickForNow();
-      if (pick) showPickInPopover(pick);
+      if (pick) showPick(popover, pick);
     });
-    popover.querySelector('.pick-again').addEventListener('click', sendBack);
   }
-
-  for (const popover of document.querySelectorAll('.pick-popover')) servePicksFrom(popover);
   document.querySelector('#site-pick').hidden = false;
 
   const filtersToggle = document.querySelector('.filters-toggle');
