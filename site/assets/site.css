@@ -1898,6 +1898,13 @@ wa-button.special::part(base) {
   display: none;
 }
 
+/* Over cards a course's head is a quiet label: at full size it read as one more card title. The list's plain rows leave it loud. */
+:root:not([data-view='list']) .course > .section-head {
+  --section-head-size: var(--list-size);
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--note-ink);
+}
+
 .recipe-cards {
   --min-column-size: 17rem;
   margin: 0;
