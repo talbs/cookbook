@@ -2,7 +2,7 @@
 {%- set isHome = page.url == "/" -%}
 <div class="site-bar wa-split wa-flex-nowrap wa-align-items-center wa-gap-l">
   {%- if isHome %}
-  <wa-button class="special hatch-button" id="site-pick" appearance="plain" hidden><hue-hop slot="start" aria-hidden="true"><wa-icon name="hat-chef" variant="regular"></wa-icon></hue-hop><span class="special-label">Today’s Special!</span></wa-button>
+  <wa-button class="special hatch-button" id="site-pick" appearance="plain" hidden><wa-icon slot="start" name="hat-chef" variant="regular"></wa-icon><span class="special-label">Today’s Special!</span></wa-button>
   <wa-tooltip class="special-tip" for="site-pick" placement="bottom">Today’s Special!</wa-tooltip>
   {{ pickPopover("site-pick", "bottom-start") }}
   {%- else %}

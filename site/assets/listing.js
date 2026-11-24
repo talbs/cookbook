@@ -115,8 +115,6 @@ if (searchInput) {
     return words.join(' ');
   }
 
-  const hueByCourse = { breakfast: 'honey', condiment: 'fern', dessert: 'guava', drink: 'honey', main: 'ember', side: 'fern' };
-
   function showPick(container, pick) {
     container.querySelector('wa-format-date').date = pick.now;
     container.querySelector('.pick-word').textContent = writeInTitleCase(pick.word);
@@ -133,9 +131,7 @@ if (searchInput) {
     const icons = [];
     for (const icon of pick.entry.icons) icons.push(icon.cloneNode());
     const iconSet = container.querySelector('.pick-icons');
-    iconSet.setAttribute('hue', hueByCourse[pick.entry.course]);
     iconSet.replaceChildren(...icons);
-    shareHue(iconSet, container);
   }
 
   async function loadSearchText() {
@@ -216,10 +212,11 @@ if (searchInput) {
     emptyNote.querySelector('.empty-tags').randomize?.();
 
     const ornament = jokes.querySelector(':scope > :not([hidden]) hue-hop');
+    const waysOut = emptyNote.querySelector('.empty-ways-out');
     // Moon is all greys, too quiet to show a hover, so that joke's links keep the accent.
     const isGrey = ornament.getAttribute('hue') === 'moon';
-    if (isGrey) for (const end of hueEnds) emptyNote.style.removeProperty(end);
-    else shareHue(ornament, emptyNote);
+    if (isGrey) for (const end of hueEnds) waysOut.style.removeProperty(end);
+    else shareHue(ornament, waysOut);
   }
 
   function showMatches({ isInstant = false } = {}) {
@@ -308,15 +305,13 @@ if (searchInput) {
     showCourseLinksWhenBrowsing();
   }
 
-  function servePicksFrom(popover) {
-    // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
+  // Each opening is a fresh look at the clock, so a tab left open since lunch suggests dinner.
+  for (const popover of document.querySelectorAll('.pick-popover')) {
     popover.addEventListener('wa-show', () => {
       const pick = choosePickForNow();
       if (pick) showPick(popover, pick);
     });
   }
-
-  for (const popover of document.querySelectorAll('.pick-popover')) servePicksFrom(popover);
   document.querySelector('#site-pick').hidden = false;
 
   const filtersToggle = document.querySelector('.filters-toggle');

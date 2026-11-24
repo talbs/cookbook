@@ -29,8 +29,6 @@ function readDayNumber(date) {
   return date.getHours() < 5 ? dayNumber - 1 : dayNumber;
 }
 
-// One recipe per period of the day: the pool is walked a step a day in a scrambled order,
-// and a season match always narrows the pool first.
 export function choosePick({ entries, date }) {
   const { word, courses } = readDaypart(date.getHours());
   const season = readSeason(date.getMonth());
