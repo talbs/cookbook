@@ -1020,8 +1020,8 @@ button.shortcut {
 /* The negative end margin cancels the anchor's own width, so a heading wraps the same with or without it. */
 .heading-anchor {
   display: inline-block;
-  inline-size: 1em;
-  margin-inline: var(--wa-space-s) -1em;
+  inline-size: 1.25em;
+  margin-inline: var(--wa-space-s) -1.25em;
   font-size: 0.7em;
   font-size: 1cap;
   color: var(--note-ink);
@@ -2442,11 +2442,10 @@ wa-progress-bar.wait-run::part(progress-bar) {
 .timer-control {
   all: unset;
   display: inline-grid;
-  place-items: center end;
+  place-items: center;
   inline-size: 2.75rem;
   block-size: 2.75rem;
-  margin-block: -0.5rem;
-  margin-inline-start: -1rem;
+  margin: -0.5rem;
   cursor: pointer;
 }
 
