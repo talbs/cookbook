@@ -2673,14 +2673,14 @@ wa-popover::part(popup__popup) {
   border-radius: var(--wa-border-radius-m);
 }
 
-/* Last baseline keeps the dots and the time on the name's final line when a long name wraps.
+/* First baseline keeps the time on the name's line, in one column down the list, when the note drops under the name.
    The list scrolls, so it would clip a ring drawn outside the row; the ring sits inside, on the highlight's corners. */
 .search-row {
   --wa-focus-ring-offset: calc(-1 * var(--wa-focus-ring-width));
   border-radius: var(--wa-border-radius-m);
   display: flex;
   gap: var(--wa-space-s);
-  align-items: last baseline;
+  align-items: baseline;
   padding: var(--wa-space-s);
   color: var(--ink);
   text-decoration: none;
@@ -2710,20 +2710,30 @@ wa-popover::part(popup__popup) {
   --secondary-opacity: var(--icon-fill);
 }
 
+/* The space between the name and the note is widened to match the row's other gaps.
+   A space, not a margin, because a space disappears when the note drops to its own line. */
 .search-label {
   flex: 0 1 auto;
   min-inline-size: 0;
+  word-spacing: var(--wa-space-xs);
 }
 
 .search-name {
   font-weight: var(--wa-font-weight-semibold);
+  word-spacing: normal;
 }
 
-/* The word space before the note plus this margin matches the row's other gaps. */
+/* The note stays in one piece: it drops under the name whole when it can't fit beside it, and ends in an ellipsis if it is wider than the row.
+   Clip, not hidden, so the box keeps its text baseline and still lines up with the name and the time. */
 .search-why {
-  margin-inline-start: var(--wa-space-xs);
+  display: inline-block;
+  max-inline-size: 100%;
+  overflow: clip;
   font-size: var(--note-size);
   color: var(--note-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-spacing: normal;
 }
 
 /* The dots only take room left over, and draw only when that room fits a few, so a long name never leaves a lone dot. */
@@ -2758,8 +2768,9 @@ wa-popover::part(popup__popup) {
 }
 
 /* On a narrow sheet the name takes the whole row. The time and why-note flow under it as one line;
-   the note never wraps, so it moves below the time when it doesn't fit whole beside it. */
-@container search-results (width < 26rem) {
+   the note never wraps, so it moves below the time when it doesn't fit whole beside it.
+   34rem is measured: side by side, a list narrower than that dropped a third of its notes and wrapped names. */
+@container search-results (width < 34rem) {
   .search-row {
     flex-wrap: wrap;
     align-content: center;
@@ -2793,7 +2804,10 @@ wa-popover::part(popup__popup) {
     -webkit-line-clamp: 2;
   }
 
+  /* The time takes the line's spare room, which pushes a note beside it to the right edge.
+     A note on its own line has no time beside it, so it starts at the left, under the name. */
   .search-time {
+    flex-grow: 1;
     order: 1;
     margin-inline-start: 0;
   }
@@ -2801,11 +2815,7 @@ wa-popover::part(popup__popup) {
   .search-why {
     flex: 0 1 auto;
     order: 2;
-    margin-inline-start: 0;
     min-inline-size: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .search-dots {
