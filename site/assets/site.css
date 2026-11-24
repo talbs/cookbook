@@ -451,11 +451,12 @@ wa-page > main {
   }
 }
 
-/* The scroller clips at its edges, which would cut the first and last links' rings. The links get room inside it, and it grows by as much, so nothing moves.
+/* The scroller clips at its edges, which would cut the first and last links' rings. The links get room inside it, and it grows by as much at the start, so the first link doesn't move.
+   It doesn't grow at the end: its fade would run into the row's gap and stop just short of the switch.
    The scroll margin keeps that room when a tabbed-to link is scrolled into view. */
 wa-scroller:has(.course-links) {
   max-inline-size: none;
-  margin-inline: calc(-1 * var(--wa-space-s));
+  margin-inline-start: calc(-1 * var(--wa-space-s));
   /* The kit rings the scroller's own tab stop outside its box, and its overflow clip hid that ring. Its content does the scrolling, so nothing else spills. */
   overflow: visible;
   border-radius: var(--wa-form-control-border-radius);
@@ -1445,9 +1446,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   min-inline-size: 0;
 }
 
-/* Room for the arrow and the row's gap, less the scroller's own overhang past the rail. */
+/* Room for the arrow and the row's gap. */
 .is-stuck > .course-rail > wa-scroller {
-  margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m) - var(--wa-space-s));
+  margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m));
 }
 
 .stuck-marker {
