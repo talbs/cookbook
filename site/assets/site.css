@@ -451,11 +451,12 @@ wa-page > main {
   }
 }
 
-/* The scroller clips at its edges, which would cut the first and last links' rings. The links get room inside it, and it grows by as much, so nothing moves.
+/* The scroller clips at its edges, which would cut the first and last links' rings. The links get room inside it, and it grows by as much at the start, so the first link doesn't move.
+   It doesn't grow at the end: its fade would run into the row's gap and stop just short of the switch.
    The scroll margin keeps that room when a tabbed-to link is scrolled into view. */
 wa-scroller:has(.course-links) {
   max-inline-size: none;
-  margin-inline: calc(-1 * var(--wa-space-s));
+  margin-inline-start: calc(-1 * var(--wa-space-s));
   /* The kit rings the scroller's own tab stop outside its box, and its overflow clip hid that ring. Its content does the scrolling, so nothing else spills. */
   overflow: visible;
   border-radius: var(--wa-form-control-border-radius);
@@ -1048,15 +1049,15 @@ button.shortcut {
   display: inline-block;
   inline-size: 1.25em;
   margin-inline: var(--wa-space-s) -1.25em;
-  font-size: 0.7em;
-  font-size: 1cap;
+  /* One size under either head: sized to the capitals, it shrank to 12px beside the cards' smaller head. */
+  font-size: 1.125rem;
   color: var(--note-ink);
   text-decoration: none;
   opacity: 0;
 }
 
 .heading-anchor wa-icon {
-  vertical-align: baseline;
+  vertical-align: -0.125em;
 }
 
 .section-head:hover > .heading-anchor {
@@ -1445,9 +1446,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   min-inline-size: 0;
 }
 
-/* Room for the arrow and the row's gap, less the scroller's own overhang past the rail. */
+/* Room for the arrow and the row's gap. */
 .is-stuck > .course-rail > wa-scroller {
-  margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m) - var(--wa-space-s));
+  margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m));
 }
 
 .stuck-marker {
@@ -1896,6 +1897,13 @@ wa-button.special::part(base) {
 :root:not([data-view='list']) .recipe-rows,
 [data-view='list'] .recipe-cards {
   display: none;
+}
+
+/* Over cards a course's head is a quiet label: at full size it read as one more card title. The list's plain rows leave it loud. */
+:root:not([data-view='list']) .course > .section-head {
+  --section-head-size: 1.125rem;
+  font-weight: var(--wa-font-weight-bold);
+  color: var(--note-ink);
 }
 
 .recipe-cards {
