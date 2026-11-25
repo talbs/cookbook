@@ -1886,31 +1886,39 @@ wa-button.special::part(base) {
 
 /* A shuffled food stands in for the 0, at a figure's height (about 0.7em in Free Lunch) on the baseline.
    The canvas hugs each icon, and the margin is the gap a real 0 would leave beside the 4s.
-   A few icons are drawn short of their canvas edges, so --glyph-inset (in the icon's 512 grid) takes that back. */
+   Cookie and citrus are drawn 16 units short of their canvas edges (out of 512), so --glyph-inset takes that back. */
 .not-found .stats wa-icon {
   font-size: 0.7em;
   vertical-align: baseline;
   margin-inline: calc(0.06em - var(--glyph-inset, 0) / 512 * 1em);
 }
 
-/* The wobble goes on the wrapper because the shown icon already runs the shuffle's arrival animation,
+.not-found .stats :is([name='cookie'], [name='citrus']) {
+  --glyph-inset: 16;
+}
+
+/* Hover motion goes on the wrapper because the shown icon already runs the shuffle's arrival animation,
    and swapping it out on the icon would replay that arrival when the pointer leaves. */
 .not-found .zero {
   display: inline-block;
   transform-origin: 50% 100%;
 }
 
+.not-found .zero:has(> [name='egg']:not([hidden])) {
+  --zero-motion: egg-wobble;
+}
+
+.not-found .zero:has(> [name='citrus']:not([hidden])) {
+  --zero-motion: citrus-squeeze;
+}
+
+.not-found .zero:has(> [name='melon']:not([hidden])) {
+  --zero-motion: melon-thud;
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .not-found .stats dd > span:hover .zero:has(> [name='egg']:not([hidden])) {
-    animation: egg-wobble calc(2 * var(--settle)) ease-out;
-  }
-
-  .not-found .stats dd > span:hover .zero:has(> [name='citrus']:not([hidden])) {
-    animation: citrus-squeeze calc(2 * var(--settle)) ease-out;
-  }
-
-  .not-found .stats dd > span:hover .zero:has(> [name='melon']:not([hidden])) {
-    animation: melon-thud calc(2 * var(--settle)) ease-out;
+  .not-found .stats dd > span:hover .zero {
+    animation: var(--zero-motion, none) calc(2 * var(--settle)) ease-out;
   }
 }
 

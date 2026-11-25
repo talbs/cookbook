@@ -1,8 +1,1 @@
-[
-  { "icon": "egg" },
-  { "icon": "olive" },
-  { "icon": "cookie", "inset": 16 },
-  { "icon": "melon" },
-  { "icon": "stroopwafel" },
-  { "icon": "citrus", "inset": 16 }
-]
+["egg", "olive", "cookie", "melon", "stroopwafel", "citrus"]
