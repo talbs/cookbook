@@ -38,9 +38,11 @@ eleventyComputed:
       </div>
       <div class="view-rest" hidden>
         <wa-radio-group class="view-switch mode-switch wa-visually-hidden-label" label="Show recipes as" orientation="horizontal" value="cards">
-          <wa-radio appearance="button" value="cards">Cards</wa-radio>
-          <wa-radio appearance="button" value="list">List</wa-radio>
+          <wa-radio appearance="button" value="cards" id="view-cards"><wa-icon name="grid-2" variant="regular" label="Cards"></wa-icon></wa-radio>
+          <wa-radio appearance="button" value="list" id="view-list"><wa-icon name="list" variant="regular" label="List"></wa-icon></wa-radio>
         </wa-radio-group>
+        <wa-tooltip for="view-cards" placement="bottom">Cards</wa-tooltip>
+        <wa-tooltip for="view-list" placement="bottom">List</wa-tooltip>
       </div>
     </div>
     <p class="match-count wa-visually-hidden" role="status"></p>
