@@ -1,6 +1,6 @@
 {#- A recipe as a card: title, description, then a foot of time, dots and the recipe's three icons. #}
 {% macro recipeCards(items, headingTag) %}
-<ul class="recipe-cards wa-list-plain wa-grid wa-gap-2xl" role="list">
+<ul class="recipe-cards wa-list-plain wa-grid" role="list">
   {%- for item in items %}
   {%- set hasTime = item.data.totalMinutes != null %}
   <li data-minutes="{{ item.data.totalMinutes if hasTime }}" data-seasons="{{ item.data.tags | seasonTags | join(' ') }}">

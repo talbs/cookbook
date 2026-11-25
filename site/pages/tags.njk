@@ -8,7 +8,7 @@ kickerCounts: tags
 
 {% block results %}
 {%- for group in collections | groupTagsByKind %}
-<section class="tag-group wa-stack wa-gap-m" aria-labelledby="{{ group.heading | lower }}-heading">
+<section class="tag-group wa-stack" aria-labelledby="{{ group.heading | lower }}-heading">
   <h2 class="section-head" id="{{ group.heading | lower }}-heading">{{ group.heading }}</h2>
   <ul class="listing-rows wa-list-plain" role="list">
     {%- for tag in group.tags %}
