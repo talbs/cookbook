@@ -1908,6 +1908,10 @@ wa-button.special::part(base) {
   .not-found .stats dd > span:hover .zero:has(> [name='citrus']:not([hidden])) {
     animation-name: zero-squeeze;
   }
+
+  .not-found .stats dd > span:hover .zero:has(> [name='melon']:not([hidden])) {
+    animation-name: zero-thud;
+  }
 }
 
 @keyframes zero-wobble {
@@ -1939,6 +1943,26 @@ wa-button.special::part(base) {
 
   80% {
     scale: 0.99 1;
+  }
+}
+
+@keyframes zero-thud {
+  20% {
+    translate: 0 -0.08em;
+    scale: 0.98 1.03;
+  }
+
+  42% {
+    translate: 0 0;
+    scale: 1.06 0.92;
+  }
+
+  65% {
+    scale: 0.98 1.02;
+  }
+
+  85% {
+    scale: 1.01 0.99;
   }
 }
 
