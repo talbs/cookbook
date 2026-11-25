@@ -3183,6 +3183,7 @@ wa-popover::part(popup__popup) {
   wa-button,
   wa-select,
   .shortcut wa-icon,
+  .mode-switch wa-icon,
   wa-button wa-icon,
   .quick-toggle wa-icon {
     transition: var(--scale-move);
@@ -3207,6 +3208,7 @@ wa-popover::part(popup__popup) {
 
   @media (hover: hover) {
     .shortcut:hover wa-icon,
+    .mode-switch wa-radio:not(:state(checked)):hover wa-icon,
     wa-button:hover wa-icon,
     .quick-toggle:hover wa-icon,
     wa-input::part(clear-button):hover,
@@ -3217,6 +3219,7 @@ wa-popover::part(popup__popup) {
   }
 
   .shortcut:active wa-icon,
+  .view-switch wa-radio:not(:state(checked)):active wa-icon,
   wa-input::part(clear-button):active,
   wa-dialog::part(close-button__button):active,
   wa-copy-button::part(button):active {
