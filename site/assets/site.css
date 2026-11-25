@@ -1608,9 +1608,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
     padding-block-end: var(--wa-space-l);
   }
 
-  /* Stacked, the credit and the links read as one pair. */
+  /* Stacked, the credit and the links are two separate lines, not a label over its value. */
   .site-footer .wa-split {
-    row-gap: var(--wa-space-xs);
+    row-gap: var(--gap-head);
   }
 
   /* Next to "Source" the arrow reads as a third link, so it goes to the far edge. */
@@ -2523,12 +2523,12 @@ wa-progress-bar.wait-run::part(indicator) {
 .connections {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 16rem));
-  row-gap: var(--wa-space-l);
+  row-gap: var(--gap-group);
 }
 
 /* Tops up the footer's gap to the rows' gap, so the step from the credit row to the tags row matches the rest. */
 .attribution .connections {
-  margin-block-start: calc(var(--wa-space-l) - var(--stack-gap));
+  margin-block-start: calc(var(--gap-group) - var(--stack-gap));
 }
 
 :is(.facts, .attribution, .colophon) dt {
