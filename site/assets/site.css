@@ -1901,20 +1901,20 @@ wa-button.special::part(base) {
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .not-found .stats dd > span:hover .zero {
-    animation: zero-wobble calc(2 * var(--settle)) ease-out;
+  .not-found .stats dd > span:hover .zero:has(> [name='egg']:not([hidden])) {
+    animation: egg-wobble calc(2 * var(--settle)) ease-out;
   }
 
   .not-found .stats dd > span:hover .zero:has(> [name='citrus']:not([hidden])) {
-    animation-name: zero-squeeze;
+    animation: citrus-squeeze calc(2 * var(--settle)) ease-out;
   }
 
   .not-found .stats dd > span:hover .zero:has(> [name='melon']:not([hidden])) {
-    animation-name: zero-thud;
+    animation: melon-thud calc(2 * var(--settle)) ease-out;
   }
 }
 
-@keyframes zero-wobble {
+@keyframes egg-wobble {
   20% {
     rotate: -9deg;
   }
@@ -1932,7 +1932,7 @@ wa-button.special::part(base) {
   }
 }
 
-@keyframes zero-squeeze {
+@keyframes citrus-squeeze {
   25% {
     scale: 0.88 1.04;
   }
@@ -1946,7 +1946,7 @@ wa-button.special::part(base) {
   }
 }
 
-@keyframes zero-thud {
+@keyframes melon-thud {
   20% {
     translate: 0 -0.08em;
     scale: 0.98 1.03;
