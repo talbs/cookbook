@@ -3987,6 +3987,12 @@ wa-page[view='desktop'] {
     --aside-size: var(--print-aside-size);
     --section-head-size: var(--print-head-size);
     --rule-gap: 1.25rem;
+    --gap-label: var(--wa-space-2xs);
+    --gap-row: var(--wa-space-xs);
+    --gap-head: var(--wa-space-s);
+    --gap-group: var(--wa-space-m);
+    --gap-subsection: var(--wa-space-l);
+    --gap-section: var(--wa-space-xl);
     print-color-adjust: exact;
   }
 
@@ -4113,6 +4119,10 @@ wa-page[view='desktop'] {
     content: '\00a0·';
   }
 
+  .needs-subhead {
+    --section-head-size: calc(var(--print-head-size) * 20 / 24);
+  }
+
   .needs {
     float: inline-start;
     inline-size: var(--print-needs-share);
@@ -4123,33 +4133,35 @@ wa-page[view='desktop'] {
     margin-inline-start: calc(var(--print-needs-share) + var(--print-column-gap));
   }
 
-  .need-group + .need-group,
+  /* Paper has no stack gaps, so pages break cleanly; each margin reads the same role the screen's gap does. */
   .need-group > * + *,
-  .checklist > li + li,
-  .timing-rows > li + li,
-  .lead-notes p + p {
-    margin-block-start: var(--wa-space-xs);
+  .timing-group > * + * {
+    margin-block-start: var(--gap-label);
   }
 
-  .need-group + .need-group:has(> .timing-section) {
-    margin-block-start: var(--wa-space-m);
+  .checklist > li + li,
+  .timing-rows > li + li {
+    margin-block-start: var(--gap-row);
+  }
+
+  :is(.section-head:not(.wa-visually-hidden), .needs-subhead:not(.timing-head > *), .timing-head) + *,
+  .lead-notes p + p {
+    margin-block-start: var(--gap-head);
+  }
+
+  .need-group + .need-group,
+  .timing-group + .timing-group,
+  .steps > li + li,
+  .phase-body > * + * {
+    margin-block-start: var(--gap-group);
   }
 
   .needs-more > section {
-    margin-block-start: var(--wa-space-l);
+    margin-block-start: var(--gap-subsection);
   }
 
-  .timing-group > .timing-section {
-    margin-block: var(--wa-space-s) var(--wa-space-3xs);
-  }
-
-  .phase-body > *,
-  .steps > li + li {
-    margin-block-start: var(--wa-space-m);
-  }
-
-  .phase-block + .phase-block > .phase {
-    margin-block-start: var(--wa-space-xl);
+  .phase-block + .phase-block {
+    margin-block-start: var(--gap-section);
   }
 
   .step-text,
@@ -4189,7 +4201,6 @@ wa-page[view='desktop'] {
   }
 
   .phase-body > .step-note {
-    margin-block: var(--wa-space-s) var(--wa-space-m);
     margin-inline-start: var(--print-step-indent);
   }
 
@@ -4211,11 +4222,6 @@ wa-page[view='desktop'] {
 
   .print-address span {
     white-space: nowrap;
-  }
-
-  .section-head,
-  .needs-subhead {
-    margin-block-end: var(--wa-space-s);
   }
 
   .section-head,
