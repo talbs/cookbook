@@ -10,6 +10,7 @@ const ACTIONS = {
   done: 'Clear',
 };
 const CHIME_NOTES = { check: 2, done: 3 };
+const NOTE_GAP_SECONDS = 0.25;
 const CHECK_WORDS = 'check now';
 const TELL_SOURCE = '/assets/vendor/tiny-tells.min.js';
 const TELL_STATES = { running: 'working', check: 'warning', done: 'done' };
@@ -127,11 +128,25 @@ function unlockAudio() {
   if (audio.state === 'suspended') audio.resume();
 }
 
+let quietAgainTimeout = null;
+
+// An iPhone on silent mutes page sound unless the page asks to be treated like a video. Asking also pauses music from other apps, so the page only asks while the chime rings.
+function ringThroughSilentSwitch(seconds) {
+  const session = navigator.audioSession;
+  if (!session) return;
+  session.type = 'playback';
+  clearTimeout(quietAgainTimeout);
+  quietAgainTimeout = setTimeout(() => {
+    session.type = 'auto';
+  }, seconds * 1000);
+}
+
 function playChime(noteCount) {
   if (!audio) return;
+  ringThroughSilentSwitch(noteCount * NOTE_GAP_SECONDS + 0.5);
   const start = audio.currentTime;
   for (let index = 0; index < noteCount; index++) {
-    const noteAt = start + index * 0.25;
+    const noteAt = start + index * NOTE_GAP_SECONDS;
     const tone = audio.createOscillator();
     const volume = audio.createGain();
     tone.frequency.value = 880;
