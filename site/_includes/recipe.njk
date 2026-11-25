@@ -165,26 +165,31 @@
   </div>
 
   <div class="recipe-body wa-stack wa-gap-3xl">
-    <section class="needs wa-stack wa-gap-m" aria-labelledby="ingredients-heading">
-      <h2 class="section-head" id="ingredients-heading">Ingredients</h2>
-      <div class="needs-list wa-stack wa-gap-s">
-        {%- for sectionIndex, chunk in recipe.ingredients | groupby("firstUseSectionIndex") %}
-        {%- set sectionName = recipe.sections[sectionIndex].name %}
-        {%- if sectionName %}
-        <p class="timing-section">{{ sectionName }}</p>
-        {%- endif %}
-        <ul class="checklist wa-list-plain wa-stack wa-gap-s" role="list">
-          {%- for ingredient in chunk %}
-          {{ checklistLine(ingredient, "need-" + sectionIndex + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
+    <section class="needs wa-stack" aria-labelledby="ingredients-heading">
+      <div class="needs-main wa-stack">
+        <h2 class="section-head" id="ingredients-heading">Ingredients</h2>
+        <div class="needs-list wa-stack">
+          {%- for sectionIndex, chunk in recipe.ingredients | groupby("firstUseSectionIndex") %}
+          {%- set sectionName = recipe.sections[sectionIndex].name %}
+          <div class="need-group wa-stack">
+            {%- if sectionName %}
+            <p class="timing-section">{{ sectionName }}</p>
+            {%- endif %}
+            <ul class="checklist wa-list-plain wa-stack" role="list">
+              {%- for ingredient in chunk %}
+              {{ checklistLine(ingredient, "need-" + sectionIndex + "-" + loop.index, collections.recipes, ingredientNote(ingredient)) }}
+              {%- endfor %}
+            </ul>
+          </div>
           {%- endfor %}
-        </ul>
-        {%- endfor %}
+        </div>
       </div>
-      <div class="needs-more">
+      {%- if recipe.cookware.length or recipe.leadNotes.length or recipe.timing or whyItWorks.length %}
+      <div class="needs-more wa-stack">
         {%- if recipe.cookware.length %}
-        <section class="equipment" aria-labelledby="equipment-heading">
+        <section class="equipment wa-stack" aria-labelledby="equipment-heading">
           <h3 class="needs-subhead" id="equipment-heading">Equipment</h3>
-          <ul class="wa-list-plain wa-grid wa-gap-xs" role="list">
+          <ul class="wa-list-plain wa-grid" role="list">
             {%- for item in recipe.cookware %}
             <li>{% if item.amount %}{{ item.amount | typeset | safe }} {% endif %}{{ item.name }}{% if item.note %} <span class="note">({{ item.note | typeset | safe }})</span>{% endif %}</li>
             {%- endfor %}
@@ -192,7 +197,7 @@
         </section>
         {%- endif %}
         {%- if recipe.leadNotes.length %}
-        <section class="lead-notes" aria-labelledby="lead-notes-heading">
+        <section class="lead-notes wa-stack" aria-labelledby="lead-notes-heading">
           <h3 class="needs-subhead" id="lead-notes-heading">Before You Start</h3>
           {%- for note in recipe.leadNotes %}
           {{ note | safe }}
@@ -200,25 +205,29 @@
         </section>
         {%- endif %}
         {%- if recipe.timing %}
-        <section class="timing" aria-labelledby="timing-heading">
-          <div class="wa-split wa-align-items-baseline wa-gap-s">
+        <section class="timing wa-stack" aria-labelledby="timing-heading">
+          <div class="timing-head wa-split wa-align-items-baseline wa-gap-s">
             <h3 class="needs-subhead" id="timing-heading">Timing</h3>
             <span class="timing-total">{{ recipe.timing.totalLabel }}</span>
           </div>
-          {%- for group in recipe.timing.sections %}
-          {%- if recipe.timing.isGrouped and group.name %}
-          <p class="timing-section wa-split wa-align-items-baseline wa-gap-s"><span>{{ group.name }}</span>{% if group.rows.length > 1 %}<span>{{ group.totalLabel }}</span>{% endif %}</p>
-          {%- endif %}
-          <ol class="timing-rows wa-list-plain wa-stack wa-gap-s" role="list">
-            {%- for row in group.rows %}
-            <li><a class="timing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-font-weight-bold wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
+          <div class="timing-groups wa-stack">
+            {%- for group in recipe.timing.sections %}
+            <div class="timing-group wa-stack">
+              {%- if recipe.timing.isGrouped and group.name %}
+              <p class="timing-section wa-split wa-align-items-baseline wa-gap-s"><span>{{ group.name }}</span>{% if group.rows.length > 1 %}<span>{{ group.totalLabel }}</span>{% endif %}</p>
+              {%- endif %}
+              <ol class="timing-rows wa-list-plain wa-stack" role="list">
+                {%- for row in group.rows %}
+                <li><a class="timing-row wa-split wa-flex-nowrap wa-align-items-baseline wa-gap-l" href="#{{ row.stepId }}"><span class="timing-label"><span class="timing-length wa-font-weight-bold wa-text-nowrap">{{ row.label | typeset | safe }}</span> <span class="timing-name">{{ row.name }}</span></span> <span class="timing-step wa-text-nowrap">step {{ row.stepNumber }}</span></a></li>
+                {%- endfor %}
+              </ol>
+            </div>
             {%- endfor %}
-          </ol>
-          {%- endfor %}
+          </div>
         </section>
         {%- endif %}
         {%- if whyItWorks.length %}
-        <section class="lead-notes" aria-labelledby="why-heading">
+        <section class="lead-notes wa-stack" aria-labelledby="why-heading">
           <h3 class="needs-subhead" id="why-heading">Why It Works</h3>
           {%- for reason in whyItWorks %}
           <p>{{ reason | safe }}</p>
@@ -226,6 +235,7 @@
         </section>
         {%- endif %}
       </div>
+      {%- endif %}
     </section>
 
     {%- if recipe.leadNotes.length %}

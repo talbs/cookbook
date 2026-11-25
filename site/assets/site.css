@@ -162,7 +162,6 @@ body {
   /* How far things that float above the page sit off its bottom edge, clear of the iPhone home bar. */
   --float-gap: max(var(--wa-space-l), env(safe-area-inset-bottom));
   --header-inset: var(--wa-space-xs);
-  --section-space: var(--wa-space-l);
   /* Paper. One rem is 9.5pt in print, and spacing scales with it: five more recipes fit one sheet than at 10pt.
      Serif text and heads sit a little under their screen ratios, which is what keeps most recipes to one sheet. */
   --print-root-size: 9.5pt;
@@ -1091,10 +1090,6 @@ button.shortcut {
   margin: 0;
 }
 
-.needs-subhead {
-  margin-block-end: var(--wa-space-s);
-}
-
 /* The negative end margin cancels the anchor's own width, so a heading wraps the same with or without it. */
 .heading-anchor {
   display: inline-block;
@@ -1132,7 +1127,11 @@ button.shortcut {
 .tag-group,
 .before-start,
 .prose-section,
-.empty-words {
+.empty-words,
+.needs-main,
+.equipment,
+.lead-notes,
+.timing {
   gap: var(--gap-head);
 }
 
@@ -1151,7 +1150,15 @@ button.shortcut {
 
 /* On one column (tablets) the lists would stretch edge to edge; past this the leaders get too long to follow. */
 .needs {
+  gap: var(--gap-subsection);
   max-inline-size: 34rem;
+}
+
+/* A size under Ingredients, so the sections stacked below it read as its children. */
+@media screen {
+  .needs-subhead {
+    --section-head-size: 1.25rem;
+  }
 }
 
 /* From tablet width the sticky bar is one row, as tall as its taller item. */
@@ -1171,29 +1178,14 @@ button.shortcut {
   .needs {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
     align-items: start;
     column-gap: var(--column-gap);
     max-inline-size: none;
   }
 
-  .needs > .section-head {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .needs-list {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .needs-more {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
-
-  .needs-more > :first-child {
-    margin-block-start: 0;
+  /* Equipment tops the second column level with Ingredients, so it takes the same size. */
+  .needs-subhead {
+    --section-head-size: 1.5rem;
   }
 }
 
@@ -1372,31 +1364,32 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-.needs-list > .timing-section {
-  margin: var(--wa-space-m) 0 0;
+.needs-list,
+.timing-groups {
+  gap: var(--gap-group);
 }
 
-.needs-list > .timing-section:first-child {
-  margin-block-start: 0;
+.need-group,
+.timing-group {
+  gap: var(--gap-label);
 }
 
-/* Each step up the column's spacing is clearly bigger than the last: 12px rows, then sections at this margin
-   plus the column's 16px gap (40px on phones, 48px wide), and 48px from the column to the method on phones. */
-.needs-more > section {
-  margin-block-start: var(--section-space);
+.need-group > .checklist,
+.timing-rows {
+  gap: var(--gap-row);
+}
+
+.needs-more {
+  gap: var(--gap-subsection);
 }
 
 .lead-notes p {
   margin: 0;
 }
 
-.lead-notes p + p {
-  margin-block-start: var(--wa-space-xs);
-}
-
 .equipment ul {
   --min-column-size: 9em;
-  column-gap: var(--wa-space-m);
+  gap: var(--gap-row) var(--wa-space-m);
   margin: 0;
 }
 
@@ -1406,7 +1399,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* Section labels and subtotals are supporting detail, so they match the ingredient notes. */
 .timing-section {
-  margin: var(--wa-space-s) 0 var(--wa-space-3xs);
+  margin: 0;
   font-size: var(--note-size);
   color: var(--note-ink);
   font-variant-numeric: tabular-nums;
@@ -3680,7 +3673,6 @@ wa-popover::part(popup__popup) {
   :root {
     --header-inset: var(--wa-space-xl);
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
-    --section-space: var(--wa-space-xl);
   }
 
   /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
@@ -4022,8 +4014,16 @@ wa-page[view='desktop'] {
      The ingredients column floats beside the steps, as in Overview on a wide screen. */
   .recipe-body,
   .needs,
+  .needs-main,
   .needs-list,
+  .need-group,
   .checklist,
+  .needs-more,
+  .equipment,
+  .lead-notes,
+  .timing,
+  .timing-groups,
+  .timing-group,
   .method,
   .steps,
   .step,
@@ -4105,10 +4105,24 @@ wa-page[view='desktop'] {
     margin-inline-start: calc(var(--print-needs-share) + var(--print-column-gap));
   }
 
-  .needs-list > * + *,
+  .need-group + .need-group,
+  .need-group > * + *,
   .checklist > li + li,
-  .timing-rows > li + li {
+  .timing-rows > li + li,
+  .lead-notes p + p {
     margin-block-start: var(--wa-space-xs);
+  }
+
+  .need-group + .need-group:has(> .timing-section) {
+    margin-block-start: var(--wa-space-m);
+  }
+
+  .needs-more > section {
+    margin-block-start: var(--wa-space-l);
+  }
+
+  .timing-group > .timing-section {
+    margin-block: var(--wa-space-s) var(--wa-space-3xs);
   }
 
   .method > * + *,
@@ -4184,7 +4198,7 @@ wa-page[view='desktop'] {
   .section-head,
   .needs-subhead,
   .timing-section,
-  .timing > div {
+  .timing-head {
     break-after: avoid;
   }
 
