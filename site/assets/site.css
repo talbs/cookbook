@@ -1904,6 +1904,10 @@ wa-button.special::part(base) {
   .not-found .stats dd > span:hover .zero {
     animation: zero-wobble calc(2 * var(--settle)) ease-out;
   }
+
+  .not-found .stats dd > span:hover .zero:has(> [name='citrus']:not([hidden])) {
+    animation-name: zero-squeeze;
+  }
 }
 
 @keyframes zero-wobble {
@@ -1921,6 +1925,20 @@ wa-button.special::part(base) {
 
   88% {
     rotate: 1deg;
+  }
+}
+
+@keyframes zero-squeeze {
+  25% {
+    scale: 0.88 1.04;
+  }
+
+  55% {
+    scale: 1.04 0.98;
+  }
+
+  80% {
+    scale: 0.99 1;
   }
 }
 
