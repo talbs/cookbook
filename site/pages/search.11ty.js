@@ -12,6 +12,7 @@ export function render({ collections }) {
     title: item.data.title,
     description: item.data.description,
     tags: item.data.tags,
+    seasons: this.seasonTags(item.data.tags),
     course: item.data.course,
     ingredients: listIngredientNames(item.data.recipe),
     time: item.data.timeLabel ?? null,

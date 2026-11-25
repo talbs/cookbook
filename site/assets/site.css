@@ -1884,18 +1884,41 @@ wa-button.special::part(base) {
   text-align: center;
 }
 
-/* The egg stands in for the 0, so it matches a figure's height (about 0.7em in Free Lunch) and sits on the baseline.
-   The icon box is far wider than the egg, so negative margins pull the 4s in to the gap a real 0 would leave. */
+/* A shuffled food stands in for the 0, at a figure's height (about 0.7em in Free Lunch) on the baseline.
+   The canvas hugs each icon, and the margin is the gap a real 0 would leave beside the 4s.
+   Cookie and citrus are drawn 16 units short of their canvas edges (out of 512), so --glyph-inset takes that back. */
 .not-found .stats wa-icon {
   font-size: 0.7em;
   vertical-align: baseline;
-  margin-inline: -0.19em;
+  margin-inline: calc(0.06em - var(--glyph-inset, 0) / 512 * 1em);
+}
+
+.not-found .stats :is([name='cookie'], [name='citrus']) {
+  --glyph-inset: 16;
+}
+
+/* Hover motion goes on the wrapper because the shown icon already runs the shuffle's arrival animation,
+   and swapping it out on the icon would replay that arrival when the pointer leaves. */
+.not-found .zero {
+  display: inline-block;
   transform-origin: 50% 100%;
 }
 
+.not-found .zero:has(> [name='egg']:not([hidden])) {
+  --zero-motion: egg-wobble;
+}
+
+.not-found .zero:has(> [name='citrus']:not([hidden])) {
+  --zero-motion: citrus-squeeze;
+}
+
+.not-found .zero:has(> [name='melon']:not([hidden])) {
+  --zero-motion: melon-thud;
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .not-found .stats dd > span:hover wa-icon {
-    animation: egg-wobble calc(2 * var(--settle)) ease-out;
+  .not-found .stats dd > span:hover .zero {
+    animation: var(--zero-motion, none) calc(2 * var(--settle)) ease-out;
   }
 }
 
@@ -1914,6 +1937,40 @@ wa-button.special::part(base) {
 
   88% {
     rotate: 1deg;
+  }
+}
+
+@keyframes citrus-squeeze {
+  25% {
+    scale: 0.88 1.04;
+  }
+
+  55% {
+    scale: 1.04 0.98;
+  }
+
+  80% {
+    scale: 0.99 1;
+  }
+}
+
+@keyframes melon-thud {
+  20% {
+    translate: 0 -0.08em;
+    scale: 0.98 1.03;
+  }
+
+  42% {
+    translate: 0 0;
+    scale: 1.06 0.92;
+  }
+
+  65% {
+    scale: 0.98 1.02;
+  }
+
+  85% {
+    scale: 1.01 0.99;
   }
 }
 
