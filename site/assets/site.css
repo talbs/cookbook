@@ -1142,7 +1142,10 @@ button.shortcut {
 }
 
 .recipe-body,
-.phases {
+.phases,
+.about-body,
+.about-prose,
+.about-data {
   gap: var(--gap-section);
 }
 
@@ -2170,12 +2173,6 @@ wa-button.special::part(base) {
 }
 
 /* About's sources sit in a side column, too narrow for two columns of rows. */
-.about-body,
-.about-prose,
-.about-data {
-  row-gap: var(--gap-section);
-}
-
 .about-body .listing-rows {
   column-count: 1;
 }
