@@ -53,7 +53,7 @@ Two things to know on a fresh clone:
 2. `lib/recipe.js` reads the file with the official Cooklang parser (`@cooklang/cooklang`), then shapes the result for the page: ingredients with their amounts added up, equipment, steps, timers and notes.
 3. `lib/validate-recipe.js` checks the recipe against this site's rules. One bad recipe stops the build with exit code 1 and names the file. [When the build fails](docs/recipe-format.md#when-the-build-fails) lists each message.
 4. `site/_includes/recipe.njk` lays the recipe out as a page at `/recipes/<file name>/`. It also writes [schema.org Recipe](https://schema.org/Recipe) data into the page for search engines.
-5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search dialog reads.
+5. The templates in `site/pages/` build everything else from the same recipes: the index, the tag pages and the About page. They also write `search.json`, which the search dialog and the 404's Today's Special read.
 6. The build also publishes each recipe's `.cook` file as plain text at `/recipes/<file name>.txt` and writes `/llms.txt`, a list of every recipe for AI agents. `/sitemap.xml` lists every page for search engines, and `/robots.txt` points them to it. On a recipe page, the File link in the footer shows the file.
 
 No bundler, no framework. The scripts in `site/assets/` are plain ES modules, and the browser loads them as written.
@@ -70,7 +70,7 @@ site/                 Everything that turns recipes into a website
     tag.njk           /tags/<tag>/, one page per tag
     about.njk         /about/
     404.njk
-    search.11ty.js    /search.json, what the search dialog reads
+    search.11ty.js    /search.json, what search and the 404 read
     raw-recipe.11ty.js /recipes/<file name>.txt, each recipe's .cook file as plain text
     llms.11ty.js      /llms.txt, every recipe's file, grouped by course
     sitemap.11ty.js   /sitemap.xml, every page's address for search engines
