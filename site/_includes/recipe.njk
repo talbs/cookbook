@@ -16,8 +16,8 @@
 
 {% macro modeSwitch() %}
     <wa-radio-group class="mode-switch wa-visually-hidden-label" label="View" orientation="horizontal" value="overview">
-      <wa-radio appearance="button" value="overview">Overview</wa-radio>
-      <wa-radio appearance="button" value="cook">Cook</wa-radio>
+      <wa-radio appearance="button" value="overview"><wa-icon name="book-open" variant="regular"></wa-icon>Overview</wa-radio>
+      <wa-radio appearance="button" value="cook"><wa-icon name="fire-flame-curved" variant="regular"></wa-icon>Cook</wa-radio>
     </wa-radio-group>
 {%- endmacro %}
 

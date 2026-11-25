@@ -993,6 +993,12 @@ button.shortcut {
   color: var(--note-ink);
 }
 
+.mode-switch wa-radio::part(label) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
+}
+
 .mode-switch wa-radio:state(checked),
 .quick-toggle[aria-pressed='true'] {
   font-weight: var(--wa-font-weight-bold);
