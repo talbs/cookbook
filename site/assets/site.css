@@ -1133,7 +1133,8 @@ button.shortcut {
 .lead-notes,
 .timing,
 .method,
-.phase-block {
+.phase-block,
+.colophon {
   gap: var(--gap-head);
 }
 
@@ -1644,7 +1645,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 .tag-group + .tag-group::before {
   content: '';
   block-size: var(--band);
-  margin-block-end: var(--wa-space-l);
+  margin-block-end: calc(var(--gap-group) - var(--gap-head));
   background: var(--divider-ink);
   mask: var(--divider);
 }
@@ -1657,6 +1658,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 /* The results area runs down to the footer, like the 404's. */
 .listing-results {
   flex: 1;
+  gap: var(--gap-group);
 }
 
 /* The first course gets the same room above its heading as the courses after a divider. */
@@ -1887,6 +1889,11 @@ wa-button.special::part(base) {
 .not-found {
   --stat-size: clamp(7rem, 30vw, 18rem);
   flex: 1;
+  gap: var(--gap-subsection);
+}
+
+.not-found > .wa-split {
+  row-gap: var(--gap-group);
 }
 
 .not-found .stats {
@@ -2014,7 +2021,7 @@ wa-button.special::part(base) {
 .recipe-cards {
   --min-column-size: 17rem;
   margin: 0;
-  column-gap: var(--column-gap);
+  gap: var(--gap-subsection);
   /* wa-grid stretches a lone card across the whole row; auto-fill keeps every card the same width, in a course of one. */
   grid-template-columns: repeat(auto-fill, minmax(min(var(--min-column-size), 100%), 1fr));
 }
@@ -2160,6 +2167,12 @@ wa-button.special::part(base) {
 }
 
 /* About's sources sit in a side column, too narrow for two columns of rows. */
+.about-body,
+.about-prose,
+.about-data {
+  row-gap: var(--gap-section);
+}
+
 .about-body .listing-rows {
   column-count: 1;
 }

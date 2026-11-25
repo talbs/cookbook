@@ -9,8 +9,8 @@ description: Who’s cooking, where it came from, and what’s under the hood. (
 {% block results %}
 {%- set recipes = collections.recipes %}
 {%- set sources = recipes | recipeSources %}
-<div class="about-body wa-stack wa-gap-3xl">
-  <div class="about-prose wa-stack wa-gap-3xl">
+<div class="about-body wa-stack">
+  <div class="about-prose wa-stack">
     <section class="prose-section wa-stack">
       <h2 class="section-head">Why This Exists</h2>
       <p class="wa-text-pretty">Someone always asks for the recipe. So I built an answer: one link to send, instead of a screenshot of a screenshot of a page that’s mostly ads.</p>
@@ -23,7 +23,7 @@ description: Who’s cooking, where it came from, and what’s under the hood. (
     <section class="prose-section wa-stack">
       <h2 class="section-head">Colophon</h2>
       <p class="wa-text-pretty">What the site is made of. The recipes would taste the same without it.</p>
-      <dl class="colophon wa-stack wa-gap-m wa-text-pretty">
+      <dl class="colophon wa-stack wa-text-pretty">
         <div><dt>Recipes</dt><dd>Plain text files, written in <a href="https://cooklang.org">Cooklang</a> and read by its official parser. Every recipe page links to its file, and <a href="/llms.txt">llms.txt</a> lists them all.</dd></div>
         <div><dt>Type</dt><dd><a href="https://simplebits.shop/products/free-lunch">Free Lunch</a> by Dan Cederholm for titles and the site name. <a href="https://fonts.google.com/specimen/Hanken+Grotesk">Hanken Grotesk</a> for labels and lists. <a href="https://fonts.google.com/specimen/Ancizar+Serif">Ancizar Serif</a> for the long reads.</dd></div>
         <div><dt>Icons</dt><dd><a href="https://fontawesome.com">Font Awesome</a>, by way of <a href="https://webawesome.com">Web Awesome</a>, which also does the page shell and the controls.</dd></div>
@@ -35,7 +35,7 @@ description: Who’s cooking, where it came from, and what’s under the hood. (
       </dl>
     </section>
   </div>
-  <div class="about-data wa-stack wa-gap-3xl">
+  <div class="about-data wa-stack">
     <section class="prose-section wa-stack">
       <h2 class="section-head">By the Numbers</h2>
       {%- macro statTicker(count) -%}
