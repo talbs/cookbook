@@ -1884,22 +1884,29 @@ wa-button.special::part(base) {
   text-align: center;
 }
 
-/* The egg stands in for the 0, so it matches a figure's height (about 0.7em in Free Lunch) and sits on the baseline.
-   The icon box is far wider than the egg, so negative margins pull the 4s in to the gap a real 0 would leave. */
+/* A shuffled food stands in for the 0, at a figure's height (about 0.7em in Free Lunch) on the baseline.
+   The canvas hugs each icon, and the margin is the gap a real 0 would leave beside the 4s.
+   A few icons are drawn short of their canvas edges, so --glyph-inset (in the icon's 512 grid) takes that back. */
 .not-found .stats wa-icon {
   font-size: 0.7em;
   vertical-align: baseline;
-  margin-inline: -0.19em;
+  margin-inline: calc(0.06em - var(--glyph-inset, 0) / 512 * 1em);
+}
+
+/* The wobble goes on the wrapper because the shown icon already runs the shuffle's arrival animation,
+   and swapping it out on the icon would replay that arrival when the pointer leaves. */
+.not-found .zero {
+  display: inline-block;
   transform-origin: 50% 100%;
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .not-found .stats dd > span:hover wa-icon {
-    animation: egg-wobble calc(2 * var(--settle)) ease-out;
+  .not-found .stats dd > span:hover .zero {
+    animation: zero-wobble calc(2 * var(--settle)) ease-out;
   }
 }
 
-@keyframes egg-wobble {
+@keyframes zero-wobble {
   20% {
     rotate: -9deg;
   }
