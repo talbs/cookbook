@@ -4243,7 +4243,8 @@ wa-page[view='desktop'] {
   .recipe-note li,
   .lead-notes p,
   .facts,
-  .equipment {
+  .equipment,
+  .timing {
     break-inside: avoid;
   }
 }
