@@ -773,7 +773,7 @@ wa-scroller[hidden] {
 
 /* In a narrow row the switch leads and print and share follow it. They stay first in the markup,
    which is the order the wide layout shows and a keyboard walks. */
-.mode-rest .mode-switch {
+.mode-rest .switch-slot {
   flex: 1;
   order: -1;
 }
@@ -845,7 +845,8 @@ wa-scroller[hidden] {
 
 .mode-switch::part(form-control-input) {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* A bare 1fr never shrinks below its label, so the wider label took more than the half the hatch covers. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0;
 }
 
@@ -1002,6 +1003,11 @@ button.shortcut {
   gap: var(--wa-space-xs);
 }
 
+.mode-switch wa-radio,
+.quick-toggle {
+  white-space: nowrap;
+}
+
 .mode-switch wa-radio:state(checked),
 .quick-toggle[aria-pressed='true'] {
   font-weight: var(--wa-font-weight-bold);
@@ -1011,6 +1017,29 @@ button.shortcut {
 .mode-switch wa-radio:not(:state(checked)):hover,
 .quick-toggle[aria-pressed='false']:hover {
   color: var(--accent);
+}
+
+/* The slot measures the room the switch really has, which differs between the bar and the resting row on one screen.
+   Under 232px the two words no longer fit their halves, so the switch folds to its icons and keeps the words for screen readers.
+   The tooltips only stand in for the words while they are hidden. */
+.switch-slot {
+  container-type: inline-size;
+}
+
+@container (width < 14.5rem) {
+  .switch-text {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+
+@container (width >= 14.5rem) {
+  .switch-tip {
+    display: none;
+  }
 }
 
 /* The kit rings the focused radio, which lands on top of the group's frame, so the group wears the ring instead.
@@ -3228,7 +3257,7 @@ wa-popover::part(popup__popup) {
   }
 
   .shortcut:active wa-icon,
-  .view-switch wa-radio:not(:state(checked)):active wa-icon,
+  .mode-switch wa-radio:not(:state(checked)):active wa-icon,
   wa-input::part(clear-button):active,
   wa-dialog::part(close-button__button):active,
   wa-copy-button::part(button):active {

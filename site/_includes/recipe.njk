@@ -14,11 +14,15 @@
     <link rel="alternate" type="text/plain" title="Cooklang source" href="{{ site.url }}/recipes/{{ page.fileSlug }}.txt">
 {% endblock %}
 
-{% macro modeSwitch() %}
+{% macro modeSwitch(id) %}
+    <div class="switch-slot">
     <wa-radio-group class="mode-switch wa-visually-hidden-label" label="View" orientation="horizontal" value="overview">
-      <wa-radio appearance="button" value="overview"><wa-icon name="book-open" variant="regular"></wa-icon>Overview</wa-radio>
-      <wa-radio appearance="button" value="cook"><wa-icon name="fire-flame-curved" variant="regular"></wa-icon>Cook</wa-radio>
+      <wa-radio appearance="button" value="overview" id="{{ id }}-overview"><wa-icon name="book-open" variant="regular"></wa-icon><span class="switch-text">Overview</span></wa-radio>
+      <wa-radio appearance="button" value="cook" id="{{ id }}-cook"><wa-icon name="fire-flame-curved" variant="regular"></wa-icon><span class="switch-text">Cook</span></wa-radio>
     </wa-radio-group>
+    <wa-tooltip class="switch-tip" for="{{ id }}-overview" placement="bottom">Overview</wa-tooltip>
+    <wa-tooltip class="switch-tip" for="{{ id }}-cook" placement="bottom">Cook</wa-tooltip>
+    </div>
 {%- endmacro %}
 
 {% macro printControl(id) %}
@@ -93,7 +97,7 @@
         {{ shareControl("shortcut-share") }}
       </nav>
     </div>
-    {{ modeSwitch() }}
+    {{ modeSwitch("shortcut-mode") }}
   </div>
 {% endblock %}
 
@@ -157,7 +161,7 @@
       {{ printControl("resting-print") }}
       {{ shareControl("resting-share") }}
     </div>
-    {{ modeSwitch() }}
+    {{ modeSwitch("resting-mode") }}
   </div>
 
   <div class="recipe-body wa-stack wa-gap-3xl">
