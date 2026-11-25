@@ -124,6 +124,9 @@ body {
   --gap-group: var(--wa-space-xl);
   --gap-subsection: var(--wa-space-3xl);
   --gap-section: var(--wa-space-4xl);
+  /* Not roles, on purpose: the page header stacks on --stack-gap; the dotted-rule math (--rule-gap, .header-rule,
+     .footer-rule, the rule between courses, .attribution and its .connections); .course-bar ~ .listing-results;
+     .recipe-body's top margin on wide screens; listing rows' tap padding; and everything inside controls and dialogs. */
   --ornament-size: 1.125rem;
   /* The page's springy moves share one length; the curves differ only in how far they overshoot. */
   --settle: 420ms;
@@ -2532,7 +2535,7 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 :is(.facts, .attribution, .colophon) dt {
-  margin-block-end: var(--wa-space-xs);
+  margin-block-end: var(--gap-label);
   font-weight: var(--wa-font-weight-bold);
   color: var(--ink);
 }
