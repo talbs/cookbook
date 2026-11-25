@@ -771,11 +771,14 @@ wa-scroller[hidden] {
   padding-block: var(--wa-space-m);
 }
 
+/* In a narrow row the switch leads and print and share follow it. They stay first in the markup,
+   which is the order the wide layout shows and a keyboard walks. */
 .mode-rest .mode-switch {
   flex: 1;
+  order: -1;
 }
 
-/* The bar only shows after scrolling, so print and share also rest here, ahead of the switch as they are in the bar.
+/* The bar only shows after scrolling, so print and share also rest here.
    They wear the switch's frame at the switch's height, so the row reads as one set of controls. */
 .mode-rest .page-action {
   inline-size: var(--rest-switch-height);
