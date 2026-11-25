@@ -1647,7 +1647,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   font-variant-numeric: tabular-nums;
 }
 
-.course + .course::before,
+.course:not([hidden]) ~ .course::before,
 .tag-group + .tag-group::before {
   content: '';
   block-size: var(--band);
