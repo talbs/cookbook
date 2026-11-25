@@ -1131,20 +1131,23 @@ button.shortcut {
 .needs-main,
 .equipment,
 .lead-notes,
-.timing {
+.timing,
+.method,
+.phase-block {
   gap: var(--gap-head);
 }
 
-.method > .phase {
-  margin-block-start: var(--wa-space-xl);
+.recipe-body,
+.phases {
+  gap: var(--gap-section);
 }
 
-.method > h2 + .phase {
-  margin-block-start: 0;
+.phase-body {
+  gap: var(--gap-group);
 }
 
 .steps {
-  --step-gap: var(--wa-space-l);
+  --step-gap: var(--gap-group);
   gap: var(--step-gap);
 }
 
@@ -2308,10 +2311,6 @@ wa-details {
   mask: var(--divider);
 }
 
-.method > .step-note {
-  margin-block: var(--wa-space-s) var(--wa-space-m);
-}
-
 /* After a step the cook walks away from, Cook draws a pause across the page: the switch's hatch, then how long. */
 .wait-mark {
   font-size: var(--note-size);
@@ -3214,7 +3213,7 @@ wa-popover::part(popup__popup) {
   }
 
   [data-mode='cook'] .steps {
-    --step-gap: var(--wa-space-2xl);
+    --step-gap: var(--gap-subsection);
   }
 
   [data-mode='cook'] .step-needs {
@@ -3827,7 +3826,7 @@ wa-page[view='desktop'] {
     --needs-column: calc(4 / 11 * (100% - var(--column-gap)));
   }
 
-  [data-mode='cook'] :is(.before-start, .method > :not(.steps), .wait-mark) {
+  [data-mode='cook'] :is(.before-start, .method > h2, .phase, .phase-body > :not(.steps), .wait-mark) {
     margin-inline-end: calc(var(--needs-column) + var(--column-gap));
   }
 
@@ -4025,6 +4024,9 @@ wa-page[view='desktop'] {
   .timing-groups,
   .timing-group,
   .method,
+  .phases,
+  .phase-block,
+  .phase-body,
   .steps,
   .step,
   .timing-rows {
@@ -4125,9 +4127,13 @@ wa-page[view='desktop'] {
     margin-block: var(--wa-space-s) var(--wa-space-3xs);
   }
 
-  .method > * + *,
+  .phase-body > *,
   .steps > li + li {
     margin-block-start: var(--wa-space-m);
+  }
+
+  .phase-block + .phase-block > .phase {
+    margin-block-start: var(--wa-space-xl);
   }
 
   .step-text,
@@ -4166,7 +4172,8 @@ wa-page[view='desktop'] {
     text-align: end;
   }
 
-  .method > .step-note {
+  .phase-body > .step-note {
+    margin-block: var(--wa-space-s) var(--wa-space-m);
     margin-inline-start: var(--print-step-indent);
   }
 
