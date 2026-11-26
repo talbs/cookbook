@@ -664,7 +664,7 @@ wa-scroller[hidden] {
 
 /* Two columns until every recipe's facts fit on one line (the widest, pancakes, measures 466px);
    past that each fact takes its own width with even gaps, as in the wide layout. */
-@media screen and (33rem <= width < 60rem) {
+@media screen and (min-width: 33rem) {
   .facts {
     display: flex;
     flex-wrap: wrap;
@@ -676,7 +676,7 @@ wa-scroller[hidden] {
   }
 }
 
-/* The facts only scroll on tablets. Everywhere else, paper included, the scroller steps out of the layout and they sit where they always have. */
+/* Below 48rem, paper included, the scroller steps out of the layout and the facts sit where they always have. */
 .facts-scroller,
 .facts-scroller::part(content) {
   display: contents;
@@ -3366,13 +3366,7 @@ wa-popover::part(popup__popup) {
   }
 
   /* Named too, so the row's paper strip, which moves as its own layer, can't cover the facts mid-flip. */
-  @media (min-width: 60rem) {
-    .facts {
-      view-transition-name: recipe-facts;
-    }
-  }
-
-  @media (48rem <= width < 60rem) {
+  @media (min-width: 48rem) {
     .facts-scroller {
       view-transition-name: recipe-facts;
     }
@@ -3453,7 +3447,7 @@ wa-popover::part(popup__popup) {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-rest, .facts, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
+    :is(.mode-rest, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
     view-transition-name: none;
   }
 
@@ -3677,14 +3671,81 @@ wa-popover::part(popup__popup) {
   }
 }
 
-/* From tablets up the row is one flank: the title takes the spare room, and print, share and the switch keep their desktop sizes. */
+/* From tablets up the header is one two-track grid. The facts, and the row's title once it sticks, take the first track; print, share and the switch take the second at their desktop sizes. */
 @media screen and (min-width: 48rem) {
-  /* The title truncates instead of claiming half the row, which at 48rem would push the switch off the edge.
-     The row is only as tall as its controls, so their top lines up with the facts beside them; its paper reaches past it. */
+  .recipe {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--wa-space-xl);
+    align-items: start;
+  }
+
+  .recipe > *,
+  .recipe-head h1,
+  .description,
+  .header-rule {
+    grid-column: 1 / -1;
+  }
+
+  .recipe-head,
+  .recipe-intro {
+    display: contents;
+  }
+
+  .recipe-head h1 {
+    grid-row: 1;
+  }
+
+  .description {
+    grid-row: 2;
+  }
+
+  .header-rule {
+    grid-row: 3;
+  }
+
+  /* Above the mode row's paper, which runs the full width. Only as wide as its facts, so it never covers print and share. */
+  .facts-scroller {
+    position: relative;
+    z-index: 3;
+    grid-area: 4 / 1;
+    justify-self: start;
+  }
+
+  .facts-scroller,
+  .facts-scroller::part(content),
+  .facts-scroller::part(start-shadow),
+  .facts-scroller::part(end-shadow) {
+    display: block;
+  }
+
+  .facts {
+    flex-wrap: nowrap;
+  }
+
+  /* Without a zero content share, WebKit gives the title half the row at 48rem and pushes the switch off the edge.
+     On the parent's columns, the auto track is exactly as wide as the controls, so nothing adds up their widths by hand.
+     The row is only as tall as its controls, so their top lines up with the facts beside them; its paper reaches past it.
+     A sticky item stops at the end of its own cell, so the row's cell runs down through the body's row. */
   .mode-rest {
     --content-percentage: 0;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-row: 4 / span 2;
+    align-self: start;
     inset-block-start: var(--wa-space-m);
     padding: 0;
+  }
+
+  .recipe-body {
+    grid-row: 5;
+  }
+
+  .recipe .stuck-marker {
+    grid-area: 4 / 1;
+    align-self: start;
+    margin-block: 0;
+    translate: 0 calc(-1 * var(--wa-space-m));
   }
 
   .mode-rest::before {
@@ -3737,32 +3798,7 @@ wa-popover::part(popup__popup) {
   }
 }
 
-/* The facts sit beside the controls on one line, scrolling sideways once they run up against them. */
 @media screen and (48rem <= width < 60rem) {
-  .recipe-intro {
-    position: relative;
-  }
-
-  /* Out of the flow, so the row moves up into their place, and no wider than the room the switch, print, share and the row's gap leave. Above the row's paper, as on wide screens. */
-  .facts-scroller {
-    position: absolute;
-    z-index: 3;
-    inset-block-start: calc(100% + var(--stack-gap));
-    inset-inline-start: 0;
-    max-inline-size: calc(100% - var(--switch-column) - 2 * var(--rest-switch-height) - var(--wa-space-xs) - var(--wa-space-m) - var(--wa-space-xl));
-  }
-
-  .facts-scroller,
-  .facts-scroller::part(content),
-  .facts-scroller::part(start-shadow),
-  .facts-scroller::part(end-shadow) {
-    display: block;
-  }
-
-  .facts {
-    flex-wrap: nowrap;
-  }
-
   /* The footer's details share one wrapping row under the dotted line, its rows as far apart as the lists' own. The line's margins take the bigger gap back.
      Cook hides the details, so it keeps the narrow footer and the space under the line. */
   [data-mode='overview'] .attribution {
@@ -3775,11 +3811,6 @@ wa-popover::part(popup__popup) {
   .attribution .footer-rule {
     flex-basis: 100%;
   }
-
-  /* The row sticks a gap below the top, so the marker sits that much above it. */
-  .recipe .stuck-marker {
-    translate: 0 calc(var(--stack-gap) / 2 - var(--wa-space-m));
-  }
 }
 
 /* Two columns need about 300px for the ingredients; below 60rem that column would wrap most names. */
@@ -3789,17 +3820,8 @@ wa-popover::part(popup__popup) {
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
   }
 
-  /* The first column repeats the 4/11 ingredients column below, so the facts start where the steps start. */
   .recipe {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
-    display: grid;
-    grid-template-columns: var(--side-column) minmax(0, 1fr) var(--switch-column);
-    column-gap: var(--column-gap);
-    align-items: start;
-  }
-
-  .recipe > * {
-    grid-column: 1 / -1;
   }
 
   /* About borrows the recipe's columns: the dotted list takes the ingredients' place on the left, the prose the steps'. */
@@ -3819,16 +3841,6 @@ wa-popover::part(popup__popup) {
     flex-basis: calc(100% - var(--side-column) - var(--column-gap));
   }
 
-  .recipe-head,
-  .recipe-intro {
-    display: contents;
-  }
-
-  .recipe-head h1 {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
   /* The title has the full row here, so titles up to 50 characters keep the top size in two lines and only the longest step down. */
   .recipe-head h1.is-longer {
     --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
@@ -3836,48 +3848,9 @@ wa-popover::part(popup__popup) {
 
   /* Capped near 65 characters a line. */
   .description {
-    grid-column: 1 / -1;
-    grid-row: 2;
     max-inline-size: 30em;
     font-size: var(--wa-font-size-2xl);
     line-height: 1.35;
-  }
-
-  .header-rule {
-    grid-column: 1 / -1;
-    grid-row: 3;
-  }
-
-  /* Above the mode row's paper, which runs the full width. Only as wide as its facts, so it never covers print and share. */
-  .facts {
-    position: relative;
-    z-index: 3;
-    justify-self: start;
-    grid-column: 1 / 3;
-    grid-row: 4;
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: max-content;
-    column-gap: var(--wa-space-2xl);
-  }
-
-  /* A sticky item stops at the end of its own cell, so the row's cell runs down through the body's row. */
-  .mode-rest {
-    grid-column: 1 / -1;
-    grid-row: 4 / span 2;
-    align-self: start;
-  }
-
-  .recipe-body {
-    grid-row: 5;
-  }
-
-  /* Beside the switch, a sticking distance above it. */
-  .recipe .stuck-marker {
-    grid-area: 4 / 3;
-    align-self: start;
-    margin-block: 0;
-    translate: 0 calc(-1 * var(--wa-space-m));
   }
 
   .row-title {
@@ -3887,7 +3860,7 @@ wa-popover::part(popup__popup) {
 
 @media screen and (min-width: 60rem) {
   .attribution {
-    grid-template-columns: subgrid;
+    grid-template-columns: var(--side-column) minmax(0, 1fr);
     column-gap: var(--column-gap);
     margin-block-start: var(--wa-space-l);
   }
