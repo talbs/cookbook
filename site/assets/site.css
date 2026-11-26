@@ -530,7 +530,7 @@ wa-scroller[hidden] {
   text-box: trim-both cap alphabetic;
 }
 
-@media (width < 64rem) {
+@media (width < 60rem) {
   /* Titles past about 28 characters step down a size, so they don't run to four or five lines. */
   .recipe-head h1.is-long {
     --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
@@ -614,7 +614,7 @@ wa-scroller[hidden] {
   line-height: 1.4;
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 60rem) {
   .listing-head .description {
     flex: 0 0 calc(50% - var(--column-gap) / 2);
     max-inline-size: none;
@@ -646,7 +646,7 @@ wa-scroller[hidden] {
 
 /* Two columns until every recipe's facts fit on one line (the widest, pancakes, measures 466px);
    past that each fact takes its own width with even gaps, as in the wide layout. */
-@media screen and (33rem <= width < 64rem) {
+@media screen and (33rem <= width < 60rem) {
   .facts {
     display: flex;
     flex-wrap: wrap;
@@ -1184,7 +1184,7 @@ button.shortcut {
 
 /* Tablets have room for two columns before the page splits into its desktop grid:
    ingredients on the left, equipment, notes and timing on the right, instead of one capped column with empty space beside it. */
-@media screen and (48rem <= width < 64rem) {
+@media screen and (48rem <= width < 60rem) {
   .needs {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -3699,8 +3699,8 @@ wa-popover::part(popup__popup) {
   }
 }
 
-/* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
-@media screen and (min-width: 64rem) {
+/* Two columns need about 300px for the ingredients; below 60rem that column would wrap most names. */
+@media screen and (min-width: 60rem) {
   :root {
     --header-inset: var(--wa-space-xl);
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
@@ -3814,7 +3814,7 @@ wa-page[view='desktop'] {
   }
 }
 
-@media screen and (min-width: 64rem) {
+@media screen and (min-width: 60rem) {
   .recipe-body {
     margin-block-start: var(--wa-space-l);
   }
