@@ -22,6 +22,9 @@ eleventyComputed:
 {% endblock %}
 
 {% block toolbar %}
+    <wa-intersection-observer intersect-class="is-scrolled-past" root-margin="100000px 0px -100% 0px">
+      <span class="stuck-marker" aria-hidden="true"></span>
+    </wa-intersection-observer>
     <div class="course-bar wa-cluster wa-flex-nowrap wa-gap-m">
       <button class="quick-toggle" id="quick-toggle" type="button" aria-pressed="false" hidden><wa-icon name="clock" variant="regular"></wa-icon>Quick</button>
       <wa-tooltip for="quick-toggle" placement="bottom">30 Minutes or Less</wa-tooltip>

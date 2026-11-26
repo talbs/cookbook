@@ -81,24 +81,13 @@ function markCurrentCourse() {
   slideIntoView(link, isArriving);
 }
 
-// A marker just above the course links going off the top is how the page knows they are stuck.
-const courseBar = document.querySelector('.course-bar');
-const stuckMarker = document.createElement('div');
-stuckMarker.className = 'stuck-marker';
-
-function markCourseBar() {
-  courseBar.classList.toggle('is-stuck', stuckMarker.getBoundingClientRect().top < 0);
+if (document.querySelector('.course-bar')) {
+  addEventListener('scroll', markCurrentCourse, { passive: true });
   markCurrentCourse();
-}
-
-if (courseBar) {
-  courseBar.before(stuckMarker);
-  addEventListener('scroll', markCourseBar, { passive: true });
-  markCourseBar();
   // The page's reveal animation slides everything a few pixels after a load or a jump, with no scroll event, so check again once it ends.
   const page = document.querySelector('wa-page');
   page.addEventListener('animationend', event => {
-    if (event.target === page) markCourseBar();
+    if (event.target === page) markCurrentCourse();
   });
 }
 

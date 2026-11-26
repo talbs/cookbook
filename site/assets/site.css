@@ -1437,7 +1437,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   background: var(--paper);
 }
 
-.course-bar.is-stuck::before,
+.listing:has(.stuck-marker.is-scrolled-past) .course-bar::before,
 .recipe:has(.stuck-marker.is-scrolled-past) .mode-rest::before {
   border-block-end-color: var(--wa-color-surface-border);
 }
@@ -1450,7 +1450,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* Room for the arrow and the row's gap. */
-.is-stuck > .course-rail > wa-scroller {
+.listing:has(.stuck-marker.is-scrolled-past) .course-rail > wa-scroller {
   margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m));
 }
 
@@ -1459,7 +1459,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   margin-block: calc(-1 * var(--stack-gap) / 2);
 }
 
-.recipe wa-intersection-observer {
+wa-intersection-observer {
   display: contents;
 }
 
@@ -1484,7 +1484,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   scale: 0.8;
 }
 
-.is-stuck .to-top {
+.listing:has(.stuck-marker.is-scrolled-past) .to-top {
   visibility: visible;
   opacity: 1;
   translate: 0 0;
