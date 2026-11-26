@@ -3682,6 +3682,13 @@ wa-popover::part(popup__popup) {
     margin-block-start: var(--wa-space-l);
   }
 
+  /* On wide screens the two lists share a grid row, so the shorter one would spread its wrapped lines to the taller one's height. */
+  .credit,
+  .connections {
+    display: flex;
+    align-content: start;
+  }
+
   .row-title {
     display: block;
     font-family: var(--wa-font-family-heading);
@@ -3741,6 +3748,19 @@ wa-popover::part(popup__popup) {
 
   .facts {
     flex-wrap: nowrap;
+  }
+
+  /* The footer's details share one wrapping row under the dotted line, its rows as far apart as the lists' own. The line's margins take the bigger gap back.
+     Cook hides the details, so it keeps the narrow footer and the space under the line. */
+  [data-mode='overview'] .attribution {
+    display: flex;
+    flex-wrap: wrap;
+    --stack-gap: var(--gap-group);
+    column-gap: var(--wa-space-2xl);
+  }
+
+  .attribution .footer-rule {
+    flex-basis: 100%;
   }
 
   /* The row sticks a gap below the top, so the marker sits that much above it. */
@@ -3857,13 +3877,6 @@ wa-popover::part(popup__popup) {
     grid-template-columns: subgrid;
     column-gap: var(--column-gap);
     margin-block-start: var(--wa-space-l);
-  }
-
-  /* The two lists share a grid row, so the shorter one would spread its wrapped lines to the taller one's height. */
-  .credit,
-  .connections {
-    display: flex;
-    align-content: start;
   }
 
   .credit {
