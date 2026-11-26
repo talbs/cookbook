@@ -159,6 +159,7 @@ body {
   --inline-sans-size: 0.875em;
   --column-gap: clamp(var(--wa-space-3xl), 6vw, var(--wa-space-5xl));
   --side-column: calc(4 / 11 * (100% - var(--column-gap)));
+  --switch-column: 15rem;
   --page-gutter: 1.25rem;
   /* Where the page's text starts: the gutter, or the side of the centred 75rem column on wide screens. */
   --text-edge: max(var(--page-gutter), calc((100% - 75rem) / 2 + var(--page-gutter)));
@@ -191,12 +192,12 @@ body {
   --heavy-line: max(2px, 0.12em);
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --to-top-size: 2.75rem;
-  /* The sticky bar on phones: padding, the title row, the gap, the switch and the 1px bottom border.
+  /* The resting switch: 36px buttons plus the switch's padding and border make it 44px, a full touch target. */
+  --rest-control-height: 2.25rem;
+  --rest-switch-height: calc(var(--rest-control-height) + 8px);
+  /* The stuck mode row: its padding and the switch.
      Jump targets and the sticky step ingredients both clear it from this one value. */
-  --bar-height: calc(
-    2 * var(--wa-space-m) + var(--shortcut-size) + var(--wa-space-s) +
-      var(--bar-switch-height) + 1px
-  );
+  --bar-height: calc(2 * var(--wa-space-m) + var(--rest-switch-height));
   scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-m));
 }
 
@@ -468,7 +469,11 @@ wa-page > main {
 wa-scroller:has(.course-links) {
   max-inline-size: none;
   margin-inline-start: calc(-1 * var(--wa-space-s));
-  /* The kit rings the scroller's own tab stop outside its box, and its overflow clip hid that ring. Its content does the scrolling, so nothing else spills. */
+}
+
+/* The kit rings the scroller's own tab stop outside its box, and its overflow clip hid that ring. Its content does the scrolling, so nothing else spills. */
+wa-scroller:has(.course-links),
+.facts-scroller {
   overflow: visible;
   border-radius: var(--wa-form-control-border-radius);
 }
@@ -500,10 +505,21 @@ wa-scroller[hidden] {
 }
 
 /* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
+.site-name,
+.row-title {
+  text-box: trim-both cap alphabetic;
+}
+
+/* The row title truncates, and its clip would shave the letters' overshoot past the trimmed box. The padding gives them room; the margin takes it back. */
+.row-title {
+  display: none;
+  padding-block: 0.1em;
+  margin-block: -0.1em;
+}
+
 .site-name {
   font-family: var(--wa-font-family-heading);
   font-size: var(--wa-font-size-l);
-  text-box: trim-both cap alphabetic;
   color: var(--ink);
   text-decoration-line: none;
   transition: color var(--fade);
@@ -515,6 +531,7 @@ wa-scroller[hidden] {
 
 /* Free Lunch ships one weight; without this the browser fakes a bold. Weight 800 is for the sans fallback. */
 .site-name,
+.row-title,
 .recipe-head h1,
 .listing-head h1 {
   font-weight: 800;
@@ -530,7 +547,7 @@ wa-scroller[hidden] {
   text-box: trim-both cap alphabetic;
 }
 
-@media (width < 64rem) {
+@media (width < 60rem) {
   /* Titles past about 28 characters step down a size, so they don't run to four or five lines. */
   .recipe-head h1.is-long {
     --title-size: clamp(2.75rem, 1.5rem + 4vw, 4.25rem);
@@ -614,6 +631,7 @@ wa-scroller[hidden] {
   line-height: 1.4;
 }
 
+/* Later than the desktop layout's 60rem: under 64rem the lede has no room beside the title, and half a column under it runs to four lines. */
 @media (min-width: 64rem) {
   .listing-head .description {
     flex: 0 0 calc(50% - var(--column-gap) / 2);
@@ -646,7 +664,7 @@ wa-scroller[hidden] {
 
 /* Two columns until every recipe's facts fit on one line (the widest, pancakes, measures 466px);
    past that each fact takes its own width with even gaps, as in the wide layout. */
-@media screen and (33rem <= width < 64rem) {
+@media screen and (33rem <= width < 60rem) {
   .facts {
     display: flex;
     flex-wrap: wrap;
@@ -656,6 +674,17 @@ wa-scroller[hidden] {
   .facts > div {
     flex: none;
   }
+}
+
+/* The facts only scroll on tablets. Everywhere else, paper included, the scroller steps out of the layout and they sit where they always have. */
+.facts-scroller,
+.facts-scroller::part(content) {
+  display: contents;
+}
+
+.facts-scroller::part(start-shadow),
+.facts-scroller::part(end-shadow) {
+  display: none;
 }
 
 /* The dotted dividers. The footer's has the recipe's icons in its middle, like a printer's ornament:
@@ -774,11 +803,13 @@ wa-scroller[hidden] {
   font-variant-numeric: diagonal-fractions;
 }
 
-/* The resting switch: under the facts on phones, at the end of the facts row on wide screens.
-   36px buttons plus the switch's padding and border make it 44px, a full touch target. */
+/* The resting switch: under the facts on phones, at the end of the facts row on wide screens. It sticks to the top of the window from there. */
 .mode-rest {
-  --wa-form-control-height: 2.25rem;
-  --rest-switch-height: calc(var(--wa-form-control-height) + 8px);
+  --wa-form-control-height: var(--rest-control-height);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  isolation: isolate;
   padding-block: var(--wa-space-m);
 }
 
@@ -789,8 +820,7 @@ wa-scroller[hidden] {
   order: -1;
 }
 
-/* The bar only shows after scrolling, so print and share also rest here.
-   They wear the switch's frame at the switch's height, so the row reads as one set of controls. */
+/* Print and share wear the switch's frame at the switch's height, so the row reads as one set of controls. */
 .mode-rest .page-action {
   inline-size: var(--rest-switch-height);
   block-size: var(--rest-switch-height);
@@ -800,46 +830,6 @@ wa-scroller[hidden] {
 
 .mode-rest .page-action:hover {
   border-color: var(--accent);
-}
-
-/* The bar carries its own copy of every control in this row, so the row steps aside while the bar shows.
-   It waits a mode-settle's distance below its spot, so it rises back the way a new mode's body does. */
-.mode-rest[inert] {
-  opacity: 0;
-  visibility: hidden;
-  translate: 0 0.75rem;
-}
-
-/* wa-page's header slot is sticky, but this bar sits outside the flow, so the slot is zero tall and the page starts with the title.
-   Once the resting switch scrolls away, the bar slides down from above the viewport. */
-.mode-bar {
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  justify-content: normal;
-  gap: var(--wa-space-s);
-  padding: var(--wa-space-m) var(--page-gutter);
-  border-block-end: var(--wa-border-width-s) solid var(--wa-color-surface-border);
-  background: var(--paper);
-  /* A shorter switch than the one resting in the page, so it has room inside the bar. */
-  --wa-form-control-height: var(--bar-control-height);
-  translate: 0 -100%;
-  visibility: hidden;
-}
-
-.mode-bar.is-pinned {
-  translate: 0 0;
-  visibility: visible;
-}
-
-/* Firefox for iOS shows the page through its status bar, above the top of the window. Paper above the bar covers it. */
-.mode-bar::before {
-  content: '';
-  position: absolute;
-  inset: -100vh 0 100%;
-  background: inherit;
 }
 
 /* The switch is a wa-radio-group of button radios. The group draws the frame; the radios lose their own fill and border. */
@@ -861,30 +851,6 @@ wa-scroller[hidden] {
   gap: 0;
 }
 
-/* On phones the icons leave the title about half the row, so it sets small on up to two lines, which still fit the 40px row. */
-.pinned-title {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  min-inline-size: 0;
-  margin: 0;
-  font-family: var(--wa-font-family-heading);
-  --title-size: 1.125rem;
-  font-size: var(--title-size);
-  font-weight: 800;
-  font-synthesis: none;
-  line-height: 1.05;
-  text-transform: uppercase;
-  text-wrap: balance;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-/* The resting print button stays at the top of the page; in the phone bar its 40px goes to the title. */
-wa-page:not([view='desktop']) .mode-bar .print-control {
-  display: none;
-}
-
 /* Free Lunch has no ñ, and the sans fallback's is half again as wide. So a title's ñ stays in the markup at no size,
    for readers and copying, and the page shows the font's own n in its place. */
 .plain-letter {
@@ -894,11 +860,6 @@ wa-page:not([view='desktop']) .mode-bar .print-control {
 .plain-letter::before {
   content: attr(data-base);
   font-size: var(--title-size);
-}
-
-/* The icons sit centred in 40px tap boxes; on phones, pulling the row out by the inset lines the last icon up with the switch's edge. */
-.shortcuts {
-  margin-inline-end: var(--shortcut-inset);
 }
 
 /* In the site bar the inset comes off both sides, so the gaps between icons measure the same as the gaps between nav words. */
@@ -917,11 +878,6 @@ wa-page:not([view='desktop']) .mode-bar .print-control {
   .site-bar .wa-cluster {
     gap: var(--wa-space-m);
   }
-}
-
-.pinned-lead {
-  min-inline-size: 0;
-  margin-inline-start: var(--shortcut-inset);
 }
 
 .shortcut,
@@ -996,10 +952,6 @@ button.shortcut {
   }
 }
 
-[data-mode='cook'] .shortcut-ingredients {
-  display: none;
-}
-
 /* A grey fill on the unchosen radio read as a second selected state next to the hatch, so only its label changes. */
 .mode-switch wa-radio {
   justify-content: center;
@@ -1030,7 +982,7 @@ button.shortcut {
   color: var(--accent);
 }
 
-/* The slot measures the room the switch really has, which differs between the bar and the resting row on one screen.
+/* The slot measures the room the switch really has.
    Under 232px the two words no longer fit their halves, so the switch folds to its icons and keeps the words for screen readers.
    The tooltips only stand in for the words while they are hidden. */
 .switch-slot {
@@ -1171,20 +1123,15 @@ button.shortcut {
   }
 }
 
-/* From tablet width the sticky bar is one row, as tall as its taller item. */
 @media screen and (min-width: 48rem) {
   :root {
-    --bar-height: calc(
-      2 * var(--wa-space-m) +
-        max(var(--shortcut-size), var(--bar-switch-height)) + 1px
-    );
     scroll-padding-block-start: calc(var(--bar-height) + var(--wa-space-l));
   }
 }
 
 /* Tablets have room for two columns before the page splits into its desktop grid:
    ingredients on the left, equipment, notes and timing on the right, instead of one capped column with empty space beside it. */
-@media screen and (48rem <= width < 64rem) {
+@media screen and (48rem <= width < 60rem) {
   .needs {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1481,7 +1428,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
-.course-bar::before {
+.course-bar::before,
+.mode-rest::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -1490,7 +1438,8 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   background: var(--paper);
 }
 
-.course-bar.is-stuck::before {
+.listing:has(.stuck-marker.is-scrolled-past) .course-bar::before,
+.recipe:has(.stuck-marker.is-scrolled-past) .mode-rest::before {
   border-block-end-color: var(--wa-color-surface-border);
 }
 
@@ -1502,13 +1451,26 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 /* Room for the arrow and the row's gap. */
-.is-stuck > .course-rail > wa-scroller {
+.listing:has(.stuck-marker.is-scrolled-past) .course-rail > wa-scroller {
   margin-inline-end: calc(var(--shortcut-size) + var(--wa-space-m));
 }
 
 .stuck-marker {
   block-size: 0;
   margin-block: calc(-1 * var(--stack-gap) / 2);
+}
+
+wa-intersection-observer {
+  display: contents;
+}
+
+/* Down to the mode row's top edge, so the marker leaves the window as the row sticks.
+   The extra pixel means a row resting exactly on the sticking line, where a mode flip lands, still reads as at rest:
+   layout rounding puts that landing a fraction either side of the line. */
+.recipe .stuck-marker {
+  position: relative;
+  inset-block-start: 1px;
+  translate: 0 calc(var(--stack-gap) / 2);
 }
 
 /* The arrow lies over the end of the rail, so the course links get all of it until the bar sticks and the arrow shows. */
@@ -1523,7 +1485,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   scale: 0.8;
 }
 
-.is-stuck .to-top {
+.listing:has(.stuck-marker.is-scrolled-past) .to-top {
   visibility: visible;
   opacity: 1;
   translate: 0 0;
@@ -1573,8 +1535,9 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   }
 }
 
-/* The full-width bar is wider than the page's column; this keeps it from adding a sideways scroll. */
-.listing-page {
+/* The full-width bars are wider than the page's column; this keeps them from adding a sideways scroll. */
+.listing-page,
+.recipe-page {
   overflow-x: clip;
 }
 
@@ -3386,31 +3349,6 @@ wa-popover::part(popup__popup) {
       translate var(--press) ease-in;
   }
 
-  /* The bar drops in over a settle like the skip link, and goes on a press like the toast. */
-  .mode-bar {
-    transition:
-      translate var(--press) ease-in,
-      visibility var(--press);
-  }
-
-  .mode-bar.is-pinned {
-    transition: translate var(--settle) var(--ease-settle);
-  }
-
-  .mode-rest {
-    transition:
-      opacity var(--fade-in) ease-out var(--fade-in-delay),
-      translate var(--settle) var(--ease-settle) var(--fade-in-delay);
-  }
-
-  /* It only drops below its spot once it has faded, so it never slides on the way out. */
-  .mode-rest[inert] {
-    transition:
-      opacity var(--press) ease-in,
-      visibility var(--press),
-      translate 0s var(--press);
-  }
-
   .mode-switch wa-radio {
     transition: color var(--wa-transition-fast) var(--wa-transition-easing);
   }
@@ -3422,27 +3360,47 @@ wa-popover::part(popup__popup) {
       var(--scale-move);
   }
 
-  /* The bar stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
-  .mode-bar {
-    view-transition-name: mode-bar;
-  }
-
-  /* The resting switch stays live too, so its hatch slides the same way when it is the one being used. */
+  /* The switch stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
   .mode-rest {
     view-transition-name: mode-rest;
   }
 
-  ::view-transition-old(mode-bar),
+  /* Named too, so the row's paper strip, which moves as its own layer, can't cover the facts mid-flip. */
+  @media (min-width: 60rem) {
+    .facts {
+      view-transition-name: recipe-facts;
+    }
+  }
+
+  @media (48rem <= width < 60rem) {
+    .facts-scroller {
+      view-transition-name: recipe-facts;
+    }
+  }
+
+  /* The toast sits in the top layer, which the page's snapshot takes in, so a flip would draw the body over it. On its own layer it stays on top and keeps animating.
+     Named on the toaster, not the toast: two toasts at once would share the name and cancel the flip. */
+  .screen-toast {
+    view-transition-name: screen-toast;
+  }
+
+  ::view-transition-group(screen-toast) {
+    animation: none;
+  }
+
   ::view-transition-old(mode-rest),
+  ::view-transition-old(recipe-facts),
   ::view-transition-old(scheme-toggle),
-  ::view-transition-old(course-bar) {
+  ::view-transition-old(course-bar),
+  ::view-transition-old(screen-toast) {
     display: none;
   }
 
-  ::view-transition-new(mode-bar),
   ::view-transition-new(mode-rest),
+  ::view-transition-new(recipe-facts),
   ::view-transition-new(scheme-toggle),
-  ::view-transition-new(course-bar) {
+  ::view-transition-new(course-bar),
+  ::view-transition-new(screen-toast) {
     animation: none;
   }
 
@@ -3451,8 +3409,9 @@ wa-popover::part(popup__popup) {
     view-transition-name: recipe-body;
   }
 
+  /* The new body is drawn where it belongs from the first frame, instead of sliding over from the old body's box. */
   ::view-transition-group(recipe-body) {
-    animation-duration: var(--wa-transition-slow);
+    animation: none;
   }
 
   ::view-transition-old(recipe-body),
@@ -3494,7 +3453,7 @@ wa-popover::part(popup__popup) {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-bar, .mode-rest, .recipe-body, .listing-results, .course-bar) {
+    :is(.mode-rest, .facts, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
     view-transition-name: none;
   }
 
@@ -3511,6 +3470,25 @@ wa-popover::part(popup__popup) {
 
   .course-bar::before {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
+  }
+
+  .mode-rest::before {
+    transition: border-color var(--press) var(--wa-transition-easing);
+  }
+
+  /* The facts and the title swap in the row's left slot: the one leaving fades fast, the one arriving fades in a beat later, as a new mode does. */
+  .row-title,
+  .recipe:has(.stuck-marker.is-scrolled-past) .facts {
+    transition:
+      opacity var(--press) ease-in,
+      visibility var(--press);
+  }
+
+  .facts,
+  .recipe:has(.stuck-marker.is-scrolled-past) .row-title {
+    transition:
+      opacity var(--fade-in) ease-out var(--fade-in-delay),
+      visibility var(--fade-in) var(--fade-in-delay);
   }
 
   /* The arrow rises and springs up to size as it arrives, the way a pressed control springs back. */
@@ -3699,8 +3677,113 @@ wa-popover::part(popup__popup) {
   }
 }
 
-/* Two columns need about 320px for the ingredients; below 64rem that column would wrap most names. */
-@media screen and (min-width: 64rem) {
+/* From tablets up the row is one flank: the title takes the spare room, and print, share and the switch keep their desktop sizes. */
+@media screen and (min-width: 48rem) {
+  /* The title truncates instead of claiming half the row, which at 48rem would push the switch off the edge.
+     The row is only as tall as its controls, so their top lines up with the facts beside them; its paper reaches past it. */
+  .mode-rest {
+    --content-percentage: 0;
+    inset-block-start: var(--wa-space-m);
+    padding: 0;
+  }
+
+  .mode-rest::before {
+    inset: calc(-1 * var(--wa-space-m)) -100vw;
+  }
+
+  .recipe-body {
+    margin-block-start: var(--wa-space-l);
+  }
+
+  /* On wide screens the two lists share a grid row, so the shorter one would spread its wrapped lines to the taller one's height. */
+  .credit,
+  .connections {
+    display: flex;
+    align-content: start;
+  }
+
+  .row-title {
+    display: block;
+    font-family: var(--wa-font-family-heading);
+    --title-size: 1.5rem;
+    font-size: var(--title-size);
+    line-height: 1;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* The desktop switch's width, with print and share back in front of it.
+     A width rather than a flex basis: the slot's size containment hides its contents, and Safari would size the controls as if the switch had no width. */
+  .mode-rest .switch-slot {
+    flex: none;
+    inline-size: var(--switch-column);
+    order: 0;
+  }
+
+  /* The facts and the title share the row's left slot: the facts at rest, the title once the row sticks.
+     The scroller hides with them, so its fades and its tab stop go too. */
+  .recipe:has(.stuck-marker.is-scrolled-past) :is(.facts-scroller, .facts) {
+    visibility: hidden;
+  }
+
+  .recipe:has(.stuck-marker.is-scrolled-past) .facts {
+    opacity: 0;
+  }
+
+  .recipe:has(.stuck-marker.is-scrolled-past) .row-title {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* The facts sit beside the controls on one line, scrolling sideways once they run up against them. */
+@media screen and (48rem <= width < 60rem) {
+  .recipe-intro {
+    position: relative;
+  }
+
+  /* Out of the flow, so the row moves up into their place, and no wider than the room the switch, print, share and the row's gap leave. Above the row's paper, as on wide screens. */
+  .facts-scroller {
+    position: absolute;
+    z-index: 3;
+    inset-block-start: calc(100% + var(--stack-gap));
+    inset-inline-start: 0;
+    max-inline-size: calc(100% - var(--switch-column) - 2 * var(--rest-switch-height) - var(--wa-space-xs) - var(--wa-space-m) - var(--wa-space-xl));
+  }
+
+  .facts-scroller,
+  .facts-scroller::part(content),
+  .facts-scroller::part(start-shadow),
+  .facts-scroller::part(end-shadow) {
+    display: block;
+  }
+
+  .facts {
+    flex-wrap: nowrap;
+  }
+
+  /* The footer's details share one wrapping row under the dotted line, its rows as far apart as the lists' own. The line's margins take the bigger gap back.
+     Cook hides the details, so it keeps the narrow footer and the space under the line. */
+  [data-mode='overview'] .attribution {
+    display: flex;
+    flex-wrap: wrap;
+    --stack-gap: var(--gap-group);
+    column-gap: var(--wa-space-2xl);
+  }
+
+  .attribution .footer-rule {
+    flex-basis: 100%;
+  }
+
+  /* The row sticks a gap below the top, so the marker sits that much above it. */
+  .recipe .stuck-marker {
+    translate: 0 calc(var(--stack-gap) / 2 - var(--wa-space-m));
+  }
+}
+
+/* Two columns need about 300px for the ingredients; below 60rem that column would wrap most names. */
+@media screen and (min-width: 60rem) {
   :root {
     --header-inset: var(--wa-space-xl);
     --page-gutter: clamp(var(--wa-space-2xl), 4vw, var(--wa-space-4xl));
@@ -3710,7 +3793,7 @@ wa-popover::part(popup__popup) {
   .recipe {
     padding: var(--wa-space-4xl) var(--page-gutter) var(--wa-space-5xl);
     display: grid;
-    grid-template-columns: var(--side-column) minmax(0, 1fr) 15rem;
+    grid-template-columns: var(--side-column) minmax(0, 1fr) var(--switch-column);
     column-gap: var(--column-gap);
     align-items: start;
   }
@@ -3765,7 +3848,11 @@ wa-popover::part(popup__popup) {
     grid-row: 3;
   }
 
+  /* Above the mode row's paper, which runs the full width. Only as wide as its facts, so it never covers print and share. */
   .facts {
+    position: relative;
+    z-index: 3;
+    justify-self: start;
     grid-column: 1 / 3;
     grid-row: 4;
     grid-template-columns: none;
@@ -3774,62 +3861,35 @@ wa-popover::part(popup__popup) {
     column-gap: var(--wa-space-2xl);
   }
 
+  /* A sticky item stops at the end of its own cell, so the row's cell runs down through the body's row. */
   .mode-rest {
-    position: relative;
-    grid-column: 3;
-    grid-row: 4;
-    align-self: end;
-    padding: 0;
+    grid-column: 1 / -1;
+    grid-row: 4 / span 2;
+    align-self: start;
   }
 
-  /* Outside the switch's column, so the switch keeps its full width. */
-  .mode-rest .rest-actions {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: calc(100% + var(--wa-space-m));
-  }
-}
-
-/* wa-page marks itself desktop past its 48rem mobile-breakpoint; the bar goes to one row on the page grid there,
-   the title at the ingredients' edge and the switch in the 15rem column the resting switch uses. */
-wa-page[view='desktop'] {
-  /* The icons cluster beside the switch, a step apart, instead of a whole column gap away. */
-  & .mode-bar {
-    grid-template-columns: minmax(0, 1fr) 15rem;
-    align-items: center;
-    column-gap: var(--wa-space-xl);
-    padding-block: var(--wa-space-m);
-    padding-inline: var(--text-edge);
-  }
-
-  & .shortcuts {
-    margin-inline-end: 0;
-  }
-
-  & .pinned-title {
-    display: block;
-    --title-size: 1.5rem;
-    line-height: 1;
-    white-space: nowrap;
-  }
-}
-
-@media screen and (min-width: 64rem) {
   .recipe-body {
-    margin-block-start: var(--wa-space-l);
+    grid-row: 5;
   }
 
+  /* Beside the switch, a sticking distance above it. */
+  .recipe .stuck-marker {
+    grid-area: 4 / 3;
+    align-self: start;
+    margin-block: 0;
+    translate: 0 calc(-1 * var(--wa-space-m));
+  }
+
+  .row-title {
+    --title-size: var(--wa-font-size-2xl);
+  }
+}
+
+@media screen and (min-width: 60rem) {
   .attribution {
     grid-template-columns: subgrid;
     column-gap: var(--column-gap);
     margin-block-start: var(--wa-space-l);
-  }
-
-  /* The two lists share a grid row, so the shorter one would spread its wrapped lines to the taller one's height. */
-  .credit,
-  .connections {
-    display: flex;
-    align-content: start;
   }
 
   .credit {
@@ -3868,7 +3928,7 @@ wa-page[view='desktop'] {
     grid-template-rows: auto 1fr;
   }
 
-  /* On a long step the list rides down beside the text, just under the sticky bar, until the step ends.
+  /* On a long step the list rides down beside the text, just under the stuck mode row, until the step ends.
      It hugs its own height so it has room to travel inside the step. */
   [data-mode='cook'] .step-needs {
     position: sticky;
@@ -3946,11 +4006,11 @@ wa-page[view='desktop'] {
     min-block-size: 0;
   }
 
-  .mode-bar,
   .recipe-nav,
   .site-header,
   .site-footer,
   .mode-rest,
+  .stuck-marker,
   wa-tooltip,
   .heading-anchor,
   wa-details.step-note,

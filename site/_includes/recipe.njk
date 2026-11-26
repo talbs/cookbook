@@ -78,28 +78,7 @@
 
 {% block pageClass %}recipe-page{% endblock %}
 
-{% block pageAttributes %} data-mode="overview"{% endblock %}
-
-{% block header %}
-  <div class="mode-bar" slot="header">
-    <div class="wa-split wa-flex-nowrap wa-align-items-center wa-gap-m">
-      <span class="pinned-lead wa-cluster wa-flex-nowrap wa-align-items-center wa-gap-2xs">
-        <a class="shortcut wa-border-radius-s" id="shortcut-home" href="/"><wa-icon name="arrow-left" variant="regular" label="All Recipes"></wa-icon></a>
-        <wa-tooltip for="shortcut-home" placement="bottom">All Recipes</wa-tooltip>
-        <p class="pinned-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
-      </span>
-      <nav class="shortcuts wa-cluster wa-flex-nowrap wa-gap-0" aria-label="Shortcuts">
-        <a class="shortcut shortcut-ingredients wa-border-radius-s" id="shortcut-ingredients" href="#ingredients-heading"><wa-icon name="basket-shopping" variant="regular" label="Ingredients"></wa-icon></a>
-        <wa-tooltip for="shortcut-ingredients" placement="bottom">Ingredients</wa-tooltip>
-        <a class="shortcut wa-border-radius-s" id="shortcut-steps" href="#preparation-heading"><wa-icon name="pot-food" variant="regular" label="Steps"></wa-icon></a>
-        <wa-tooltip for="shortcut-steps" placement="bottom">Steps</wa-tooltip>
-        {{ printControl("shortcut-print") }}
-        {{ shareControl("shortcut-share") }}
-      </nav>
-    </div>
-    {{ modeSwitch("shortcut-mode") }}
-  </div>
-{% endblock %}
+{% block pageAttributes %} data-mode="overview" disable-sticky="header"{% endblock %}
 
 {% block content %}
 <div class="recipe-nav">
@@ -126,42 +105,52 @@
       <p class="description wa-text-balance">{{ description }}</p>
       <div class="header-rule wa-cluster wa-flex-nowrap wa-gap-0" aria-hidden="true"><span class="rule-run"></span></div>
       {%- if hasFacts or hasCredit or cuisine or usedIn.length %}
-      <dl class="facts wa-grid wa-gap-m{% if not hasFacts %} print-fact{% endif %}">
-        {%- if servings %}
-        <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
-        {%- endif %}
-        {%- if yield %}
-        <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
-        {%- endif %}
-        {%- if totalMinutes != null %}
-        <div><dt>Time</dt><dd><time datetime="{{ longestMinutes | isoDuration }}">{% for end in timeLabel.split(' – ') %}<span class="wa-text-nowrap">{{ end }}</span>{% if not loop.last %}&nbsp;– {% endif %}{% endfor %}</time></dd></div>
-        {%- endif %}
-        {%- if difficulty %}
-        <div><dt>Difficulty</dt><dd>{{ difficulty | capitalize }}</dd></div>
-        {%- endif %}
-        {%- if course %}
-        <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
-        {%- endif %}
-        {%- if cuisine %}
-        <div class="print-fact"><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
-        {%- endif %}
-        {%- if hasCredit %}
-        <div class="print-fact fact-credit">{{ creditLine | safe }}</div>
-        {%- endif %}
-        {%- if usedIn.length %}
-        <div class="print-fact">{{ usedInLine | safe }}</div>
-        {%- endif %}
-      </dl>
+      <wa-scroller class="facts-scroller" without-scrollbar>
+        <dl class="facts wa-grid wa-gap-m{% if not hasFacts %} print-fact{% endif %}">
+          {%- if servings %}
+          <div><dt>Serves</dt><dd>{{ servings | typeset | safe }}</dd></div>
+          {%- endif %}
+          {%- if yield %}
+          <div><dt>Makes</dt><dd>{{ yield | typeset | safe }}</dd></div>
+          {%- endif %}
+          {%- if totalMinutes != null %}
+          <div><dt>Time</dt><dd><time datetime="{{ longestMinutes | isoDuration }}">{% for end in timeLabel.split(' – ') %}<span class="wa-text-nowrap">{{ end }}</span>{% if not loop.last %}&nbsp;– {% endif %}{% endfor %}</time></dd></div>
+          {%- endif %}
+          {%- if difficulty %}
+          <div><dt>Difficulty</dt><dd>{{ difficulty | capitalize }}</dd></div>
+          {%- endif %}
+          {%- if course %}
+          <div><dt>Course</dt><dd>{{ course | courseLabel }}</dd></div>
+          {%- endif %}
+          {%- if cuisine %}
+          <div class="print-fact"><dt>Cuisine</dt><dd>{{ cuisine }}</dd></div>
+          {%- endif %}
+          {%- if hasCredit %}
+          <div class="print-fact fact-credit">{{ creditLine | safe }}</div>
+          {%- endif %}
+          {%- if usedIn.length %}
+          <div class="print-fact">{{ usedInLine | safe }}</div>
+          {%- endif %}
+        </dl>
+      </wa-scroller>
       {%- endif %}
     </div>
   </header>
 
-  <div class="mode-rest wa-cluster wa-flex-nowrap" hidden>
-    <div class="rest-actions wa-cluster wa-flex-nowrap wa-gap-xs">
-      {{ printControl("resting-print") }}
-      {{ shareControl("resting-share") }}
+  {#- The observer watches only the space above the window, so a marker gets its class once it has scrolled past the top,
+      and a page the kit hasn't measured yet reads as at rest instead of scrolled away. #}
+  <wa-intersection-observer intersect-class="is-scrolled-past" root-margin="100000px 0px -100% 0px">
+    <span class="stuck-marker" aria-hidden="true"></span>
+  </wa-intersection-observer>
+  <div class="mode-rest wa-flank:end wa-flex-nowrap wa-gap-xl" hidden>
+    <p class="row-title wa-text-truncate" aria-hidden="true">{{ title | escape | showPlainLetters | safe }}</p>
+    <div class="wa-cluster wa-flex-nowrap wa-justify-content-end">
+      <div class="wa-cluster wa-flex-nowrap wa-gap-xs">
+        {{ printControl("resting-print") }}
+        {{ shareControl("resting-share") }}
+      </div>
+      {{ modeSwitch("resting-mode") }}
     </div>
-    {{ modeSwitch("resting-mode") }}
   </div>
 
   <div class="recipe-body wa-stack">
