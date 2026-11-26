@@ -49,7 +49,9 @@ async function waitForPageReveal() {
       cloakWatcher.observe(root, { attributes: true, attributeFilter: ['class'] });
     });
   }
-  await Promise.allSettled(page.getAnimations().map((animation) => animation.finished));
+  const pageGrid = page.shadowRoot.querySelector('[part~="base"]');
+  const revealAnimations = [...page.getAnimations(), ...pageGrid.getAnimations()];
+  await Promise.allSettled(revealAnimations.map((animation) => animation.finished));
 }
 
 function markScreenToastShown() {

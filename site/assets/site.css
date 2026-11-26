@@ -3472,9 +3472,18 @@ wa-popover::part(popup__popup) {
      The kit then removes wa-cloak; the head script in base.njk swaps in is-revealed so the animation isn't cut off. */
   .wa-cloak:not(:has(:not(:defined))) wa-page,
   .is-revealed wa-page {
-    animation:
-      page-reveal-fade-in var(--fade-in) ease-out,
-      mode-settle var(--settle) var(--ease-settle);
+    animation: page-reveal-fade-in var(--fade-in) ease-out;
+  }
+
+  /* The settle moves the grid inside wa-page, and wa-page clips what passes its bottom edge.
+     Moving wa-page itself made the document 0.75rem taller until it settled, which flashes a scrollbar on a one-screen page. */
+  .wa-cloak:not(:has(:not(:defined))) wa-page::part(base),
+  .is-revealed wa-page::part(base) {
+    animation: mode-settle var(--settle) var(--ease-settle);
+  }
+
+  wa-page {
+    overflow-y: clip;
   }
 
   /* Going from one page to another is one short cross-fade of the whole page. The pieces that move on their own
