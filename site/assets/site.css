@@ -631,7 +631,8 @@ wa-scroller[hidden] {
   line-height: 1.4;
 }
 
-@media (min-width: 60rem) {
+/* Later than the desktop layout's 60rem: under 64rem the lede has no room beside the title, and half a column under it runs to four lines. */
+@media (min-width: 64rem) {
   .listing-head .description {
     flex: 0 0 calc(50% - var(--column-gap) / 2);
     max-inline-size: none;
