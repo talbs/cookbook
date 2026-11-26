@@ -3,9 +3,9 @@ import { changeWithTransition } from './transition.js';
 
 const page = document.querySelector('.recipe-page');
 const recipe = page.querySelector('.recipe');
-const modeBar = page.querySelector('.mode-bar');
 const modeRest = page.querySelector('.mode-rest');
-const modeSwitches = [...page.querySelectorAll('.mode-switch')];
+const stuckMarker = recipe.querySelector('.stuck-marker');
+const modeSwitch = page.querySelector('.mode-switch');
 const checkboxes = [...recipe.querySelectorAll('wa-checkbox[data-check]')];
 const storageKey = `recipe:${recipe.dataset.recipe}`;
 const screenToast = page.querySelector('.screen-toast');
@@ -101,18 +101,22 @@ function writeModeToUrl(mode) {
 
 function showMode(mode) {
   page.dataset.mode = mode;
-  for (const modeSwitch of modeSwitches) {
-    modeSwitch.value = mode;
-  }
+  modeSwitch.value = mode;
   writeModeToUrl(mode);
   timers.keepScreenAwakeWhileNeeded();
 }
 
 function findStepBeingRead() {
-  const barBottom = modeBar.getBoundingClientRect().bottom;
-  for (const step of recipe.querySelectorAll('.step')) {
+  const rowBottom = modeRest.getBoundingClientRect().bottom;
+  const steps = recipe.querySelectorAll('.step');
+  for (const step of steps) {
+    const { top } = step.getBoundingClientRect();
+    if (top >= rowBottom && top < window.innerHeight) return step;
+  }
+  // No step starts on screen, so the step running past the row is the one being read.
+  for (const step of steps) {
     const { top, bottom } = step.getBoundingClientRect();
-    if (bottom > barBottom && top < window.innerHeight) return step;
+    if (bottom > rowBottom && top < window.innerHeight) return step;
   }
   return null;
 }
@@ -124,13 +128,14 @@ function findLandingFor(mode) {
   return beforeStart ?? recipe.querySelector('.method');
 }
 
-function isRestingSwitchInView() {
-  return modeRest.getBoundingClientRect().top >= modeBar.offsetHeight;
+// The marker sits where the row starts to stick, so it reaches the top of the window as the row does.
+function isModeRowStuck() {
+  return stuckMarker.getBoundingClientRect().top <= 0;
 }
 
 function switchMode(mode) {
-  const isBarShowing = modeBar.classList.contains('is-pinned');
-  const heldStep = isBarShowing ? findStepBeingRead() : null;
+  const isStuck = isModeRowStuck();
+  const heldStep = isStuck ? findStepBeingRead() : null;
   const heldStepTop = heldStep?.getBoundingClientRect().top;
 
   runningTransition = changeWithTransition(() => {
@@ -138,7 +143,7 @@ function switchMode(mode) {
     if (heldStep) {
       window.scrollBy({ top: heldStep.getBoundingClientRect().top - heldStepTop, behavior: 'instant' });
     }
-    if (isBarShowing && (!heldStep || isRestingSwitchInView())) {
+    if (isStuck && (!heldStep || !isModeRowStuck())) {
       findLandingFor(mode)?.scrollIntoView({ block: 'start', behavior: 'instant' });
     }
     saveState();
@@ -221,28 +226,10 @@ if (isMode(linkedMode)) saveState();
 revealShareControls();
 modeRest.hidden = false;
 
-// The switch rests in the page; once it starts sliding under the bar's bottom edge, wa-page's sticky header bar slides in with its own copy.
-// The hidden bar can't be reached, and the resting switch goes inert while the bar shows, so there is only ever one switch to meet.
-let restingSwitchWatcher = null;
-
-function watchRestingSwitch() {
-  restingSwitchWatcher?.disconnect();
-  restingSwitchWatcher = new IntersectionObserver(([entry]) => {
-    const isPinned = entry.boundingClientRect.top < entry.rootBounds.top;
-    modeBar.classList.toggle('is-pinned', isPinned);
-    modeRest.inert = isPinned;
-  }, { threshold: 1, rootMargin: `-${modeBar.offsetHeight}px 0px 0px 0px` });
-  restingSwitchWatcher.observe(modeRest);
-}
-
-new ResizeObserver(watchRestingSwitch).observe(modeBar);
-
-for (const modeSwitch of modeSwitches) {
-  modeSwitch.addEventListener('change', () => {
-    if (page.dataset.mode === modeSwitch.value) return;
-    switchMode(modeSwitch.value);
-  });
-}
+modeSwitch.addEventListener('change', () => {
+  if (page.dataset.mode === modeSwitch.value) return;
+  switchMode(modeSwitch.value);
+});
 
 // A printed page can't be clicked back to, so each sheet's footer carries the address it came from.
 // Only the browser knows the host, so the rule is written here; site.css styles the box.
