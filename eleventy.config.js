@@ -31,6 +31,7 @@ const METHOD_TAGS = [
 const FAMILY_TAG_NAMES = {
   'auntie-jeanie': 'Auntie Jeanie',
   'aunt-mel': 'Aunt Mel',
+  michelle: 'Michelle',
   mimi: 'Mimi',
 };
 const RECIPE_PATH_PATTERN = /^\.\/recipes\/[^/]+\.cook$/;
