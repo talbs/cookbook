@@ -1886,12 +1886,6 @@ wa-button.special::part(base) {
   }
 }
 
-@media (min-width: 48rem) {
-  .not-found-page main {
-    padding-block-end: var(--wa-space-2xl);
-  }
-}
-
 .not-found {
   --stat-size: clamp(7rem, 30vw, 18rem);
   flex: 1;
@@ -1900,6 +1894,22 @@ wa-button.special::part(base) {
 
 .not-found > .wa-split {
   row-gap: var(--gap-group);
+}
+
+@media (min-width: 48rem) {
+  .not-found-page main {
+    padding-block-end: var(--wa-space-2xl);
+  }
+
+  /* At full size the page needs 58.5rem of height: header, footer, paddings, the number and the text row.
+     In a shorter window the number gives up half of the shortfall, each padding a fifth and the gap a tenth, so the page still fits one screen
+     and the padding stays wider than the gap inside it. */
+  .not-found {
+    --short-by: max(0px, 58.5rem - 100dvh);
+    --stat-size: max(7rem, min(30vw, 18rem - 0.5 * var(--short-by)));
+    gap: max(var(--wa-space-l), var(--gap-subsection) - 0.1 * var(--short-by));
+    padding-block: max(var(--wa-space-xl), clamp(var(--wa-space-3xl), 7vw, 5rem) - 0.2 * var(--short-by));
+  }
 }
 
 .not-found .stats {
