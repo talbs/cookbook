@@ -3377,17 +3377,29 @@ wa-popover::part(popup__popup) {
     }
   }
 
+  /* The toast sits in the top layer, which the page's snapshot takes in, so a flip would draw the body over it. On its own layer it stays on top and keeps animating.
+     Named on the toaster, not the toast: two toasts at once would share the name and cancel the flip. */
+  .screen-toast {
+    view-transition-name: screen-toast;
+  }
+
+  ::view-transition-group(screen-toast) {
+    animation: none;
+  }
+
   ::view-transition-old(mode-rest),
   ::view-transition-old(recipe-facts),
   ::view-transition-old(scheme-toggle),
-  ::view-transition-old(course-bar) {
+  ::view-transition-old(course-bar),
+  ::view-transition-old(screen-toast) {
     display: none;
   }
 
   ::view-transition-new(mode-rest),
   ::view-transition-new(recipe-facts),
   ::view-transition-new(scheme-toggle),
-  ::view-transition-new(course-bar) {
+  ::view-transition-new(course-bar),
+  ::view-transition-new(screen-toast) {
     animation: none;
   }
 
@@ -3440,7 +3452,7 @@ wa-popover::part(popup__popup) {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-rest, .facts, .facts-scroller, .recipe-body, .listing-results, .course-bar) {
+    :is(.mode-rest, .facts, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
     view-transition-name: none;
   }
 
