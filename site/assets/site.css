@@ -1860,7 +1860,7 @@ wa-button.special::part(base) {
 }
 
 /* Under 47.5rem of card the words and the ways out can't share a row without squeezing the words below a readable line,
-   so they stack, centred under the number. From there up the row never wraps: left to wrap, it held at 1200px and broke at 1440px.
+   so they stack, centered under the number. From there up the row never wraps: left to wrap, it held at 1200px and broke at 1440px.
    Any higher and the row turns back into a stack at 60rem, where the page gutter doubles and the card drops to 47.8rem. */
 .not-found {
   container-type: inline-size;
