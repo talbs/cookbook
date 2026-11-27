@@ -804,7 +804,7 @@ wa-scroller[hidden] {
 }
 
 /* The resting switch: under the facts on phones, at the end of the facts row on wide screens. It sticks to the top of the window from there. */
-.mode-rest {
+.mode-row {
   --wa-form-control-height: var(--rest-control-height);
   position: sticky;
   inset-block-start: 0;
@@ -815,20 +815,20 @@ wa-scroller[hidden] {
 
 /* In a narrow row the switch leads and print and share follow it. They stay first in the markup,
    which is the order the wide layout shows and a keyboard walks. */
-.mode-rest .switch-slot {
+.mode-row .switch-slot {
   flex: 1;
   order: -1;
 }
 
 /* Print and share wear the switch's frame at the switch's height, so the row reads as one set of controls. */
-.mode-rest .page-action {
+.mode-row .page-action {
   inline-size: var(--rest-switch-height);
   block-size: var(--rest-switch-height);
   border: var(--wa-border-width-s) solid var(--control-edge);
   border-radius: var(--wa-border-radius-m);
 }
 
-.mode-rest .page-action:hover {
+.mode-row .page-action:hover {
   border-color: var(--accent);
 }
 
@@ -1429,7 +1429,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 
 /* The paper is always there, unseen against the page, so recipes never show through; only the line waits for the bar to stick. */
 .course-bar::before,
-.mode-rest::before {
+.mode-row::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -1439,7 +1439,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
 }
 
 .listing:has(.stuck-marker.is-scrolled-past) .course-bar::before,
-.recipe:has(.stuck-marker.is-scrolled-past) .mode-rest::before {
+.recipe:has(.stuck-marker.is-scrolled-past) .mode-row::before {
   border-block-end-color: var(--wa-color-surface-border);
 }
 
@@ -3288,7 +3288,7 @@ wa-popover::part(popup__popup) {
   wa-select:active,
   .hatch-button:not(#site-scheme):active,
   .quick-toggle:active,
-  .mode-rest .page-action:active {
+  .mode-row .page-action:active {
     --scale-move: scale var(--press) ease-out;
     scale: 0.97;
   }
@@ -3361,8 +3361,8 @@ wa-popover::part(popup__popup) {
   }
 
   /* The switch stays live while the rest of the page crossfades, so its hatch can slide instead of fading. */
-  .mode-rest {
-    view-transition-name: mode-rest;
+  .mode-row {
+    view-transition-name: mode-row;
   }
 
   /* Named too, so the row's paper strip, which moves as its own layer, can't cover the facts mid-flip. */
@@ -3382,7 +3382,7 @@ wa-popover::part(popup__popup) {
     animation: none;
   }
 
-  ::view-transition-old(mode-rest),
+  ::view-transition-old(mode-row),
   ::view-transition-old(recipe-facts),
   ::view-transition-old(scheme-toggle),
   ::view-transition-old(course-bar),
@@ -3390,7 +3390,7 @@ wa-popover::part(popup__popup) {
     display: none;
   }
 
-  ::view-transition-new(mode-rest),
+  ::view-transition-new(mode-row),
   ::view-transition-new(recipe-facts),
   ::view-transition-new(scheme-toggle),
   ::view-transition-new(course-bar),
@@ -3447,7 +3447,7 @@ wa-popover::part(popup__popup) {
   }
 
   :root:active-view-transition-type(page-turn, scheme)
-    :is(.mode-rest, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
+    :is(.mode-row, .facts-scroller, .recipe-body, .listing-results, .course-bar, .screen-toast) {
     view-transition-name: none;
   }
 
@@ -3466,7 +3466,7 @@ wa-popover::part(popup__popup) {
     transition: border-color var(--wa-transition-slow) var(--wa-transition-easing);
   }
 
-  .mode-rest::before {
+  .mode-row::before {
     transition: border-color var(--press) var(--wa-transition-easing);
   }
 
@@ -3727,7 +3727,7 @@ wa-popover::part(popup__popup) {
      On the parent's columns, the auto track is exactly as wide as the controls.
      The row is only as tall as its controls, so their top lines up with the facts beside them; its paper reaches past it.
      A sticky item stops at the end of its own cell, so the row's cell runs down through the body's row. */
-  .mode-rest {
+  .mode-row {
     --content-percentage: 0;
     display: grid;
     grid-template-columns: subgrid;
@@ -3748,7 +3748,7 @@ wa-popover::part(popup__popup) {
     translate: 0 calc(-1 * var(--wa-space-m));
   }
 
-  .mode-rest::before {
+  .mode-row::before {
     inset: calc(-1 * var(--wa-space-m)) -100vw;
   }
 
@@ -3776,7 +3776,7 @@ wa-popover::part(popup__popup) {
 
   /* The desktop switch's width, with print and share back in front of it.
      A width rather than a flex basis: the slot's size containment hides its contents, and Safari would size the controls as if the switch had no width. */
-  .mode-rest .switch-slot {
+  .mode-row .switch-slot {
     flex: none;
     inline-size: var(--switch-column);
     order: 0;
@@ -3982,7 +3982,7 @@ wa-popover::part(popup__popup) {
   .recipe-nav,
   .site-header,
   .site-footer,
-  .mode-rest,
+  .mode-row,
   .stuck-marker,
   wa-tooltip,
   .heading-anchor,
