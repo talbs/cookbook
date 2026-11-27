@@ -21,6 +21,7 @@ const malformedRecipes = [
   ['unnamed-timer.cook', /timer in step 1 has no name/],
   ['two-word-timer.cook', /timer "Rest Time" in step 1 must be one lowercase word, like bake or pressure-cook/],
   ['repeat-without-reference.cook', /"eggs" in step 2 is mentioned again: write @&eggs/],
+  ['extra-without-plus-more.cook', /note on "basil" says "more for serving": start it "plus more" or "or more"/],
   ['title-list.cook', /title must be text/],
   ['author-map.cook', /author must be text/],
   ['diet-number.cook', /diet must be text or a list of text/],
