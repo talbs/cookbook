@@ -3,7 +3,7 @@ import { changeWithTransition } from './transition.js';
 
 const page = document.querySelector('.recipe-page');
 const recipe = page.querySelector('.recipe');
-const modeRest = page.querySelector('.mode-rest');
+const modeRow = page.querySelector('.mode-row');
 const stuckMarker = recipe.querySelector('.stuck-marker');
 const modeSwitch = page.querySelector('.mode-switch');
 const checkboxes = [...recipe.querySelectorAll('wa-checkbox[data-check]')];
@@ -107,7 +107,7 @@ function showMode(mode) {
 }
 
 function findStepBeingRead() {
-  const rowBottom = modeRest.getBoundingClientRect().bottom;
+  const rowBottom = modeRow.getBoundingClientRect().bottom;
   const steps = recipe.querySelectorAll('.step');
   for (const step of steps) {
     const { top } = step.getBoundingClientRect();
@@ -224,7 +224,7 @@ else if (isMode(savedState.mode)) showMode(savedState.mode);
 if (Array.isArray(savedState.checked)) restoreChecks(savedState.checked);
 if (isMode(linkedMode)) saveState();
 revealShareControls();
-modeRest.hidden = false;
+modeRow.hidden = false;
 
 modeSwitch.addEventListener('change', () => {
   if (page.dataset.mode === modeSwitch.value) return;
