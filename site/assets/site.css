@@ -663,7 +663,7 @@ wa-scroller[hidden] {
 }
 
 /* Two columns until every recipe's facts fit on one line (the widest, pancakes, measures 466px);
-   past that each fact takes its own width with even gaps, as in the wide layout. */
+   past that each fact takes its own width with even gaps. */
 @media screen and (min-width: 33rem) {
   .facts {
     display: flex;
@@ -3724,7 +3724,7 @@ wa-popover::part(popup__popup) {
   }
 
   /* Without a zero content share, WebKit gives the title half the row at 48rem and pushes the switch off the edge.
-     On the parent's columns, the auto track is exactly as wide as the controls, so nothing adds up their widths by hand.
+     On the parent's columns, the auto track is exactly as wide as the controls.
      The row is only as tall as its controls, so their top lines up with the facts beside them; its paper reaches past it.
      A sticky item stops at the end of its own cell, so the row's cell runs down through the body's row. */
   .mode-rest {
