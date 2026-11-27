@@ -70,6 +70,7 @@ Cooklang also accepts other names for some keys (`serves`, `category`, `introduc
 - `#name{}` for cookware. This builds the Equipment list. A count and a note in parentheses show there too: `#canning jars{5}(8 oz, with lids)`. Repeats work the same way: `#&bowl{}`.
 - Every timer gets a one-word name: `~bake{20%minutes}`, `~chill{24-36%hours}`. Timers know seconds, minutes, hours and days. Write longer waits as plain words ("at least 1 week").
 - A second unit or a count goes in the note: `@egg yolks{110%g}(4 oz, about 7)`.
+- Extra beyond the amount is its own part of the note, starting `plus more` or `or more`: `@flour{2%cup}(sifted, plus more for dusting)`. Cook mode shows it on the later step that uses the extra (`@&flour{}`). Other wordings stop the build.
 - `@./other-recipe{}` uses another recipe as an ingredient. Write the other recipe's file name. The page shows its title as a link, and the other recipe's page says where it's used. `@?./other-recipe{}` marks it optional.
 - `= Name` starts a section. `>` starts a note, which can use Markdown links and bold.
 - A note after a step needs a bold title, a dash and a body, or the build stops.
@@ -114,6 +115,7 @@ The build names the file and says what's wrong. What each message means:
 | `parser error: unreachable`                           | The parser crashed. Look for a mark with no amount, like `~rest` or `@{1%cup}`                                                                                                         |
 | `front matter didn't parse`                           | A value has a colon followed by a space, so YAML reads it as a new key. Reword it without the colon, or quote it: `title: "Pasta: The Easy Way"`                                       |
 | `note "..." needs a title and a body`                 | Start the note with a bold title and a dash: `> **Storing** — Keeps for 2 weeks.`                                                                                                      |
+| `note on "..." says "..."`                            | Start that part of the note with `plus more` or `or more`: `more for serving` becomes `plus more for serving`                                                                          |
 | `missing title` / `missing description`               | Add the key                                                                                                                                                                            |
 | `missing course`                                      | Add `course:` with one of the six courses in the table above                                                                                                                           |
 | `course "..." must be one of ...`                     | Pick one of the six the message lists: `brunch` becomes `breakfast`                                                                                                                    |
