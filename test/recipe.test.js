@@ -29,9 +29,9 @@ test('a "plus more" note shows on the step that uses the extra, and in full on t
     section.blocks.filter(block => block.type === 'steps').flatMap(block => block.steps)
   );
   const expectedDetailsPerStep = [
-    [['pork', null], ['black pepper', null], ['flour', '5 oz, plus more for dusting']],
+    [['pork', null], ['salt', null], ['black pepper', null], ['flour', '5 oz, plus more for dusting']],
     [['olive oil', 'fruity']],
-    [['black pepper', 'to taste'], ['olive oil', null]],
+    [['salt', 'to taste'], ['black pepper', 'to taste'], ['olive oil', null]],
     [['olive oil', 'for drizzling']],
   ];
   const shownDetailsPerStep = steps.map(step =>
@@ -40,7 +40,7 @@ test('a "plus more" note shows on the step that uses the extra, and in full on t
   assert.deepEqual(shownDetailsPerStep, expectedDetailsPerStep);
   assert.deepEqual(
     recipe.ingredients.map(ingredient => ingredient.text),
-    ['1 lb pork', '1/2 tsp black pepper (plus more to taste)', '1 cup flour (5 oz, plus more for dusting)', '3 tbsp olive oil (fruity, plus more for drizzling)']
+    ['1 lb pork', '1 tsp salt (or more to taste)', '1/2 tsp black pepper (plus more to taste)', '1 cup flour (5 oz, plus more for dusting)', '3 tbsp olive oil (fruity, plus more for drizzling)']
   );
 });
 
