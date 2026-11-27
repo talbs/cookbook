@@ -73,7 +73,7 @@ function tellNewJoke() {
 
   const ornament = jokes.querySelector(':scope > :not([hidden]) hue-hop');
   const waysOut = emptyPanel.querySelector('.empty-ways-out');
-  // Moon is all greys, too quiet to show a hover, so that joke's links keep the accent.
+  // Moon is all grays, too quiet to show a hover, so that joke's links keep the accent.
   const isGrey = ornament.getAttribute('hue') === 'moon';
   if (isGrey) for (const end of hueEnds) waysOut.style.removeProperty(end);
   else shareHue(ornament, waysOut);

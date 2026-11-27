@@ -47,7 +47,7 @@ body {
   padding: 0;
 }
 
-/* Near-neutral greys with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool greys and white.
+/* Near-neutral grays with a faint warm cast (hue 80, chroma about 0.005) on an off-white paper, in place of WA's cool grays and white.
    The head script in base.njk repeats both papers for the theme-color meta. */
 :root {
   --wa-color-neutral-95: #f2f1f0;
@@ -107,7 +107,7 @@ body {
   --band: 0.5rem;
   /* One dot every 6px. The leaders, the dividers and the spacing around the footer's icons all count in this. */
   --dot-pitch: 6px;
-  /* Leader dots from the same library, used as a mask so they take the ink colour in either theme. */
+  /* Leader dots from the same library, used as a mask so they take the ink color in either theme. */
   --divider: radial-gradient(circle, black 0.75px, transparent 1.1px) center /
     var(--dot-pitch) var(--dot-pitch) round;
   /* The paper each word carries past its own edge, so the leader's dots stop short of the text. */
@@ -161,7 +161,7 @@ body {
   --side-column: calc(4 / 11 * (100% - var(--column-gap)));
   --switch-column: 15rem;
   --page-gutter: 1.25rem;
-  /* Where the page's text starts: the gutter, or the side of the centred 75rem column on wide screens. */
+  /* Where the page's text starts: the gutter, or the side of the centerd 75rem column on wide screens. */
   --text-edge: max(var(--page-gutter), calc((100% - 75rem) / 2 + var(--page-gutter)));
   /* How far things that float above the page sit off its bottom edge, clear of the iPhone home bar. */
   --float-gap: max(var(--wa-space-l), env(safe-area-inset-bottom));
@@ -209,7 +209,7 @@ body {
   --wa-focus-ring-offset: 3px;
 }
 
-/* Text links match Tiny Tells: a solid 1px underline in the text colour, set 0.2em below, instead of WA's dotted 70% one. */
+/* Text links match Tiny Tells: a solid 1px underline in the text color, set 0.2em below, instead of WA's dotted 70% one. */
 a,
 .listing-name,
 .card-title,
@@ -251,7 +251,7 @@ a:hover,
 
 :root {
   scrollbar-color: color-mix(in oklab, var(--ink) 35%, transparent) transparent;
-  /* Phones flash a grey box on tap; links and buttons here already show their own pressed state. */
+  /* Phones flash a gray box on tap; links and buttons here already show their own pressed state. */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -269,7 +269,7 @@ wa-tooltip::part(body) {
   white-space: nowrap;
 }
 
-/* Keys stay quiet beside the words around them: a faint tint of the text colour instead of the kit's keycap edge and shadow. */
+/* Keys stay quiet beside the words around them: a faint tint of the text color instead of the kit's keycap edge and shadow. */
 kbd {
   padding: 0.1em 0.4em;
   border: 0;
@@ -293,7 +293,7 @@ a:focus-visible {
 }
 
 /* wa-page shows its skip link in the flow when focused, which pushes the page down; fixed, it floats over the header instead.
-   Its padding matches the nav links', so starting at the header's inset centres it on the same line as the bar. */
+   Its padding matches the nav links', so starting at the header's inset centers it on the same line as the bar. */
 wa-page::part(skip-to-content):focus {
   position: fixed;
   inset-block-start: var(--header-inset);
@@ -329,7 +329,7 @@ wa-page::part(skip-to-content):focus {
   }
 }
 
-/* A keyframe rather than a transition: a transition would need a resting transparent outline, which forced-colours mode paints on every control. */
+/* A keyframe rather than a transition: a transition would need a resting transparent outline, which forced-colors mode paints on every control. */
 @media (prefers-reduced-motion: no-preference) {
   :focus-visible,
   wa-button::part(base):focus-visible,
@@ -361,7 +361,7 @@ wa-page::part(skip-to-content):focus {
 }
 
 /* Every page's main runs down to the footer, so a short page's content area meets it instead of stopping early.
-   In a flex column, main's centring margins would shrink it to fit its content, so it keeps the full width explicitly. */
+   In a flex column, main's centering margins would shrink it to fit its content, so it keeps the full width explicitly. */
 wa-page::part(main-content) {
   display: flex;
   flex-direction: column;
@@ -441,7 +441,7 @@ wa-page > main {
 }
 
 /* The padding makes each link a 40px tap target without moving the words.
-   It would also make the focus ring twice as tall as the words. The ring goes on a box centred on the link instead,
+   It would also make the focus ring twice as tall as the words. The ring goes on a box centerd on the link instead,
    1.3em tall (the height of the letters' own area) and a little wider than the words, so its gap is even all round. */
 .site-nav a,
 .course-links a,
@@ -504,7 +504,7 @@ wa-scroller[hidden] {
   font-weight: var(--wa-font-weight-bold);
 }
 
-/* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar centre the letters themselves. */
+/* Free Lunch's capitals sit low in its line box; trimming to cap height lets the bar center the letters themselves. */
 .site-name,
 .row-title {
   text-box: trim-both cap alphabetic;
@@ -689,7 +689,7 @@ wa-scroller[hidden] {
 
 /* The dotted dividers. The footer's has the recipe's icons in its middle, like a printer's ornament:
    two runs of dots, each its own box, so the mask fits whole dots into it and none is cut at the gap. */
-/* The margins bring the dots' centre to --rule-gap from the text above and below, past the gap its parent already adds. */
+/* The margins bring the dots' center to --rule-gap from the text above and below, past the gap its parent already adds. */
 .header-rule,
 .footer-rule {
   block-size: var(--band);
@@ -728,7 +728,7 @@ wa-scroller[hidden] {
 }
 
 /* wa-icon sets its own --secondary-* defaults on :host, so the tones go on the icon, not the set.
-   At rest only the line shows, in the divider's colour. */
+   At rest only the line shows, in the divider's color. */
 .recipe-icons wa-icon,
 .made-with wa-icon {
   --primary-color: var(--divider-ink);
@@ -952,7 +952,7 @@ button.shortcut {
   }
 }
 
-/* A grey fill on the unchosen radio read as a second selected state next to the hatch, so only its label changes. */
+/* A gray fill on the unchosen radio read as a second selected state next to the hatch, so only its label changes. */
 .mode-switch wa-radio {
   justify-content: center;
   border: 0;
@@ -1234,7 +1234,7 @@ wa-checkbox:not(:state(checked)) .box-checked {
   initial-value: 0.4;
 }
 
-/* A colour fade moves nothing, so it stays under reduced motion. */
+/* A color fade moves nothing, so it stays under reduced motion. */
 wa-checkbox.is-touched:state(checked) .box-checked {
   animation: tick-flash 900ms ease-out;
 }
@@ -1287,7 +1287,7 @@ wa-checkbox.is-touched:state(checked) .box-checked {
   color: var(--note-ink);
 }
 
-/* The paper colour hugs the words line by line and hides the leader dots behind them, so dots show only
+/* The paper color hugs the words line by line and hides the leader dots behind them, so dots show only
    between name and note. Clone repeats it on every wrapped line. */
 .row-words {
   background: var(--paper);
@@ -1669,7 +1669,7 @@ wa-intersection-observer {
 }
 
 /* Hue Hop hands everything inside it the two ends of the hue, and the script copies them to the empty-search links
-   so they match. Where it doesn't run, on paper, or when contrast is forced, every use falls back to the colour it had before. */
+   so they match. Where it doesn't run, on paper, or when contrast is forced, every use falls back to the color it had before. */
 @media screen and (forced-colors: none) and (prefers-contrast: no-preference) {
   hue-hop,
   .empty-ways-out {
@@ -1728,7 +1728,7 @@ wa-button[appearance='outlined']:hover::part(base) {
   color: var(--accent);
 }
 
-/* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's colour change alone. */
+/* Plain buttons have no fill to keep on the hatch, so their hover is the outlined one's color change alone. */
 wa-button[appearance='plain']::part(base) {
   color: var(--note-ink);
   transition: color var(--fade);
@@ -2283,7 +2283,7 @@ wa-details {
 }
 
 /* The note's own icon is the toggle, in the details' expand and collapse slots: outlined when folded, tinted when open.
-   WA turns its chevron a quarter turn on open and greys it; a note icon should do neither. */
+   WA turns its chevron a quarter turn on open and grays it; a note icon should do neither. */
 .step-note::part(icon) {
   rotate: none;
   color: inherit;
@@ -2293,7 +2293,7 @@ wa-details {
   margin: 0;
 }
 
-/* The open note's icon takes the fill the recipe's icons get on hover. Both layers follow the title's colour, so a hovered note tints whole. */
+/* The open note's icon takes the fill the recipe's icons get on hover. Both layers follow the title's color, so a hovered note tints whole. */
 .step-note > .note-icon[slot='collapse-icon'] {
   --primary-color: currentColor;
   --secondary-color: currentColor;
@@ -2568,7 +2568,7 @@ wa-progress-bar.wait-run::part(indicator) {
 }
 
 /* Floating panels come and go the way the page's other pieces do: the fade is quick and only the movement springs.
-   A popover pops out of its anchor like the icons and buttons do (transition.js aims it); a dialog pops gently from its centre as it rises.
+   A popover pops out of its anchor like the icons and buttons do (transition.js aims it); a dialog pops gently from its center as it rises.
    Each shrinks back to the size and spot it grew from on the way out.
    The kit waits for every animation on the part, and its backdrop fades on these durations too. */
 wa-popover,
@@ -2615,7 +2615,7 @@ wa-popover::part(popup__popup) {
   color: var(--ink);
 }
 
-/* Dark paper is the page's own colour and a dark shadow doesn't show on it, so the toast sits a step lighter instead.
+/* Dark paper is the page's own color and a dark shadow doesn't show on it, so the toast sits a step lighter instead.
    Screen only: paper is always light. */
 @media screen {
   .wa-dark .screen-toast wa-toast-item::part(toast-item) {
@@ -2628,7 +2628,7 @@ wa-popover::part(popup__popup) {
   padding: var(--wa-space-m);
 }
 
-/* The arrow's edge is an inset shadow in the kit's own border colour, so it is repainted to match the panel. */
+/* The arrow's edge is an inset shadow in the kit's own border color, so it is repainted to match the panel. */
 .pick-popover::part(popup__arrow) {
   background-color: var(--paper);
   box-shadow: inset -1px -1px 0 0 var(--control-edge);
@@ -3500,7 +3500,7 @@ wa-popover::part(popup__popup) {
     animation-duration: var(--wa-transition-normal);
   }
 
-  /* A scheme change crossfades the whole page's colour, while the toggle stays live so its icons can set and rise. */
+  /* A scheme change crossfades the whole page's color, while the toggle stays live so its icons can set and rise. */
   :root:active-view-transition-type(scheme) #site-scheme {
     view-transition-name: scheme-toggle;
   }
@@ -3997,7 +3997,7 @@ wa-popover::part(popup__popup) {
     --wa-color-surface-default: white;
     --wa-color-text-normal: black;
     --wa-color-text-quiet: var(--wa-color-neutral-30);
-    /* Dots and icon lines at the screen's 22% can vanish in a laser printer's halftone, so paper gets a firmer grey. */
+    /* Dots and icon lines at the screen's 22% can vanish in a laser printer's halftone, so paper gets a firmer gray. */
     --mark: color-mix(in oklab, black 45%, transparent);
     --timer-ink: var(--ink);
   }
@@ -4179,7 +4179,7 @@ wa-popover::part(popup__popup) {
   }
 
   /* Real dotted borders, not the gradient dots: macOS Preview smears or drops the gradient at this size, and a border stays sharp.
-     The margins keep each line centred in the strip the dots used to fill. */
+     The margins keep each line centerd in the strip the dots used to fill. */
   .rule-run,
   .timing-rows li::after {
     block-size: 0;
