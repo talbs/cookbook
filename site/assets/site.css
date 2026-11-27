@@ -2581,6 +2581,15 @@ wa-popover::part(popup__popup) {
   color: var(--ink);
 }
 
+/* Dark paper is the page's own colour and a dark shadow doesn't show on it, so the toast sits a step lighter instead.
+   Screen only: paper is always light. */
+@media screen {
+  .wa-dark .screen-toast wa-toast-item::part(toast-item) {
+    background: var(--wa-color-neutral-20);
+    box-shadow: none;
+  }
+}
+
 .pick-popover::part(body) {
   padding: var(--wa-space-m);
 }
