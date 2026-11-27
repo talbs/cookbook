@@ -73,7 +73,7 @@ function markCurrentCourse() {
   const section = findCurrentCourse();
   const link = section ? document.querySelector(`.course-links [data-course="${section.dataset.course}"]`) : null;
   if (link === markedCourseLink && !isSlideOwed) return;
-  // A smooth slide started while the page is still revealing gets cancelled, so the first mark after a load jumps.
+  // A smooth slide started while the page is still revealing gets canceled, so the first mark after a load jumps.
   const isArriving = markedCourseLink === null || isSlideOwed;
   markedCourseLink?.removeAttribute('aria-current');
   link?.setAttribute('aria-current', 'true');
