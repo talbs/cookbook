@@ -1859,17 +1859,46 @@ wa-button.special::part(base) {
   row-gap: var(--gap-group);
 }
 
+/* Under 47.5rem of card the words and the ways out can't share a row without squeezing the words below a readable line,
+   so they stack, centered under the number. From there up the row never wraps: left to wrap, it held at 1200px and broke at 1440px.
+   Any higher and the row turns back into a stack at 60rem, where the page gutter doubles and the card drops to 47.8rem. */
+.not-found {
+  container-type: inline-size;
+}
+
+@container (width < 47.5rem) {
+  .not-found > .wa-split {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .not-found .empty-ways-out {
+    justify-content: center;
+  }
+}
+
+@container (width >= 47.5rem) {
+  .not-found > .wa-split {
+    flex-wrap: nowrap;
+  }
+
+  .not-found .empty-ways-out {
+    flex: none;
+  }
+}
+
 @media (min-width: 48rem) {
   .not-found-page main {
     padding-block-end: var(--wa-space-2xl);
   }
 
-  /* At full size the page needs 58.5rem of height: header, footer, paddings, the number and the text row.
+  /* At full size the page needs 48.6rem of height: header, footer, paddings, the number and the text under it.
      In a shorter window the number gives up half of the shortfall, each padding a fifth and the gap a tenth, so the page still fits one screen
-     and the padding stays wider than the gap inside it. */
+     and the padding stays wider than the gap inside it. The figures are 0.72em tall, so half the shortfall in height is 0.7 of it in font size. */
   .not-found {
-    --short-by: max(0px, 58.5rem - 100dvh);
-    --stat-size: max(7rem, min(30vw, 18rem - 0.5 * var(--short-by)));
+    --short-by: max(0px, 48.6rem - 100dvh);
+    --stat-size: max(7rem, min(30vw, 18rem) - 0.7 * var(--short-by));
     gap: max(var(--wa-space-l), var(--gap-subsection) - 0.1 * var(--short-by));
     padding-block: max(var(--wa-space-xl), clamp(var(--wa-space-3xl), 7vw, 5rem) - 0.2 * var(--short-by));
   }
@@ -1878,6 +1907,11 @@ wa-button.special::part(base) {
 .not-found .stats {
   margin-block: auto;
   text-align: center;
+}
+
+/* The figures fill only 0.72em of their line box, most of the rest above them. Trimmed, the card's padding and gap are measured from the figures. */
+.not-found .stats dd {
+  text-box: trim-both cap alphabetic;
 }
 
 /* A shuffled food stands in for the 0, at a figure's height (about 0.7em in Free Lunch) on the baseline.
